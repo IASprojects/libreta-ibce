@@ -1,0 +1,21 @@
+<!-- Cumpleañeros del mes -->
+<div class="section-card">
+  <h3 class="section-title">🎂 Cumpleañeros de {{ currentMonth() }}</h3>
+  <div class="birthday-list">
+    @for (birthday of monthlyBirthdays(); track birthday.name) {
+      <div class="birthday-item">
+        <div class="birthday-avatar">{{ birthday.initials }}</div>
+        <div class="birthday-info">
+          <span class="birthday-name">{{ birthday.name }}</span>
+          <span class="birthday-date">{{ birthday.date }}</span>
+        </div>
+        <div class="birthday-cake">🎂</div>
+      </div>
+    }
+    @if (monthlyBirthdays().length === 0) {
+      <div class="no-birthdays">
+        <p>No hay cumpleañeros este mes</p>
+      </div>
+    }
+  </div>
+</div>

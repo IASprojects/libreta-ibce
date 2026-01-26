@@ -1,0 +1,21 @@
+<!-- Estudiantes nuevos -->
+<div class="section-card">
+  <h3 class="section-title">🆕 Últimos Estudiantes Nuevos</h3>
+  <div class="new-students-list">
+    @for (student of recentStudents; track student.name) {
+      <div class="student-item">
+        <div class="student-avatar">{{ student.initials }}</div>
+        <div class="student-info">
+          <span class="student-name">{{ student.name }}</span>
+          <span class="student-joined">Se unió el {{ student.joinedDate }}</span>
+        </div>
+        <div class="new-badge">NUEVO</div>
+      </div>
+    }
+    @if (recentStudents.length === 0) {
+      <div class="no-new-students">
+        <p>No hay estudiantes nuevos recientes</p>
+      </div>
+    }
+  </div>
+</div>

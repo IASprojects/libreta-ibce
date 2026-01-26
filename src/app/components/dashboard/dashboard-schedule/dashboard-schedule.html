@@ -1,0 +1,19 @@
+<!-- Próximas clases programadas -->
+<div class="section-card">
+  <h3 class="section-title">📋 Próximas Clases Programadas</h3>
+  <div class="upcoming-classes">
+    @for (upcomingClass of upcomingClasses; track upcomingClass.topic) {
+      <div class="class-item">
+        <div class="class-date">
+          <span class="day">{{ upcomingClass.day }}</span>
+          <span class="month">{{ upcomingClass.month }}</span>
+        </div>
+        <div class="class-info">
+          <span class="class-topic">{{ upcomingClass.topic }}</span>
+          <span class="class-teacher">Maestro: {{ upcomingClass.teacher }}</span>
+        </div>
+        <div class="class-time">{{ upcomingClass.time }}</div>
+      </div>
+    }
+  </div>
+</div>

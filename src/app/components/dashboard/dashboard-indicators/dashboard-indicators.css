@@ -1,0 +1,80 @@
+/* Grid de indicadores */
+.indicators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem;
+  margin-bottom: 3rem;
+}
+
+.indicator-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border-left: 4px solid;
+}
+
+.indicator-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.indicator-card.primary {
+  border-left-color: #667eea;
+}
+
+.indicator-card.success {
+  border-left-color: #28a745;
+}
+
+.indicator-card.info {
+  border-left-color: #17a2b8;
+}
+
+.indicator-card.warning {
+  border-left-color: #ffc107;
+}
+
+.indicator-icon {
+  font-size: 3rem;
+  opacity: 0.8;
+}
+
+.indicator-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.indicator-content p {
+  margin: 0;
+  color: #666;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.indicator-content small {
+  display: block;
+  color: #888;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .indicators-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1rem;
+  }
+  
+  .indicator-card {
+    padding: 1.5rem;
+  }
+}

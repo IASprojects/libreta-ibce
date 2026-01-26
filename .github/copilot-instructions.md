@@ -1,4 +1,29 @@
+## Contexto del Proyecto
 
+### **Justificación**
+Somos un grupo de 6 profesores de escuela dominical de una iglesia en un pueblo. Atendemos a jóvenes de 12 a 15 años con los siguientes objetivos:
+- Enseñar valores bíblicos y bases teológicas para fortalecer su fe
+- Fomentar el impacto social positivo
+- Atender a jóvenes en diversas condiciones sociales y con necesidades específicas
+
+### **Descripción del Sistema**
+Sistema de gestión gratuito para:
+1. Control de asistencia diaria
+2. Registro de información básica de estudiantes
+3. Seguimiento de asistencia anual
+4. Contacto de padres/encargados
+5. Recordatorios de cumpleaños
+
+## Requisitos Específicos
+
+### **Funcionales**
+- Registro rápido de asistencia al inicio de clase
+- Incorporación inmediata de nuevos estudiantes
+- Visualización responsive (PC, tablets, móviles)
+- Historial de asistencia anual por estudiante
+- Gestión de contactos de padres/encargados
+- Alertas de cumpleaños
+- Funciona con 1 solo usuario (profesor) los 6 maestro vamos a usar la misma cuenta
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
 ## TypeScript Best Practices
@@ -54,3 +79,31 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+Switch to the spanish language for explain context and requirements:
+## Contexto del Proyecto
+
+### **Justificación**
+Somos un grupo de 6 profesores de escuela dominical de una iglesia en un pueblo. Atendemos a jóvenes de 12 a 15 años con los siguientes objetivos:
+- Enseñar valores bíblicos y bases teológicas para fortalecer su fe
+- Fomentar el impacto social positivo
+- Atender a jóvenes en diversas condiciones sociales y con necesidades específicas
+
+### **Descripción del Sistema**
+Sistema de gestión gratuito para:
+1. Control de asistencia diaria
+2. Registro de información básica de estudiantes
+3. Seguimiento de asistencia anual
+4. Contacto de padres/encargados
+5. Recordatorios de cumpleaños
+
+## Requisitos Específicos
+
+### **Funcionales**
+- Registro rápido de asistencia al inicio de clase
+- Incorporación inmediata de nuevos estudiantes
+- Visualización responsive (PC, tablets, móviles)
+- Historial de asistencia anual por estudiante
+- Gestión de contactos de padres/encargados
+- Alertas de cumpleaños
+- Funciona con 1 solo usuario (profesor) los 6 maestro vamos a usar la misma cuenta

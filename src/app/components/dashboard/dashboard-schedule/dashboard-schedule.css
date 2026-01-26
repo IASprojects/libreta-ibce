@@ -1,0 +1,97 @@
+.section-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.section-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.section-title {
+  margin: 0 0 1.5rem 0;
+  color: #333;
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Próximas clases */
+.upcoming-classes {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.class-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.class-item:hover {
+  background: #e9ecef;
+  transform: translateX(4px);
+}
+
+.class-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 12px;
+  min-width: 60px;
+}
+
+.class-date .day {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.class-date .month {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.class-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.class-topic {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+.class-teacher {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.class-time {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .section-card {
+    padding: 1.5rem;
+  }
+}
