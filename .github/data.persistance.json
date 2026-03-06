@@ -1,0 +1,555 @@
+{
+  "version": "1.0.0",
+  "description": "Modelos de datos para Sistema de Gestión de Escuela Dominical",
+  "lastUpdated": "2026-03-05",
+
+  "models": {
+    "Student": {
+      "description": "Información de estudiantes",
+      "collection": "students",
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "description": "ID automático de Firestore"
+        },
+        "name": {
+          "type": "string",
+          "required": true,
+          "description": "Nombre completo del estudiante",
+          "maxLength": 100
+        },
+        "birthDate": {
+          "type": "date",
+          "required": true,
+          "description": "Fecha de nacimiento (formato ISO)"
+        },
+        "contacts": {
+          "type": "array",
+          "required": true,
+          "description": "Lista de contactos/tutores",
+          "items": {
+            "type": "object",
+            "fields": {
+              "name": {
+                "type": "string",
+                "required": true,
+                "description": "Nombre del tutor"
+              },
+              "relationship": {
+                "type": "string",
+                "required": true,
+                "enum": ["padre", "madre", "abuelo", "tutor", "otro"],
+                "description": "Parentesco"
+              },
+              "phone": {
+                "type": "string",
+                "required": true,
+                "description": "Teléfono principal"
+              },
+              "isMain": {
+                "type": "boolean",
+                "required": true,
+                "description": "¿Es el contacto principal?"
+              }
+            }
+          }
+        },
+        "address": {
+          "type": "string",
+          "required": false,
+          "description": "Dirección de domicilio",
+          "maxLength": 200
+        },
+        "notes": {
+          "type": "string",
+          "required": false,
+          "description": "Notas generales sobre el estudiante",
+          "maxLength": 500
+        },
+        "active": {
+          "type": "boolean",
+          "required": true,
+          "default": true,
+          "description": "¿Está activo en la clase?"
+        },
+        "registeredAt": {
+          "type": "timestamp",
+          "required": true,
+          "description": "Fecha de registro"
+        },
+        "updatedAt": {
+          "type": "timestamp",
+          "required": true,
+          "description": "Fecha de última modificación"
+        },
+        "lastAttendance": {
+          "type": "date",
+          "required": false,
+          "description": "Última vez que asistió"
+        },
+        "stats": {
+          "type": "object",
+          "required": false,
+          "description": "Estadísticas calculadas (se actualizan automáticamente)",
+          "fields": {
+            "totalAttendances": {
+              "type": "number",
+              "description": "Total de asistencias"
+            },
+            "currentStreak": {
+              "type": "number",
+              "description": "Asistencias consecutivas"
+            },
+            "last3MonthsPercentage": {
+              "type": "number",
+              "description": "Porcentaje últimos 3 meses (0-100)"
+            }
+          }
+        }
+      },
+      "indexes": ["name", "active", "birthDate", "lastAttendance"]
+    },
+
+    "Attendance": {
+      "description": "Registro individual de asistencia a una clase específica",
+      "collection": "attendance",
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "description": "ID automático de Firestore"
+        },
+        "lessonClassId": {
+          "type": "string",
+          "required": true,
+          "description": "ID de la instancia de clase (referencia a LessonClass)"
+        },
+        "studentId": {
+          "type": "string",
+          "required": true,
+          "description": "ID del estudiante (referencia a Student)"
+        },
+        "present": {
+          "type": "boolean",
+          "required": true,
+          "description": "true = presente, false = ausente"
+        },
+        "notes": {
+          "type": "string",
+          "required": false,
+          "description": "Notas del día",
+          "maxLength": 200
+        },
+        "type": {
+          "type": "string",
+          "required": true,
+          "enum": ["regular", "visitor", "first-time"],
+          "default": "regular",
+          "description": "Tipo de asistencia"
+        },
+        "registeredBy": {
+          "type": "string",
+          "required": true,
+          "description": "ID del maestro que registró (referencia a Teacher.id)"
+        },
+        "registeredAt": {
+          "type": "timestamp",
+          "required": true,
+          "description": "Momento del registro"
+        },
+        "updatedAt": {
+          "type": "timestamp",
+          "required": true,
+          "description": "Fecha de última modificación"
+        },
+        "inactive": {
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "¿La asistencia fue marcada como inactiva (ej. corrección)?"
+        },
+        "synced": {
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "description": "Para control de sincronización offline"
+        }
+      },
+      "indexes": ["lessonClassId", "studentId", "registeredAt", "type"]
+    },
+
+    "PlannedLesson": {
+      "description": "Planificación anticipada de clases para calendario visual",
+      "collection": "planned_lessons",
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "description": "ID automático de Firestore"
+        },
+        "plannedDate": {
+          "type": "date",
+          "required": true,
+          "description": "Fecha para la cual se planifica esta clase (calendario)"
+        },
+        "unitNumber": {
+          "type": "string",
+          "required": true,
+          "description": "Unidad del Libro de Lecciones",
+          "maxLength": 100
+        },
+        "lessonNumber": {
+          "type": "string",
+          "required": true,
+          "description": "Número de Lección dentro de la unidad",
+          "maxLength": 50
+        },
+        "plannedTeacherId": {
+          "type": "string",
+          "required": true,
+          "description": "ID del maestro asignado (referencia a Teacher.id)"
+        },
+        "active": {
+          "type": "boolean",
+          "required": true,
+          "default": true,
+          "description": "¿La planificación está activa? (false si se canceló)"
+        },
+        "createdBy": {
+          "type": "string",
+          "required": true,
+          "description": "ID del maestro que creó la planificación"
+        },
+        "createdAt": {
+          "type": "timestamp",
+          "required": true
+        },
+        "updatedAt": {
+          "type": "timestamp",
+          "required": true
+        }
+      },
+      "indexes": ["plannedDate", "unitNumber", "lessonNumber", "plannedTeacherId", "active"]
+    },
+
+    "LessonClass": {
+      "description": "Instancia real de la clase (la que realmente ocurre, puede variar de lo planificado)",
+      "collection": "lesson_classes",
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "description": "ID automático de Firestore"
+        },
+        "date": {
+          "type": "date",
+          "required": true,
+          "description": "Fecha real cuando se dicta la clase"
+        },
+        "plannedLessonId": {
+          "type": "string",
+          "required": false,
+          "description": "ID de la planificación original (si aplica, opcional para clases no planificadas)"
+        },
+        "unitNumber": {
+          "type": "string",
+          "required": true,
+          "description": "Unidad que realmente se dio (puede diferir de lo planificado)"
+        },
+        "lessonNumber": {
+          "type": "string",
+          "required": true,
+          "description": "Lección que realmente se dio (puede diferir de lo planificado)"
+        },
+        "teacherId": {
+          "type": "string",
+          "required": true,
+          "description": "ID del maestro que realmente dictó (referencia a Teacher.id)"
+        },
+        "notes": {
+          "type": "string",
+          "required": false,
+          "description": "Notas específicas sobre cómo se desarrolló la clase",
+          "maxLength": 500
+        },
+        "active": {
+          "type": "boolean",
+          "required": true,
+          "default": true,
+          "description": "¿La clase está activa o fue cancelada?"
+        },
+        "createdBy": {
+          "type": "string",
+          "required": true,
+          "description": "ID del maestro que registró la instancia"
+        },
+        "createdAt": {
+          "type": "timestamp",
+          "required": true
+        }
+      },
+      "indexes": ["date", "unitNumber", "lessonNumber", "teacherId", "active"]
+    },
+
+    "AppConfig": {
+      "description": "Configuración global de la aplicación (único documento)",
+      "collection": "config",
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "default": "global",
+          "description": "Siempre 'global' (único documento)"
+        },
+        "churchName": {
+          "type": "string",
+          "required": true,
+          "description": "Nombre de la iglesia",
+          "maxLength": 100
+        },
+        "churchAddress": {
+          "type": "string",
+          "required": false,
+          "description": "Dirección de la iglesia",
+          "maxLength": 200
+        },
+        "teachers": {
+          "type": "array",
+          "required": true,
+          "description": "Lista de maestros (fuente única)",
+          "items": {
+            "type": "object",
+            "fields": {
+              "id": {
+                "type": "string",
+                "required": true,
+                "description": "ID único del maestro (iniciales o número)"
+              },
+              "name": {
+                "type": "string",
+                "required": true,
+                "enum": ["Carlos", "Laudy", "Kennet", "Yendry", "Selenia", "Isacc"],
+                "description": "Nombre del maestro"
+              },
+              "phone": {
+                "type": "string",
+                "required": true,
+                "description": "Teléfono de contacto"
+              },
+              "email": {
+                "type": "string",
+                "required": false,
+                "description": "Correo electrónico"
+              },
+              "isActive": {
+                "type": "boolean",
+                "required": true,
+                "default": true,
+                "description": "¿Está activo actualmente?"
+              },
+              "joinedAt": {
+                "type": "date",
+                "required": true,
+                "description": "Fecha de ingreso"
+              }
+            }
+          }
+        },
+        "alerts": {
+          "type": "object",
+          "required": false,
+          "description": "Configuración de alertas",
+          "fields": {
+            "enableBirthdayReminders": {
+              "type": "boolean",
+              "default": true
+            },
+            "birthdayReminderDays": {
+              "type": "number",
+              "default": 1,
+              "min": 0,
+              "max": 7
+            },
+            "attendanceAlertThreshold": {
+              "type": "number",
+              "default": 50,
+              "description": "Porcentaje mínimo de asistencia",
+              "min": 0,
+              "max": 100
+            },
+            "consecutiveAbsencesAlert": {
+              "type": "number",
+              "default": 3,
+              "description": "Faltas consecutivas para alertar"
+            }
+          }
+        },
+        "lastBackup": {
+          "type": "timestamp",
+          "required": false,
+          "description": "Fecha del último backup"
+        },
+        "updatedAt": {
+          "type": "timestamp",
+          "required": true,
+          "description": "Fecha de última actualización"
+        }
+      }
+    },
+
+    "OfflineData": {
+      "description": "Estructura para almacenamiento local (no va en Firestore)",
+      "type": "localStorage",
+      "fields": {
+        "version": {
+          "type": "number",
+          "required": true,
+          "default": 1
+        },
+        "lastSync": {
+          "type": "timestamp",
+          "required": true
+        },
+        "students": {
+          "type": "array",
+          "required": true,
+          "description": "Copia local de estudiantes",
+          "items": {
+            "type": "object",
+            "reference": "Student"
+          }
+        },
+        "recentAttendance": {
+          "type": "array",
+          "required": true,
+          "description": "Últimas 50 asistencias",
+          "items": {
+            "type": "object",
+            "reference": "Attendance"
+          }
+        },
+        "upcomingPlannedLessons": {
+          "type": "array",
+          "required": true,
+          "description": "Próximas planificaciones para calendario",
+          "items": {
+            "type": "object",
+            "reference": "PlannedLesson"
+          }
+        },
+        "recentLessonClasses": {
+          "type": "array",
+          "required": true,
+          "description": "Últimas 20 clases reales",
+          "items": {
+            "type": "object",
+            "reference": "LessonClass"
+          }
+        },
+        "pendingChanges": {
+          "type": "array",
+          "required": true,
+          "description": "Cambios pendientes de sincronizar",
+          "items": {
+            "type": "object",
+            "fields": {
+              "id": {
+                "type": "string",
+                "required": true
+              },
+              "collection": {
+                "type": "string",
+                "required": true,
+                "enum": ["students", "attendance", "planned_lessons", "lesson_classes"]
+              },
+              "action": {
+                "type": "string",
+                "required": true,
+                "enum": ["add", "update", "delete"]
+              },
+              "data": {
+                "type": "object",
+                "required": true
+              },
+              "timestamp": {
+                "type": "timestamp",
+                "required": true
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "enums": {
+    "ContactRelationship": ["padre", "madre", "abuelo", "tutor", "otro"],
+    "AttendanceType": ["regular", "visitor", "first-time"],
+    "TeacherNames": ["Carlos", "Laudy", "Kennet", "Yendry", "Selenia", "Isacc"],
+    "SyncAction": ["add", "update", "delete"]
+  },
+
+  "relationships": [
+    {
+      "from": "Attendance.lessonClassId",
+      "to": "LessonClass.id",
+      "type": "many-to-one",
+      "description": "Una clase real tiene muchas asistencias"
+    },
+    {
+      "from": "Attendance.studentId",
+      "to": "Student.id",
+      "type": "many-to-one",
+      "description": "Un estudiante tiene muchas asistencias"
+    },
+    {
+      "from": "LessonClass.plannedLessonId",
+      "to": "PlannedLesson.id",
+      "type": "many-to-one",
+      "description": "Una planificación puede derivar en una clase real (o no, si se cancela o cambia)"
+    },
+    {
+      "from": "LessonClass.teacherId",
+      "to": "AppConfig.teachers.id",
+      "type": "many-to-one",
+      "description": "Un maestro puede dictar muchas clases reales"
+    },
+    {
+      "from": "PlannedLesson.plannedTeacherId",
+      "to": "AppConfig.teachers.id",
+      "type": "many-to-one",
+      "description": "Un maestro puede tener muchas clases planificadas"
+    },
+    {
+      "from": "PlannedLesson.createdBy",
+      "to": "AppConfig.teachers.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "LessonClass.createdBy",
+      "to": "AppConfig.teachers.id",
+      "type": "many-to-one"
+    }
+  ],
+
+  "indexes": {
+    "students": ["name", "active", "birthDate", "lastAttendance"],
+    "attendance": ["lessonClassId", "studentId", "registeredAt", "type"],
+    "planned_lessons": ["plannedDate", "unitNumber", "lessonNumber", "plannedTeacherId", "active"],
+    "lesson_classes": ["date", "unitNumber", "lessonNumber", "teacherId", "active"]
+  },
+
+  "validation": {
+    "phoneRegex": "^\\+?[0-9]{7,15}$",
+    "emailRegex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+  },
+
+  "notes": {
+    "plannedVsReal": "PlannedLesson = calendario (lo que planeamos), LessonClass = realidad (lo que realmente pasó, puede diferir)",
+    "dailyAttendance": "Se genera en tiempo real desde Attendance",
+    "studentStats": "Se calculan automáticamente desde Attendance",
+    "teacherSource": "AppConfig.teachers es la fuente única de maestros",
+    "lessonContent": "El contenido (título, versículos) está en el libro físico, no se duplica en la app"
+  }
+}
