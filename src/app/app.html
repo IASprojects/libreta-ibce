@@ -1,1 +1,14 @@
-<router-outlet />
+@if (showSplashScreen()) {
+  <!-- Splash screen mientras inicializa Firebase Auth -->
+  <div class="splash-screen">
+    <div class="splash-content">
+      <h1>Libreta IBCE</h1>
+      <div class="loading-spinner"></div>
+      <p>Inicializando aplicación...</p>
+      <small>Conectando con Firebase Auth</small>
+    </div>
+  </div>
+} @else {
+  <!-- App principal una vez inicializada -->
+  <router-outlet />
+}

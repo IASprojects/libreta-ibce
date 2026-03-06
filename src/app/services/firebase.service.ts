@@ -20,13 +20,21 @@ export class FirebaseService {
 
   private initializeFirebase(): void {
     try {
+      console.log('🔥 Initializing Firebase with config:', {
+        apiKey: environment.firebase.apiKey?.substring(0, 10) + '...',
+        authDomain: environment.firebase.authDomain,
+        projectId: environment.firebase.projectId
+      });
+      
       this.app = initializeApp(environment.firebase);
       this.db = getFirestore(this.app);
       this.auth = getAuth(this.app);
       this.storage = getStorage(this.app);
+      
+      console.log('✅ Firebase initialized successfully');
     } catch (error) {
-      // Registra el error para facilitar el diagnóstico sin bloquear el manejo de errores de Angular
-      console.error('Error al inicializar Firebase:', error);
+      console.error('❌ Error al inicializar Firebase:', error);
+      console.error('🔍 Check Firebase configuration in environment.ts');
       throw error;
     }
   }
