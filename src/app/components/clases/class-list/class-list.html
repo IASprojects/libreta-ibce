@@ -1,0 +1,253 @@
+<div class="class-list-container">
+  <!-- Header con filtros y estadísticas -->
+  <header class="list-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <span class="title-icon" aria-hidden="true">📚</span>
+        Clases Registradas
+      </h1>
+      <p class="page-subtitle">
+        {{ totalClasses() }} clase{{ totalClasses() !== 1 ? 's' : '' }} registrada{{
+          totalClasses() !== 1 ? 's' : ''
+        }}
+        @if (hasTodayClass()) {
+          <span class="today-badge" aria-label="Clase de hoy">
+            ⭐ Clase hoy
+          </span>
+        }
+        @if (recentCount() > 0) {
+          <span class="recent-badge" aria-label="Clases recientes">
+            📌 {{ recentCount() }} reciente{{ recentCount() !== 1 ? 's' : '' }}
+          </span>
+        }
+      </p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-container">
+      <!-- Filtro por maestro -->
+      <div class="filter-group">
+        <label for="teacher-filter" class="filter-label">Maestro</label>
+        <select
+          id="teacher-filter"
+          class="filter-select"
+          [value]="filterTeacher()"
+          (change)="onFilterTeacherChange($any($event.target).value)"
+        >
+          <option value="all">Todos los maestros</option>
+          @for (teacher of uniqueTeachers(); track teacher) {
+            <option [value]="teacher">{{ teacher }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Filtro por período -->
+      <div class="filter-group">
+        <label for="period-filter" class="filter-label">Período</label>
+        <select
+          id="period-filter"
+          class="filter-select"
+          [value]="filterPeriod()"
+          (change)="onFilterPeriodChange($any($event.target).value)"
+        >
+          <option value="all">Todas las fechas</option>
+          <option value="today">Hoy</option>
+          <option value="week">Esta semana</option>
+          <option value="month">Este mes</option>
+          <option value="year">Este año</option>
+        </select>
+      </div>
+
+      <!-- Barra de búsqueda -->
+      <div class="search-group">
+        <label for="class-search" class="visually-hidden">Buscar clase</label>
+        <div class="search-input-wrapper">
+          <span class="search-icon" aria-hidden="true">🔍</span>
+          <input
+            id="class-search"
+            type="search"
+            class="search-input"
+            placeholder="Buscar por unidad, lección, maestro o notas..."
+            [value]="searchTerm()"
+            (input)="onSearchChange($any($event.target).value)"
+            autocomplete="off"
+            aria-label="Buscar clase por unidad, lección, maestro o notas"
+          />
+          @if (searchTerm()) {
+            <button
+              type="button"
+              class="clear-search-btn"
+              (click)="clearSearch()"
+              aria-label="Limpiar búsqueda"
+            >
+              ✕
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Botón limpiar filtros -->
+      @if (searchTerm() || filterTeacher() !== 'all' || filterPeriod() !== 'all') {
+        <button type="button" class="clear-filters-btn" (click)="clearFilters()">
+          Limpiar filtros
+        </button>
+      }
+    </div>
+
+    <!-- Resultados -->
+    @if (searchTerm() || filterTeacher() !== 'all' || filterPeriod() !== 'all') {
+      <p class="search-results-text" role="status" aria-live="polite">
+        {{ totalFiltered() }} resultado{{ totalFiltered() !== 1 ? 's' : '' }} encontrado{{
+          totalFiltered() !== 1 ? 's' : ''
+        }}
+      </p>
+    }
+  </header>
+
+  <!-- Estado de carga -->
+  @if (isLoading()) {
+    <div class="loading-container" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="loading-text">Cargando clases registradas...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="error-container" role="alert">
+      <span class="error-icon" aria-hidden="true">⚠️</span>
+      <p class="error-text">{{ error() }}</p>
+      <button type="button" class="retry-btn" (click)="refresh()">Reintentar</button>
+    </div>
+  }
+
+  <!-- Sin resultados -->
+  @if (showNoResults()) {
+    <div class="no-results-container" role="status">
+      <span class="no-results-icon" aria-hidden="true">🔍</span>
+      <h2 class="no-results-title">No se encontraron clases</h2>
+      <p class="no-results-text">
+        No hay clases que coincidan con los filtros seleccionados
+      </p>
+      <button type="button" class="clear-search-btn-alt" (click)="clearFilters()">
+        Limpiar filtros
+      </button>
+    </div>
+  }
+
+  <!-- Lista de clases -->
+  @if (!isLoading() && !error() && filteredClasses().length > 0) {
+    <div class="classes-grid">
+      @for (lessonClass of filteredClasses(); track trackByClassId($index, lessonClass)) {
+        <article 
+          class="class-card"
+          [class.class-today]="lessonClass.isToday"
+          [class.class-recent]="lessonClass.isRecent && !lessonClass.isToday"
+          [class.class-past]="lessonClass.isPast"
+        >
+          <!-- Fecha y tiempo relativo -->
+          <div class="class-date">
+            <div class="date-badge" [class.date-today]="lessonClass.isToday">
+              <span class="date-day">{{ lessonClass.formattedShortDate }}</span>
+              @if (lessonClass.isToday) {
+                <span class="date-label">Hoy</span>
+              } @else if (lessonClass.isRecent) {
+                <span class="date-label">Reciente</span>
+              } @else {
+                <span class="date-label">{{ getRelativeTime(lessonClass.daysSinceClass) }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Información de la clase -->
+          <div class="class-info">
+            <h3 class="class-title">
+              Unidad {{ lessonClass.unitNumber }} - Lección {{ lessonClass.lessonNumber }}
+            </h3>
+            <p class="class-date-full">
+              {{ lessonClass.formattedDate }}
+            </p>
+            <div class="class-teacher">
+              <span class="teacher-icon" aria-hidden="true">👤</span>
+              <span class="teacher-name">{{ lessonClass.teacherId }}</span>
+            </div>
+            
+            @if (lessonClass.notes) {
+              <div class="class-notes">
+                <span class="notes-icon" aria-hidden="true">📝</span>
+                <p class="notes-text">{{ lessonClass.notes }}</p>
+              </div>
+            }
+
+            @if (lessonClass.plannedLessonId) {
+              <div class="class-badge planned-badge" title="Clase planificada">
+                📅 Planificada
+              </div>
+            } @else {
+              <div class="class-badge custom-badge" title="Clase no planificada">
+                ✏️ Personalizada
+              </div>
+            }
+          </div>
+
+          <!-- Acciones -->
+          <div class="class-actions">
+            <button
+              type="button"
+              class="action-btn action-view"
+              (click)="viewClassDetail(lessonClass.id)"
+              aria-label="Ver detalles de la clase"
+              title="Ver detalles"
+            >
+              👁️ Ver
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  <!-- Lista vacía (sin clases registradas) -->
+  @if (!isLoading() && !error() && !searchTerm() && totalClasses() === 0) {
+    <div class="empty-state" role="status">
+      <span class="empty-icon" aria-hidden="true">📚</span>
+      <h2 class="empty-title">No hay clases registradas</h2>
+      <p class="empty-text">
+        Comienza a registrar las clases para llevar un historial del progreso de las lecciones.
+      </p>
+      <a routerLink="/dashboard/planificador" class="cta-btn">
+        Ir al Planificador
+      </a>
+    </div>
+  }
+
+  <!-- Estadísticas -->
+  @if (!isLoading() && totalClasses() > 0) {
+    <aside class="stats-section" aria-labelledby="stats-title">
+      <h2 id="stats-title" class="stats-title">Estadísticas</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-icon" aria-hidden="true">📊</span>
+          <div class="stat-content">
+            <p class="stat-value">{{ classStats().totalClasses }}</p>
+            <p class="stat-label">Total de clases</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon" aria-hidden="true">📅</span>
+          <div class="stat-content">
+            <p class="stat-value">{{ classStats().classesThisMonth }}</p>
+            <p class="stat-label">Este mes</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon" aria-hidden="true">📈</span>
+          <div class="stat-content">
+            <p class="stat-value">{{ classStats().averageClassesPerMonth }}</p>
+            <p class="stat-label">Promedio/mes</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  }
+</div>

@@ -1,53 +1,7 @@
 .page-container {
   min-height: 100vh;
-  padding: 2rem;
-  background: linear-gradient(160deg, #f4f8ff 0%, #eef8ff 100%);
+  background: #f8f9fa;
 }
-
-.page-header h1 {
-  margin: 0;
-  font-size: 2rem;
-  color: #173a5c;
-}
-
-.page-header p {
-  margin-top: 0.5rem;
-  color: #35506b;
-}
-
-.info-card {
-  margin-top: 1.5rem;
-  max-width: 720px;
-  border-radius: 16px;
-  background: #ffffff;
-  border: 1px solid #cfe0ef;
-  padding: 1.5rem;
-  box-shadow: 0 12px 24px rgba(20, 52, 81, 0.08);
-}
-
-.info-card h2 {
-  margin: 0;
-  color: #1d4d77;
-}
-
-.info-card p {
-  margin-top: 0.75rem;
-  color: #35506b;
-}
-
-.actions {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-}
-
-.action-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  padding: 0.5rem 0.85rem;
   border-radius: 10px;
   border: 1px solid #3e79a3;
   text-decoration: none;

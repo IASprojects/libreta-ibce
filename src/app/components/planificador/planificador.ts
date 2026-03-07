@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { PlannedLessonList } from './planned-lesson-list/planned-lesson-list';
 
 @Component({
   selector: 'app-planificador',
-  imports: [RouterLink],
+  imports: [PlannedLessonList],
   templateUrl: './planificador.html',
   styleUrl: './planificador.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

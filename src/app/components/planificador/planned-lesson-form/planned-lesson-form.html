@@ -1,0 +1,165 @@
+<div class="form-container">
+  <!-- Header del formulario -->
+  <header class="form-header">
+    <h2 class="form-title">{{ formTitle() }}</h2>
+    <button
+      type="button"
+      class="close-button"
+      (click)="onCancel()"
+      aria-label="Cerrar formulario"
+    >
+      ✕
+    </button>
+  </header>
+
+  <!-- Alerta de error general -->
+  @if (formError()) {
+    <div class="alert alert-error" role="alert">
+      <span class="alert-icon" aria-hidden="true">⚠️</span>
+      <p class="alert-text">{{ formError() }}</p>
+    </div>
+  }
+
+  <!-- Formulario -->
+  <form (ngSubmit)="onSubmit()" class="lesson-form" novalidate>
+    
+    <!-- Sección: Información de la Lección -->
+    <section class="form-section">
+      
+      <!-- Campo: Fecha Planificada -->
+      <div class="form-group">
+        <label for="planned-date" class="form-label">
+          Fecha <span class="required-mark" aria-label="requerido">*</span>
+        </label>
+        <input
+          id="planned-date"
+          type="date"
+          class="form-input"
+          [class.input-error]="hasFieldError('plannedDate')"
+          [value]="formData().plannedDate"
+          (input)="updateField('plannedDate', $any($event.target).value)"
+          [min]="minDate()"
+          aria-required="true"
+          [attr.aria-invalid]="hasFieldError('plannedDate')"
+          [attr.aria-describedby]="hasFieldError('plannedDate') ? 'planned-date-error' : null"
+        />
+        @if (hasFieldError('plannedDate')) {
+          <p id="planned-date-error" class="error-message" role="alert">
+            {{ getFieldError('plannedDate') }}
+          </p>
+        }
+        <p class="field-hint">La fecha no puede ser en el pasado</p>
+      </div>
+
+      <!-- Fila: Unidad y Lección -->
+      <div class="form-row">
+        <!-- Campo: Unidad -->
+        <div class="form-group">
+          <label for="unit-number" class="form-label">
+            Unidad <span class="required-mark" aria-label="requerido">*</span>
+          </label>
+          <select
+            id="unit-number"
+            class="form-select"
+            [class.input-error]="hasFieldError('unitNumber')"
+            [value]="formData().unitNumber"
+            (change)="updateField('unitNumber', $any($event.target).value)"
+            aria-required="true"
+            [attr.aria-invalid]="hasFieldError('unitNumber')"
+            [attr.aria-describedby]="hasFieldError('unitNumber') ? 'unit-number-error' : null"
+          >
+            <option value="" disabled>Seleccionar unidad</option>
+            @for (unit of unitNumbers; track unit) {
+              <option [value]="unit">Unidad {{ unit }}</option>
+            }
+          </select>
+          @if (hasFieldError('unitNumber')) {
+            <p id="unit-number-error" class="error-message" role="alert">
+              {{ getFieldError('unitNumber') }}
+            </p>
+          }
+        </div>
+
+        <!-- Campo: Lección -->
+        <div class="form-group">
+          <label for="lesson-number" class="form-label">
+            Lección <span class="required-mark" aria-label="requerido">*</span>
+          </label>
+          <select
+            id="lesson-number"
+            class="form-select"
+            [class.input-error]="hasFieldError('lessonNumber')"
+            [value]="formData().lessonNumber"
+            (change)="updateField('lessonNumber', $any($event.target).value)"
+            aria-required="true"
+            [attr.aria-invalid]="hasFieldError('lessonNumber')"
+            [attr.aria-describedby]="hasFieldError('lessonNumber') ? 'lesson-number-error' : null"
+          >
+            <option value="" disabled>Seleccionar lección</option>
+            @for (lesson of lessonNumbers; track lesson) {
+              <option [value]="lesson">Lección {{ lesson }}</option>
+            }
+          </select>
+          @if (hasFieldError('lessonNumber')) {
+            <p id="lesson-number-error" class="error-message" role="alert">
+              {{ getFieldError('lessonNumber') }}
+            </p>
+          }
+        </div>
+      </div>
+
+      <!-- Campo: Maestro -->
+      <div class="form-group">
+        <label for="teacher-id" class="form-label">
+          Maestro Asignado <span class="required-mark" aria-label="requerido">*</span>
+        </label>
+        <select
+          id="teacher-id"
+          class="form-select"
+          [class.input-error]="hasFieldError('plannedTeacherId')"
+          [value]="formData().plannedTeacherId"
+          (change)="updateField('plannedTeacherId', $any($event.target).value)"
+          aria-required="true"
+          [attr.aria-invalid]="hasFieldError('plannedTeacherId')"
+          [attr.aria-describedby]="hasFieldError('plannedTeacherId') ? 'teacher-id-error' : null"
+        >
+          <option value="" disabled>Seleccionar maestro</option>
+          @for (teacher of teacherNames; track teacher) {
+            <option [value]="teacher">{{ teacher }}</option>
+          }
+        </select>
+        @if (hasFieldError('plannedTeacherId')) {
+          <p id="teacher-id-error" class="error-message" role="alert">
+            {{ getFieldError('plannedTeacherId') }}
+          </p>
+        }
+      </div>
+
+    </section>
+
+    <!-- Botones de acción -->
+    <footer class="form-footer">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="isSaving()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="isSaving()"
+        [attr.aria-busy]="isSaving()"
+      >
+        @if (isSaving()) {
+          <span class="spinner-small" aria-hidden="true"></span>
+          <span>Guardando...</span>
+        } @else {
+          <span>{{ submitButtonText() }}</span>
+        }
+      </button>
+    </footer>
+  </form>
+</div>
