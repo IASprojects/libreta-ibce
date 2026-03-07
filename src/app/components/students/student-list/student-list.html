@@ -27,11 +27,11 @@
           id="student-search"
           type="search"
           class="search-input"
-          placeholder="Buscar por nombre, edad o contacto..."
+          placeholder="Buscar por nombre, teléfono, edad o contacto..."
           [value]="searchTerm()"
           (input)="onSearchChange($any($event.target).value)"
           autocomplete="off"
-          aria-label="Buscar estudiante por nombre, edad o contacto"
+          aria-label="Buscar estudiante por nombre, teléfono, edad o contacto"
         />
         @if (searchTerm()) {
           <button

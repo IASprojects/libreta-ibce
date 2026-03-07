@@ -34,6 +34,8 @@ export interface Student {
   id: string;
   /** Nombre completo del estudiante */
   name: string;
+  /** Teléfono principal del estudiante */
+  phone: string;
   /** Fecha de nacimiento (formato ISO) */
   birthDate: string;
   /** Lista de contactos/tutores */

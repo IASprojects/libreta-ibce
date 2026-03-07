@@ -52,6 +52,7 @@ export class StudentList {
 
     return students.filter(student => 
       student.name.toLowerCase().includes(search) ||
+      student.phone.toLowerCase().includes(search) ||
       student.age.toString().includes(search) ||
       student.contacts.some(contact => 
         contact.name.toLowerCase().includes(search) ||

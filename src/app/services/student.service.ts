@@ -479,14 +479,33 @@ export class StudentService {
    */
   private mapStudentData(id: string, data: Record<string, unknown>): Student {
     const contacts = this.normalizeContacts(data);
+    const phone = this.normalizeStudentPhone(data, contacts);
 
     return {
-      ...(data as Omit<Student, 'id' | 'contacts' | 'registeredAt' | 'updatedAt'>),
+      ...(data as Omit<Student, 'id' | 'contacts' | 'phone' | 'registeredAt' | 'updatedAt'>),
       id,
+      phone,
       contacts,
       registeredAt: this.toDate(data['registeredAt']),
       updatedAt: this.toDate(data['updatedAt'])
     } as Student;
+  }
+
+  /**
+   * Obtiene teléfono principal del estudiante con fallback a contacto principal.
+   */
+  private normalizeStudentPhone(data: Record<string, unknown>, contacts: StudentContact[]): string {
+    const directPhone = this.readString(data, ['phone', 'telefono', 'phoneNumber', 'mobile']);
+    if (directPhone) {
+      return directPhone;
+    }
+
+    const mainContact = contacts.find(contact => contact.isMain);
+    if (mainContact?.phone) {
+      return mainContact.phone;
+    }
+
+    return contacts[0]?.phone ?? '';
   }
 
   /**

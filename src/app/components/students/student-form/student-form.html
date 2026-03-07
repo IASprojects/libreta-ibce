@@ -66,6 +66,30 @@
         }
       </div>
 
+      <!-- Campo: Teléfono -->
+      <div class="form-group">
+        <label for="student-phone" class="form-label">
+          Teléfono <span class="required-mark" aria-label="requerido">*</span>
+        </label>
+        <input
+          id="student-phone"
+          type="tel"
+          formControlName="phone"
+          class="form-input"
+          [class.input-error]="hasError('phone')"
+          placeholder="1234-5678 o +506 1234-5678"
+          autocomplete="tel"
+          aria-required="true"
+          [attr.aria-invalid]="hasError('phone')"
+          [attr.aria-describedby]="hasError('phone') ? 'phone-error' : null"
+        />
+        @if (hasError('phone')) {
+          <p id="phone-error" class="error-message" role="alert">
+            {{ getErrorMessage('phone') }}
+          </p>
+        }
+      </div>
+
       <!-- Campo: Fecha de Nacimiento -->
       <div class="form-group">
         <label for="student-birthdate" class="form-label">
@@ -77,6 +101,7 @@
           formControlName="birthDate"
           class="form-input"
           [class.input-error]="hasError('birthDate')"
+          [attr.max]="minAllowedBirthDate"
           aria-required="true"
           [attr.aria-invalid]="hasError('birthDate')"
           [attr.aria-describedby]="hasError('birthDate') ? 'birthdate-error' : null"
@@ -86,7 +111,7 @@
             {{ getErrorMessage('birthDate') }}
           </p>
         }
-        <p class="field-hint">El estudiante debe tener entre 5 y 20 años</p>
+        <p class="field-hint">El estudiante debe tener entre 11 y 20 años</p>
       </div>
 
       <!-- Campo: Dirección -->

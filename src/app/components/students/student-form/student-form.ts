@@ -1,12 +1,18 @@
 import { Component, inject, signal, computed, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { finalize, timeout } from 'rxjs';
 import { StudentService } from '../../../services/student.service';
 import { UserService } from '../../../services/user.service';
 import { Student, StudentContact } from '../../../core/models/student.model';
 import { ContactRelationship } from '../../../core/models/enums';
+import {
+  createStudentForm,
+  createContactFormGroup,
+  getContactsFormArray,
+} from './student-form.factory';
+import { getBirthDateBoundary } from './student-form.validators';
 
 /**
  * Modo del formulario
@@ -23,6 +29,7 @@ interface RelationshipOption {
 
 interface StudentFormData {
   name: string;
+  phone: string;
   birthDate: string;
   address: string;
   notes: string;
@@ -37,6 +44,8 @@ interface StudentFormData {
 })
 export class StudentForm implements OnInit {
   private readonly SAVE_TIMEOUT_MS = 45000;
+  private readonly MIN_STUDENT_AGE = 11;
+  private readonly MAX_STUDENT_AGE = 20;
 
   private fb = inject(FormBuilder);
   private studentService = inject(StudentService);
@@ -50,15 +59,13 @@ export class StudentForm implements OnInit {
   isSubmitting = signal(false);
   submitError = signal<string | null>(null);
   submitSuccess = signal(false);
-  
+
   // Título del formulario
-  formTitle = computed(() => 
-    this.mode() === 'create' ? 'Nuevo Estudiante' : 'Editar Estudiante'
-  );
-  
+  formTitle = computed(() => (this.mode() === 'create' ? 'Nuevo Estudiante' : 'Editar Estudiante'));
+
   // Botón de envío
-  submitButtonText = computed(() => 
-    this.mode() === 'create' ? 'Crear Estudiante' : 'Guardar Cambios'
+  submitButtonText = computed(() =>
+    this.mode() === 'create' ? 'Crear Estudiante' : 'Guardar Cambios',
   );
 
   // Opciones de relación para el select
@@ -67,15 +74,16 @@ export class StudentForm implements OnInit {
     { value: ContactRelationship.MADRE, label: 'Madre' },
     { value: ContactRelationship.ABUELO, label: 'Abuelo/a' },
     { value: ContactRelationship.TUTOR, label: 'Tutor/a' },
-    { value: ContactRelationship.OTRO, label: 'Otro' }
+    { value: ContactRelationship.OTRO, label: 'Otro' },
   ];
 
   // Formulario reactivo
   studentForm: FormGroup;
+  readonly minAllowedBirthDate = getBirthDateBoundary(this.MIN_STUDENT_AGE);
 
   constructor() {
     // Inicializar formulario
-    this.studentForm = this.createForm();
+    this.studentForm = createStudentForm(this.fb, this.minAllowedBirthDate, this.MAX_STUDENT_AGE);
 
     // Efecto para monitorear cambios en el formulario
     effect(() => {
@@ -88,7 +96,7 @@ export class StudentForm implements OnInit {
   ngOnInit(): void {
     // Determinar modo del formulario según la ruta
     const studentId = this.route.snapshot.paramMap.get('id');
-    
+
     if (studentId && studentId !== 'nuevo') {
       this.mode.set('edit');
       this.studentId.set(studentId);
@@ -99,100 +107,17 @@ export class StudentForm implements OnInit {
   }
 
   /**
-   * Crear estructura del formulario
-   */
-  private createForm(): FormGroup {
-    return this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-      birthDate: ['', [Validators.required, this.birthDateValidator]],
-      address: ['', [Validators.maxLength(200)]],
-      notes: ['', [Validators.maxLength(500)]],
-      contacts: this.fb.array([
-        this.createContactFormGroup()
-      ], [Validators.required, Validators.minLength(1)])
-    });
-  }
-
-  /**
-   * Crear FormGroup para un contacto
-   */
-  private createContactFormGroup(contact?: StudentContact): FormGroup {
-    return this.fb.group({
-      name: [contact?.name || '', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-      relationship: [contact?.relationship || ContactRelationship.PADRE, [Validators.required]],
-      phone: [contact?.phone || '', [Validators.required, this.phoneValidator]],
-      isMain: [contact?.isMain || false]
-    });
-  }
-
-  /**
-   * Validador personalizado para fecha de nacimiento
-   */
-  private birthDateValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) {
-      return null;
-    }
-
-    const birthDate = new Date(control.value);
-    const today = new Date();
-    const maxDate = new Date();
-    maxDate.setFullYear(today.getFullYear() - 5); // Mínimo 5 años
-    const minDate = new Date();
-    minDate.setFullYear(today.getFullYear() - 20); // Máximo 20 años (ajustar según necesidad)
-
-    if (birthDate > today) {
-      return { futureDate: true };
-    }
-
-    if (birthDate > maxDate) {
-      return { tooYoung: true };
-    }
-
-    if (birthDate < minDate) {
-      return { tooOld: true };
-    }
-
-    return null;
-  }
-
-  /**
-   * Validador personalizado para teléfono (formato flexible)
-   * Acepta: +506 1234-5678, 12345678, 1234-5678, etc.
-   */
-  private phoneValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) {
-      return null;
-    }
-
-    // Regex flexible para números de teléfono
-    // Acepta: dígitos, espacios, guiones, paréntesis, y opcionalmente +
-    const phoneRegex = /^[\d\s\-\+\(\)]{8,20}$/;
-    
-    if (!phoneRegex.test(control.value)) {
-      return { invalidPhone: true };
-    }
-
-    // Verificar que tenga al menos 8 dígitos
-    const digitsOnly = control.value.replace(/\D/g, '');
-    if (digitsOnly.length < 8) {
-      return { tooShort: true };
-    }
-
-    return null;
-  }
-
-  /**
    * Obtener FormArray de contactos
    */
   get contacts(): FormArray {
-    return this.studentForm.get('contacts') as FormArray;
+    return getContactsFormArray(this.studentForm);
   }
 
   /**
    * Agregar nuevo contacto
    */
   addContact(): void {
-    this.contacts.push(this.createContactFormGroup());
+    this.contacts.push(createContactFormGroup(this.fb));
   }
 
   /**
@@ -219,7 +144,7 @@ export class StudentForm implements OnInit {
   private loadStudent(studentId: string): void {
     this.studentService.getStudentById(studentId).subscribe({
       next: (student) => {
-        if (student) {         
+        if (student) {
           this.populateForm(student);
         } else {
           this.submitError.set('Estudiante no encontrado');
@@ -229,7 +154,7 @@ export class StudentForm implements OnInit {
       error: (error) => {
         console.error('Error al cargar estudiante:', error);
         this.submitError.set('Error al cargar datos del estudiante');
-      }
+      },
     });
   }
 
@@ -239,37 +164,40 @@ export class StudentForm implements OnInit {
   private populateForm(student: Student): void {
     this.studentForm.patchValue({
       name: student.name,
-      birthDate: student.birthDate,
+      phone: student.phone,
+      birthDate: student.birthDate || this.minAllowedBirthDate,
       address: student.address || '',
-      notes: student.notes || ''
+      notes: student.notes || '',
     });
 
-    const contacts = this.normalizeContactsForForm(student.contacts, student as unknown as Record<string, unknown>);
+    const contacts = this.normalizeContactsForForm(
+      student.contacts,
+      student as unknown as Record<string, unknown>,
+    );
 
-    // Caso más común y sensible: mantener el primer FormGroup evita glitches
-    // de renderizado cuando solo existe un contacto.
+    // Caso especial: mantener el primer FormGroup evita glitches de renderizado
     if (contacts.length === 1) {
       while (this.contacts.length > 1) {
         this.contacts.removeAt(this.contacts.length - 1);
       }
 
       if (this.contacts.length === 0) {
-        this.contacts.push(this.createContactFormGroup(contacts[0]));
+        this.contacts.push(createContactFormGroup(this.fb, contacts[0]));
       } else {
         this.contacts.at(0).patchValue(contacts[0]);
       }
-
       return;
     }
 
+    // Múltiples contactos: reemplazar completamente
     this.contacts.clear();
-
-    contacts.forEach(contact => {
-      this.contacts.push(this.createContactFormGroup(contact));
+    contacts.forEach((contact) => {
+      this.contacts.push(createContactFormGroup(this.fb, contact));
     });
 
+    // Asegurar al menos un contacto si no hay ninguno
     if (this.contacts.length === 0) {
-      this.contacts.push(this.createContactFormGroup());
+      this.contacts.push(createContactFormGroup(this.fb));
     }
   }
 
@@ -278,7 +206,7 @@ export class StudentForm implements OnInit {
    */
   private normalizeContactsForForm(
     contacts: unknown,
-    fallbackSource?: Record<string, unknown>
+    fallbackSource?: Record<string, unknown>,
   ): StudentContact[] {
     const source = Array.isArray(contacts)
       ? contacts
@@ -290,8 +218,12 @@ export class StudentForm implements OnInit {
       }
 
       const candidate = contact as Partial<StudentContact>;
-      return typeof candidate.name === 'string' && candidate.name.trim() !== '' &&
-        typeof candidate.phone === 'string' && candidate.phone.trim() !== '';
+      return (
+        typeof candidate.name === 'string' &&
+        candidate.name.trim() !== '' &&
+        typeof candidate.phone === 'string' &&
+        candidate.phone.trim() !== ''
+      );
     });
   }
 
@@ -308,7 +240,7 @@ export class StudentForm implements OnInit {
       source['contactos'],
       source['guardians'],
       source['tutors'],
-      source['responsables']
+      source['responsables'],
     ];
 
     for (const candidate of candidates) {
@@ -343,10 +275,10 @@ export class StudentForm implements OnInit {
       'telefono',
       'phoneNumber',
       'relationship',
-      'parentesco'
+      'parentesco',
     ];
 
-    return Object.keys(value).some(key => contactKeys.includes(key));
+    return Object.keys(value).some((key) => contactKeys.includes(key));
   }
 
   /**
@@ -415,45 +347,54 @@ export class StudentForm implements OnInit {
     console.log('🔐 Verificando autenticación antes de guardar...');
     console.log('Usuario actual:', this.userService.user());
     console.log('Auth UID:', this.userService.user()?.uid);
-    
-    this.studentService.createStudent(formData).pipe(
-      timeout(this.SAVE_TIMEOUT_MS),
-      finalize(() => this.isSubmitting.set(false))
-    ).subscribe({
-      next: (studentId) => {
-        console.log('✅ Estudiante creado con ID:', studentId);
-        this.submitSuccess.set(true);
 
-        if (continueAdding) {
-          // Reset formulario y mantener en la página
-          this.studentForm.reset();
-          this.contacts.clear();
-          this.addContact();
-          this.submitSuccess.set(false);
-          
-          // Scroll al inicio
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          // Navegar de inmediato a la lista para evitar espera percibida
-          void this.router.navigate(['/dashboard/estudiantes']);
-        }
-      },
-      error: (error) => {
-        console.error('❌ Error al crear estudiante:', error);
-        console.error('📋 Error details:', {
-          name: error?.name,
-          code: error?.code,
-          message: error?.message,
-          fullError: error
-        });
-        
-        this.submitError.set(
-          error?.name === 'TimeoutError'
-            ? 'No se pudo confirmar el guardado por conexion lenta. Revise la lista de estudiantes y luego intente nuevamente.'
-            : `Error al crear el estudiante: ${error?.code || error?.message || 'Error desconocido'}`
-        );
-      }
-    });
+    this.studentService
+      .createStudent(formData)
+      .pipe(
+        timeout(this.SAVE_TIMEOUT_MS),
+        finalize(() => this.isSubmitting.set(false)),
+      )
+      .subscribe({
+        next: (studentId) => {
+          console.log('✅ Estudiante creado con ID:', studentId);
+          this.submitSuccess.set(true);
+
+          if (continueAdding) {
+            // Reset formulario y mantener en la página
+            this.studentForm.reset({
+              name: '',
+              phone: '',
+              birthDate: this.minAllowedBirthDate,
+              address: '',
+              notes: '',
+            });
+            this.contacts.clear();
+            this.addContact();
+            this.submitSuccess.set(false);
+
+            // Scroll al inicio
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            // Navegar de inmediato a la lista para evitar espera percibida
+            void this.router.navigate(['/dashboard/estudiantes']);
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al crear estudiante:', error);
+          console.error('📋 Error details:', {
+            name: error?.name,
+            code: error?.code,
+            message: error?.message,
+            fullError: error,
+          });
+
+          this.submitError.set(
+            error?.name === 'TimeoutError'
+              ? 'No se pudo confirmar el guardado por conexion lenta. Revise la lista de estudiantes y luego intente nuevamente.'
+              : `Error al crear el estudiante: ${error?.code || error?.message || 'Error desconocido'}`,
+          );
+        },
+      });
   }
 
   /**
@@ -467,40 +408,43 @@ export class StudentForm implements OnInit {
       return;
     }
 
-    this.studentService.updateStudent(studentId, formData).pipe(
-      timeout(this.SAVE_TIMEOUT_MS),
-      finalize(() => this.isSubmitting.set(false))
-    ).subscribe({
-      next: () => {
-        console.log('✅ Estudiante actualizado');
-        this.submitSuccess.set(true);
+    this.studentService
+      .updateStudent(studentId, formData)
+      .pipe(
+        timeout(this.SAVE_TIMEOUT_MS),
+        finalize(() => this.isSubmitting.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          console.log('✅ Estudiante actualizado');
+          this.submitSuccess.set(true);
 
-        // En modo edición, volver de inmediato a la lista
-        void this.router.navigate(['/dashboard/estudiantes']);
-      },
-      error: (error) => {
-        console.error('❌ Error al actualizar estudiante:', error);
-        console.error('📋 Error details:', {
-          name: error?.name,
-          code: error?.code,
-          message: error?.message,
-          fullError: error
-        });
-        
-        this.submitError.set(
-          error?.name === 'TimeoutError'
-            ? 'No se pudo confirmar el guardado por conexion lenta. Revise la lista de estudiantes y luego intente nuevamente.'
-            : `Error al actualizar el estudiante: ${error?.code || error?.message || 'Error desconocido'}`
-        );
-      }
-    });
+          // En modo edición, volver de inmediato a la lista
+          void this.router.navigate(['/dashboard/estudiantes']);
+        },
+        error: (error) => {
+          console.error('❌ Error al actualizar estudiante:', error);
+          console.error('📋 Error details:', {
+            name: error?.name,
+            code: error?.code,
+            message: error?.message,
+            fullError: error,
+          });
+
+          this.submitError.set(
+            error?.name === 'TimeoutError'
+              ? 'No se pudo confirmar el guardado por conexion lenta. Revise la lista de estudiantes y luego intente nuevamente.'
+              : `Error al actualizar el estudiante: ${error?.code || error?.message || 'Error desconocido'}`,
+          );
+        },
+      });
   }
 
   /**
    * Marcar todos los campos como touched para mostrar errores
    */
   private markFormGroupTouched(formGroup: FormGroup | FormArray): void {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       const control = formGroup.get(key);
       control?.markAsTouched();
 
@@ -515,7 +459,9 @@ export class StudentForm implements OnInit {
    */
   cancel(): void {
     if (this.studentForm.dirty) {
-      const confirm = window.confirm('¿Está seguro de que desea cancelar? Los cambios no guardados se perderán.');
+      const confirm = window.confirm(
+        '¿Está seguro de que desea cancelar? Los cambios no guardados se perderán.',
+      );
       if (confirm) {
         this.router.navigate(['/dashboard/estudiantes']);
       }
@@ -540,11 +486,15 @@ export class StudentForm implements OnInit {
     if (!field || !field.errors) return '';
 
     if (field.errors['required']) return 'Este campo es requerido';
-    if (field.errors['minlength']) return `Mínimo ${field.errors['minlength'].requiredLength} caracteres`;
-    if (field.errors['maxlength']) return `Máximo ${field.errors['maxlength'].requiredLength} caracteres`;
+    if (field.errors['minlength'])
+      return `Mínimo ${field.errors['minlength'].requiredLength} caracteres`;
+    if (field.errors['maxlength'])
+      return `Máximo ${field.errors['maxlength'].requiredLength} caracteres`;
     if (field.errors['futureDate']) return 'La fecha no puede ser futura';
-    if (field.errors['tooYoung']) return 'El estudiante debe tener al menos 5 años';
-    if (field.errors['tooOld']) return 'El estudiante debe tener 20 años o menos';
+    if (field.errors['tooYoung']) return `El estudiante debe tener al menos ${this.MIN_STUDENT_AGE} años`;
+    if (field.errors['tooOld']) return `El estudiante debe tener ${this.MAX_STUDENT_AGE} años o menos`;
+    if (field.errors['invalidPhone']) return 'Teléfono inválido';
+    if (field.errors['tooShort']) return 'Mínimo 8 dígitos';
 
     return 'Campo inválido';
   }

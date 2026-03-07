@@ -89,6 +89,7 @@ describe('StudentForm', () => {
     
     form.patchValue({
       name: 'Juan Pérez',
+      phone: '8888-7777',
       birthDate: '2015-01-01'
     });
     
@@ -138,6 +139,7 @@ describe('StudentForm', () => {
     
     component.studentForm.patchValue({
       name: 'Juan Pérez',
+      phone: '8888-7777',
       birthDate: '2015-01-01'
     });
     
@@ -160,6 +162,7 @@ describe('StudentForm', () => {
     
     component.studentForm.patchValue({
       name: 'Juan Pérez',
+      phone: '8888-7777',
       birthDate: '2015-01-01'
     });
     
@@ -180,6 +183,7 @@ describe('StudentForm', () => {
 
     component.studentForm.patchValue({
       name: 'Juan Pérez',
+      phone: '8888-7777',
       birthDate: '2015-01-01'
     });
 
@@ -197,6 +201,7 @@ describe('StudentForm', () => {
 
     component.studentForm.patchValue({
       name: 'Juan Pérez',
+      phone: '8888-7777',
       birthDate: '2015-01-01'
     });
 
