@@ -1,0 +1,52 @@
+.page-container {
+  min-height: 100vh;
+  padding: 2rem;
+  background: radial-gradient(circle at top left, #fff7e9 0%, #ffe9d1 45%, #ffe0c8 100%);
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #60330e;
+}
+
+.page-header p {
+  margin-top: 0.5rem;
+  color: #7a4b25;
+}
+
+.settings-panel {
+  margin-top: 1.5rem;
+  max-width: 760px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #f2d7bb;
+  padding: 1.5rem;
+  box-shadow: 0 10px 22px rgba(114, 72, 31, 0.12);
+}
+
+.settings-panel h2 {
+  margin: 0;
+  color: #7a451a;
+}
+
+.settings-panel p {
+  margin-top: 0.75rem;
+  color: #81512d;
+}
+
+.settings-panel ul {
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
+  color: #6a3f21;
+}
+
+.settings-panel li {
+  margin: 0.4rem 0;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+}

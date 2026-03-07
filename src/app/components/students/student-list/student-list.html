@@ -1,0 +1,186 @@
+<div class="student-list-container">
+  <!-- Header con búsqueda y estadísticas -->
+  <header class="list-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <span class="title-icon" aria-hidden="true">👥</span>
+        Estudiantes
+      </h1>
+      <p class="page-subtitle">
+        {{ totalStudents() }} estudiante{{ totalStudents() !== 1 ? 's' : '' }} activo{{ totalStudents() !== 1 ? 's' : '' }}
+        @if (upcomingBirthdays() > 0) {
+          <span class="birthday-badge" aria-label="Cumpleaños próximos">
+            🎂 {{ upcomingBirthdays() }}
+          </span>
+        }
+      </p>
+    </div>
+
+    <!-- Barra de búsqueda -->
+    <div class="search-container">
+      <label for="student-search" class="visually-hidden">Buscar estudiante</label>
+      <div class="search-input-wrapper">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input
+          id="student-search"
+          type="search"
+          class="search-input"
+          placeholder="Buscar por nombre, edad o contacto..."
+          [value]="searchTerm()"
+          (input)="onSearchChange($any($event.target).value)"
+          autocomplete="off"
+          aria-label="Buscar estudiante por nombre, edad o contacto"
+        />
+        @if (searchTerm()) {
+          <button
+            type="button"
+            class="clear-search-btn"
+            (click)="clearSearch()"
+            aria-label="Limpiar búsqueda">
+            ✕
+          </button>
+        }
+      </div>
+      @if (searchTerm()) {
+        <p class="search-results-text" role="status" aria-live="polite">
+          {{ totalFiltered() }} resultado{{ totalFiltered() !== 1 ? 's' : '' }} encontrado{{ totalFiltered() !== 1 ? 's' : '' }}
+        </p>
+      }
+    </div>
+  </header>
+
+  <!-- Estado de carga -->
+  @if (isLoading()) {
+    <div class="loading-container" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="loading-text">Cargando estudiantes...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="error-container" role="alert">
+      <span class="error-icon" aria-hidden="true">⚠️</span>
+      <p class="error-text">{{ error() }}</p>
+      <button 
+        type="button"
+        class="retry-btn"
+        (click)="refresh()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- Sin resultados de búsqueda -->
+  @if (showNoResults()) {
+    <div class="no-results-container" role="status">
+      <span class="no-results-icon" aria-hidden="true">🔍</span>
+      <h2 class="no-results-title">No se encontraron estudiantes</h2>
+      <p class="no-results-text">
+        No hay estudiantes que coincidan con "{{ searchTerm() }}"
+      </p>
+      <button 
+        type="button"
+        class="clear-search-btn-alt"
+        (click)="clearSearch()">
+        Limpiar búsqueda
+      </button>
+    </div>
+  }
+
+  <!-- Lista de estudiantes -->
+  @if (!isLoading() && !error() && filteredStudents().length > 0) {
+    <ul class="student-list" role="list">
+      @for (student of filteredStudents(); track trackByStudentId($index, student)) {
+        <li class="student-card">
+          <button
+            type="button"
+            class="student-card-button"
+            (click)="viewStudentDetail(student.id)"
+            [attr.aria-label]="'Ver detalles de ' + student.name">
+            
+            <!-- Avatar con iniciales -->
+            <div class="student-avatar" aria-hidden="true">
+              <span class="avatar-initials">{{ getInitials(student.name) }}</span>
+              @if (student.hasUpcomingBirthday) {
+                <span 
+                  class="birthday-indicator"
+                  role="img"
+                  aria-label="Cumpleaños próximo"
+                  title="Cumpleaños {{ formatBirthday(student.birthDate) }}">
+                  🎂
+                </span>
+              }
+            </div>
+
+            <!-- Información del estudiante -->
+            <div class="student-info">
+              <h3 class="student-name">{{ student.name }}</h3>
+              
+              <div class="student-details">
+                <span class="detail-item">
+                  <span class="detail-icon" aria-hidden="true">🎂</span>
+                  <span class="detail-text">{{ student.age }} años</span>
+                </span>
+                
+                <span class="detail-item">
+                  <span class="detail-icon" aria-hidden="true">📅</span>
+                  <span class="detail-text">{{ student.lastContactFormatted }}</span>
+                </span>
+              </div>
+
+              <!-- Contacto principal -->
+              <div class="student-contact">
+                <span class="contact-icon" aria-hidden="true">📞</span>
+                <span class="contact-text">{{ getMainContact(student) }}</span>
+              </div>
+
+              <!-- Estadísticas de asistencia (si existen) -->
+              @if (student.stats && student.stats.totalAttendances) {
+                <div class="student-stats">
+                  <span class="stat-badge" [attr.aria-label]="'Total de asistencias: ' + student.stats.totalAttendances">
+                    ✓ {{ student.stats.totalAttendances }}
+                  </span>
+                  @if (student.stats.currentStreak && student.stats.currentStreak > 0) {
+                    <span class="stat-badge streak" [attr.aria-label]="'Racha actual: ' + student.stats.currentStreak + ' clases'">
+                      🔥 {{ student.stats.currentStreak }}
+                    </span>
+                  }
+                  @if (student.stats.last3MonthsPercentage !== undefined) {
+                    <span class="stat-badge percentage" [attr.aria-label]="'Porcentaje últimos 3 meses: ' + student.stats.last3MonthsPercentage + '%'">
+                      📊 {{ student.stats.last3MonthsPercentage }}%
+                    </span>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Indicador visual de interacción -->
+            <span class="chevron-icon" aria-hidden="true">›</span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  <!-- Lista vacía (sin estudiantes registrados) -->
+  @if (!isLoading() && !error() && !searchTerm() && totalStudents() === 0) {
+    <div class="empty-state" role="status">
+      <span class="empty-icon" aria-hidden="true">👥</span>
+      <h2 class="empty-title">No hay estudiantes registrados</h2>
+      <p class="empty-text">
+        Comienza agregando tu primer estudiante usando el botón de abajo
+      </p>
+    </div>
+  }
+
+  <!-- Botón flotante para agregar nuevo estudiante -->
+  <button
+    type="button"
+    class="fab"
+    (click)="addNewStudent()"
+    aria-label="Agregar nuevo estudiante"
+    title="Agregar nuevo estudiante">
+    <span class="fab-icon" aria-hidden="true">+</span>
+  </button>
+</div>

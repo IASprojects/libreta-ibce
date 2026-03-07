@@ -65,4 +65,58 @@ export class DateService {
     
     return age;
   }
+
+  // Método para obtener fecha actual en formato string (YYYY-MM-DD)
+  getTodayDateString(): string {
+    const today = new Date();
+    return this.getDateString(today);
+  }
+
+  // Método para convertir Date a string (YYYY-MM-DD)
+  getDateString(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  // Método para obtener diferencia en días entre dos fechas
+  getDaysDifference(date1: Date, date2: Date): number {
+    const diffTime = Math.abs(date1.getTime() - date2.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  // Método para verificar si el cumpleaños es próximo (próximos 7 días)
+  isUpcomingBirthday(birthDate: string | Date, daysAhead: number = 7): boolean {
+    const today = new Date();
+    const birth = typeof birthDate === 'string' ? new Date(birthDate) : birthDate;
+    
+    // Ajustar cumpleaños al año actual
+    const thisYearBirthday = new Date(
+      today.getFullYear(),
+      birth.getMonth(),
+      birth.getDate()
+    );
+    
+    // Calcular diferencia en días
+    const diffDays = Math.ceil((thisYearBirthday.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    
+    return diffDays >= 0 && diffDays <= daysAhead;
+  }
+
+  // Método para formatear fecha relativa (hace X días, en X días)
+  getRelativeDate(date: Date): string {
+    const today = new Date();
+    const diffDays = this.getDaysDifference(date, today);
+    
+    if (date > today) {
+      if (diffDays === 0) return 'Hoy';
+      if (diffDays === 1) return 'Mañana';
+      return `En ${diffDays} días`;
+    } else {
+      if (diffDays === 0) return 'Hoy';
+      if (diffDays === 1) return 'Ayer';
+      return `Hace ${diffDays} días`;
+    }
+  }
 }

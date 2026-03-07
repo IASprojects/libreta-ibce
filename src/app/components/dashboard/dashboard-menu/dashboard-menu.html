@@ -1,0 +1,41 @@
+<!-- Botón hamburguesa para móviles -->
+<button 
+  class="menu-toggle" 
+  (click)="toggleMenu()"
+  [attr.aria-label]="isMenuOpen() ? 'Cerrar menú' : 'Abrir menú'">
+  <span class="hamburger-icon">{{ isMenuOpen() ? '✕' : '☰' }}</span>
+</button>
+
+<!-- Overlay para cerrar el menú en móviles -->
+@if (isMenuOpen()) {
+  <div class="menu-overlay" (click)="closeMenu()"></div>
+}
+
+<!-- Menú de navegación -->
+<nav class="dashboard-menu" [class.menu-open]="isMenuOpen()">
+  <div class="menu-header">
+    <h2 class="menu-title">Navegación</h2>
+  </div>
+
+  <ul class="menu-list">
+    @for (item of menuItems; track item.route) {
+      <li class="menu-item">
+        <a 
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: item.route === '/dashboard'}"
+          class="menu-link"
+          (click)="closeMenu()"
+          [attr.title]="item.description">
+          <span class="menu-icon">{{ item.icon }}</span>
+          <span class="menu-label">{{ item.label }}</span>
+        </a>
+      </li>
+    }
+  </ul>
+
+  <!-- Información adicional en el pie del menú -->
+  <div class="menu-footer">
+    <p class="menu-footer-text">🙏 Escuela Dominical IBCE</p>
+  </div>
+</nav>

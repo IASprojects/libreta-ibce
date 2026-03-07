@@ -1,0 +1,297 @@
+<div class="form-container">
+  <!-- Header del formulario -->
+  <header class="form-header">
+    <button 
+      type="button"
+      class="back-button"
+      (click)="cancel()"
+      aria-label="Volver a la lista de estudiantes">
+      <span class="back-icon" aria-hidden="true">←</span>
+    </button>
+    <h1 class="form-title">{{ formTitle() }}</h1>
+  </header>
+
+  <!-- Alertas de éxito/error -->
+  @if (submitSuccess()) {
+    <div class="alert alert-success" role="alert">
+      <span class="alert-icon" aria-hidden="true">✓</span>
+      <p class="alert-text">
+        @if (mode() === 'create') {
+          ¡Estudiante creado exitosamente!
+        } @else {
+          ¡Cambios guardados exitosamente!
+        }
+      </p>
+    </div>
+  }
+
+  @if (submitError()) {
+    <div class="alert alert-error" role="alert">
+      <span class="alert-icon" aria-hidden="true">⚠</span>
+      <p class="alert-text">{{ submitError() }}</p>
+    </div>
+  }
+
+  <!-- Formulario -->
+  <form [formGroup]="studentForm" (ngSubmit)="onSubmit()" class="student-form" novalidate>
+    
+    <!-- Sección: Información Personal -->
+    <section class="form-section">
+      <h2 class="section-title">
+        <span class="section-icon" aria-hidden="true">👤</span>
+        Información Personal
+      </h2>
+
+      <!-- Campo: Nombre -->
+      <div class="form-group">
+        <label for="student-name" class="form-label">
+          Nombre Completo <span class="required-mark" aria-label="requerido">*</span>
+        </label>
+        <input
+          id="student-name"
+          type="text"
+          formControlName="name"
+          class="form-input"
+          [class.input-error]="hasError('name')"
+          placeholder="Ej: Juan Pérez García"
+          autocomplete="name"
+          aria-required="true"
+          [attr.aria-invalid]="hasError('name')"
+          [attr.aria-describedby]="hasError('name') ? 'name-error' : null"
+        />
+        @if (hasError('name')) {
+          <p id="name-error" class="error-message" role="alert">
+            {{ getErrorMessage('name') }}
+          </p>
+        }
+      </div>
+
+      <!-- Campo: Fecha de Nacimiento -->
+      <div class="form-group">
+        <label for="student-birthdate" class="form-label">
+          Fecha de Nacimiento <span class="required-mark" aria-label="requerido">*</span>
+        </label>
+        <input
+          id="student-birthdate"
+          type="date"
+          formControlName="birthDate"
+          class="form-input"
+          [class.input-error]="hasError('birthDate')"
+          aria-required="true"
+          [attr.aria-invalid]="hasError('birthDate')"
+          [attr.aria-describedby]="hasError('birthDate') ? 'birthdate-error' : null"
+        />
+        @if (hasError('birthDate')) {
+          <p id="birthdate-error" class="error-message" role="alert">
+            {{ getErrorMessage('birthDate') }}
+          </p>
+        }
+        <p class="field-hint">El estudiante debe tener entre 5 y 20 años</p>
+      </div>
+
+      <!-- Campo: Dirección -->
+      <div class="form-group">
+        <label for="student-address" class="form-label">
+          Dirección
+        </label>
+        <textarea
+          id="student-address"
+          formControlName="address"
+          class="form-textarea"
+          [class.input-error]="hasError('address')"
+          placeholder="Ej: 200m norte de la iglesia, casa verde"
+          rows="2"
+          [attr.aria-invalid]="hasError('address')"
+          [attr.aria-describedby]="hasError('address') ? 'address-error' : null"
+        ></textarea>
+        @if (hasError('address')) {
+          <p id="address-error" class="error-message" role="alert">
+            {{ getErrorMessage('address') }}
+          </p>
+        }
+      </div>
+
+      <!-- Campo: Notas -->
+      <div class="form-group">
+        <label for="student-notes" class="form-label">
+          Notas Adicionales
+        </label>
+        <textarea
+          id="student-notes"
+          formControlName="notes"
+          class="form-textarea"
+          [class.input-error]="hasError('notes')"
+          placeholder="Información adicional relevante sobre el estudiante..."
+          rows="3"
+          [attr.aria-invalid]="hasError('notes')"
+          [attr.aria-describedby]="hasError('notes') ? 'notes-error' : null"
+        ></textarea>
+        @if (hasError('notes')) {
+          <p id="notes-error" class="error-message" role="alert">
+            {{ getErrorMessage('notes') }}
+          </p>
+        }
+      </div>
+    </section>
+
+    <!-- Sección: Contactos -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">📞</span>
+          Contactos / Tutores
+        </h2>
+        <button
+          type="button"
+          class="add-contact-btn"
+          (click)="addContact()"
+          aria-label="Agregar nuevo contacto">
+          <span aria-hidden="true">+ Agregar</span>
+        </button>
+      </div>
+      <p class="section-description">Agregue al menos un contacto principal</p>
+
+      <!-- Lista de contactos -->
+      <div formArrayName="contacts" class="contacts-list">
+        @for (contact of contacts.controls; track trackByIndex($index); let i = $index) {
+          <div [formGroupName]="i" class="contact-card">
+            <div class="contact-header">
+              <h3 class="contact-title">Contacto {{ i + 1 }}</h3>
+              @if (contacts.length > 1) {
+                <button
+                  type="button"
+                  class="remove-contact-btn"
+                  (click)="removeContact(i)"
+                  [attr.aria-label]="'Eliminar contacto ' + (i + 1)">
+                  <span aria-hidden="true">✕</span>
+                </button>
+              }
+            </div>
+
+            <div class="contact-fields">
+              <!-- Nombre del contacto -->
+              <div class="form-group">
+                <label [for]="'contact-name-' + i" class="form-label">
+                  Nombre <span class="required-mark" aria-label="requerido">*</span>
+                </label>
+                <input
+                  [id]="'contact-name-' + i"
+                  type="text"
+                  formControlName="name"
+                  class="form-input"
+                  [class.input-error]="hasContactError(i, 'name')"
+                  placeholder="Nombre del tutor"
+                  autocomplete="name"
+                  aria-required="true"
+                  [attr.aria-invalid]="hasContactError(i, 'name')"
+                />
+                @if (hasContactError(i, 'name')) {
+                  <p class="error-message" role="alert">
+                    {{ getContactErrorMessage(i, 'name') }}
+                  </p>
+                }
+              </div>
+
+              <!-- Relación -->
+              <div class="form-group">
+                <label [for]="'contact-relationship-' + i" class="form-label">
+                  Relación <span class="required-mark" aria-label="requerido">*</span>
+                </label>
+                <select
+                  [id]="'contact-relationship-' + i"
+                  formControlName="relationship"
+                  class="form-select"
+                  [class.input-error]="hasContactError(i, 'relationship')"
+                  aria-required="true"
+                >
+                  @for (option of relationshipOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Teléfono -->
+              <div class="form-group">
+                <label [for]="'contact-phone-' + i" class="form-label">
+                  Teléfono <span class="required-mark" aria-label="requerido">*</span>
+                </label>
+                <input
+                  [id]="'contact-phone-' + i"
+                  type="tel"
+                  formControlName="phone"
+                  class="form-input"
+                  [class.input-error]="hasContactError(i, 'phone')"
+                  placeholder="1234-5678 o +506 1234-5678"
+                  autocomplete="tel"
+                  aria-required="true"
+                  [attr.aria-invalid]="hasContactError(i, 'phone')"
+                />
+                @if (hasContactError(i, 'phone')) {
+                  <p class="error-message" role="alert">
+                    {{ getContactErrorMessage(i, 'phone') }}
+                  </p>
+                }
+              </div>
+
+              <!-- Contacto principal -->
+              <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                  <input
+                    type="checkbox"
+                    formControlName="isMain"
+                    class="form-checkbox"
+                    (change)="setMainContact(i)"
+                    [attr.aria-label]="'Marcar como contacto principal'"
+                  />
+                  <span class="checkbox-text">Contacto Principal</span>
+                </label>
+                <p class="field-hint">El contacto principal aparecerá primero en la lista</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Botones de acción -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancelar
+      </button>
+
+      @if (mode() === 'create') {
+        <button
+          type="button"
+          class="btn btn-outline"
+          (click)="onSubmitAndContinue()"
+          [disabled]="isSubmitting() || !studentForm.valid">
+          @if (isSubmitting()) {
+            <span class="btn-spinner" aria-hidden="true"></span>
+          }
+          <span>Guardar y Agregar Otro</span>
+        </button>
+      }
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="isSubmitting()">
+        @if (isSubmitting()) {
+          <span class="btn-spinner" aria-hidden="true"></span>
+        }
+        <span>{{ submitButtonText() }}</span>
+      </button>
+    </div>
+
+    <!-- Indicador de formulario sucio -->
+    @if (studentForm.dirty && !submitSuccess()) {
+      <p class="form-status" role="status" aria-live="polite">
+        Hay cambios sin guardar
+      </p>
+    }
+  </form>
+</div>

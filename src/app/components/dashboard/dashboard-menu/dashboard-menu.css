@@ -1,0 +1,217 @@
+/* Contenedor principal del menú */
+.dashboard-menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 280px;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+/* Header del menú */
+.menu-header {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.menu-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Lista de elementos del menú */
+.menu-list {
+  list-style: none;
+  padding: 1rem 0;
+  margin: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.menu-item {
+  margin: 0;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+  font-weight: 500;
+}
+
+.menu-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-left-color: rgba(255, 255, 255, 0.5);
+}
+
+.menu-link.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border-left-color: white;
+  font-weight: 600;
+}
+
+.menu-icon {
+  font-size: 1.5rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-label {
+  font-size: 1rem;
+  flex: 1;
+}
+
+/* Footer del menú */
+.menu-footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+}
+
+.menu-footer-text {
+  margin: 0;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+/* Botón hamburguesa (oculto en desktop) */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1100;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.menu-toggle:hover {
+  background: #764ba2;
+  transform: scale(1.05);
+}
+
+.menu-toggle:active {
+  transform: scale(0.95);
+}
+
+.hamburger-icon {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Overlay para cerrar menú en móviles */
+.menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+/* Responsive Design - Tablets y móviles */
+@media (max-width: 768px) {
+  /* Mostrar botón hamburguesa */
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Menú fuera de pantalla por defecto */
+  .dashboard-menu {
+    transform: translateX(-100%);
+  }
+
+  /* Menú abierto */
+  .dashboard-menu.menu-open {
+    transform: translateX(0);
+  }
+
+  /* Mostrar overlay cuando el menú está abierto */
+  .menu-overlay {
+    display: block;
+  }
+
+  /* Reducir ancho del menú en móviles */
+  .dashboard-menu {
+    width: 260px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .dashboard-menu {
+    width: 80%;
+    max-width: 280px;
+  }
+
+  .menu-link {
+    padding: 0.875rem 1.25rem;
+  }
+
+  .menu-icon {
+    font-size: 1.25rem;
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .menu-label {
+    font-size: 0.95rem;
+  }
+}
+
+/* Scrollbar personalizado para el menú */
+.menu-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.menu-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.menu-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Animación suave para todos los estados */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
