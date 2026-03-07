@@ -20,9 +20,10 @@ import {
 } from 'firebase/firestore';
 import { Observable, from, map, catchError, of, BehaviorSubject, throwError } from 'rxjs';
 import { FirebaseService } from './firebase.service';
-import { Student, StudentStats } from '../core/models/student.model';
+import { Student, StudentStats, StudentContact } from '../core/models/student.model';
 import { Attendance } from '../core/models/attendance.model';
 import { DateService } from './date.service';
+import { ContactRelationship } from '../core/models/enums';
 
 @Injectable({
   providedIn: 'root'
@@ -79,12 +80,9 @@ export class StudentService {
 
       onSnapshot(q, 
         (snapshot: QuerySnapshot) => {
-          const students = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-            registeredAt: doc.data()['registeredAt']?.toDate() || new Date(),
-            updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
-          })) as Student[];
+          const students = snapshot.docs.map(docSnap => 
+            this.mapStudentData(docSnap.id, docSnap.data() as Record<string, unknown>)
+          );
           
           this.studentsSubject.next(students);
           this.setError(null);
@@ -157,13 +155,7 @@ export class StudentService {
     return from(getDoc(studentRef)).pipe(
       map((docSnap: DocumentSnapshot) => {
         if (docSnap.exists()) {
-          const data = docSnap.data();
-          return {
-            id: docSnap.id,
-            ...data,
-            registeredAt: data['registeredAt']?.toDate() || new Date(),
-            updatedAt: data['updatedAt']?.toDate() || new Date()
-          } as Student;
+          return this.mapStudentData(docSnap.id, docSnap.data() as Record<string, unknown>);
         }
         return null;
       }),
@@ -257,12 +249,9 @@ export class StudentService {
 
     return from(getDocs(q)).pipe(
       map((querySnapshot: QuerySnapshot) => {
-        const allStudents = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          registeredAt: doc.data()['registeredAt']?.toDate() || new Date(),
-          updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
-        })) as Student[];
+        const allStudents = querySnapshot.docs.map(docSnap => 
+          this.mapStudentData(docSnap.id, docSnap.data() as Record<string, unknown>)
+        );
 
         // Filtro case insensitive en el frontend
         const searchLower = searchTerm.toLowerCase();
@@ -483,5 +472,214 @@ export class StudentService {
     // Este método puede ser útil para forzar una recarga si es necesario
     console.log('🔄 Refrescando datos de estudiantes...');
     this.setError(null);
+  }
+
+  /**
+   * Normaliza documento de estudiante para soportar esquemas legacy.
+   */
+  private mapStudentData(id: string, data: Record<string, unknown>): Student {
+    const contacts = this.normalizeContacts(data);
+
+    return {
+      ...(data as Omit<Student, 'id' | 'contacts' | 'registeredAt' | 'updatedAt'>),
+      id,
+      contacts,
+      registeredAt: this.toDate(data['registeredAt']),
+      updatedAt: this.toDate(data['updatedAt'])
+    } as Student;
+  }
+
+  /**
+   * Asegura que contactos siempre sea un arreglo válido.
+   */
+  private normalizeContacts(data: Record<string, unknown>): StudentContact[] {
+    const rawContacts = this.extractContactsSource(data);
+
+    const contacts = rawContacts
+      .map(contact => this.normalizeContact(contact))
+      .filter((contact): contact is StudentContact => !!contact);
+
+    if (contacts.length > 0 && !contacts.some(contact => contact.isMain)) {
+      contacts[0].isMain = true;
+    }
+
+    return contacts;
+  }
+
+  /**
+   * Normaliza un contacto individual con fallback para nombres legacy.
+   */
+  private normalizeContact(contact: unknown): StudentContact | null {
+    if (!contact || typeof contact !== 'object') {
+      return null;
+    }
+
+    const raw = contact as Record<string, unknown>;
+    const name = this.readString(raw, [
+      'name',
+      'nombre',
+      'fullName',
+      'contactName',
+      'tutorName',
+      'guardianName'
+    ]);
+
+    const phone = this.readString(raw, [
+      'phone',
+      'telefono',
+      'phoneNumber',
+      'mobile',
+      'cellphone',
+      'numero'
+    ]);
+
+    if (!name || !phone) {
+      return null;
+    }
+
+    return {
+      name,
+      phone,
+      relationship: this.normalizeRelationship(raw['relationship'] ?? raw['parentesco']),
+      isMain: Boolean(raw['isMain'] ?? raw['main'] ?? raw['isPrimary'] ?? raw['principal'])
+    };
+  }
+
+  /**
+   * Obtiene el origen de contactos soportando arrays y mapas/objetos legacy.
+   */
+  private extractContactsSource(data: Record<string, unknown>): unknown[] {
+    const directCandidates = [
+      data['contacts'],
+      data['contactos'],
+      data['guardians'],
+      data['tutors'],
+      data['responsables']
+    ];
+
+    for (const candidate of directCandidates) {
+      if (Array.isArray(candidate)) {
+        return candidate;
+      }
+
+      if (this.isObjectRecord(candidate)) {
+        if (this.isLikelyContactRecord(candidate)) {
+          return [candidate];
+        }
+
+        return Object.values(candidate);
+      }
+    }
+
+    if (data['contact']) {
+      return [data['contact']];
+    }
+
+    return [];
+  }
+
+  /**
+   * Convierte valores de relación al enum soportado.
+   */
+  private normalizeRelationship(value: unknown): ContactRelationship {
+    const normalized = this.toStringValue(value).toLowerCase();
+
+    switch (normalized) {
+      case ContactRelationship.PADRE:
+      case 'papa':
+        return ContactRelationship.PADRE;
+      case ContactRelationship.MADRE:
+      case 'mama':
+        return ContactRelationship.MADRE;
+      case ContactRelationship.ABUELO:
+      case 'abuela':
+        return ContactRelationship.ABUELO;
+      case ContactRelationship.TUTOR:
+        return ContactRelationship.TUTOR;
+      case ContactRelationship.OTRO:
+        return ContactRelationship.OTRO;
+      default:
+        return ContactRelationship.PADRE;
+    }
+  }
+
+  /**
+   * Convierte Timestamp de Firestore o Date a Date.
+   */
+  private toDate(value: unknown): Date {
+    if (value instanceof Date) {
+      return value;
+    }
+
+    if (value && typeof value === 'object' && 'toDate' in value && typeof (value as { toDate?: unknown }).toDate === 'function') {
+      return (value as { toDate: () => Date }).toDate();
+    }
+
+    return new Date();
+  }
+
+  /**
+   * Convierte unknown a string seguro.
+   */
+  private toStringValue(value: unknown): string {
+    return typeof value === 'string' ? value.trim() : '';
+  }
+
+  /**
+   * Lee el primer string no vacío entre múltiples posibles llaves.
+   */
+  private readString(source: Record<string, unknown>, keys: string[]): string {
+    for (const key of keys) {
+      const value = source[key];
+
+      if (typeof value === 'string' && value.trim() !== '') {
+        return value.trim();
+      }
+
+      if (this.isObjectRecord(value)) {
+        const nested = this.readString(value, ['number', 'value', 'text']);
+        if (nested) {
+          return nested;
+        }
+      }
+    }
+
+    return '';
+  }
+
+  /**
+   * Type guard para objetos tipo record.
+   */
+  private isObjectRecord(value: unknown): value is Record<string, unknown> {
+    return !!value && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  /**
+   * Determina si un objeto parece ser un contacto único y no un mapa de contactos.
+   */
+  private isLikelyContactRecord(value: Record<string, unknown>): boolean {
+    const keys = Object.keys(value);
+    const hasContactShape = keys.some(key => [
+      'name',
+      'nombre',
+      'fullName',
+      'contactName',
+      'phone',
+      'telefono',
+      'phoneNumber',
+      'relationship',
+      'parentesco'
+    ].includes(key));
+
+    if (!hasContactShape) {
+      return false;
+    }
+
+    const firstLevelObjectValues = Object.values(value).filter(item => this.isObjectRecord(item));
+    if (firstLevelObjectValues.length === 0) {
+      return true;
+    }
+
+    return firstLevelObjectValues.every(item => !this.isLikelyContactRecord(item));
   }
 }

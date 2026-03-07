@@ -219,7 +219,7 @@ export class StudentForm implements OnInit {
   private loadStudent(studentId: string): void {
     this.studentService.getStudentById(studentId).subscribe({
       next: (student) => {
-        if (student) {
+        if (student) {         
           this.populateForm(student);
         } else {
           this.submitError.set('Estudiante no encontrado');
@@ -244,14 +244,109 @@ export class StudentForm implements OnInit {
       notes: student.notes || ''
     });
 
-    // Limpiar y repoblar contactos
-    while (this.contacts.length > 0) {
-      this.contacts.removeAt(0);
+    const contacts = this.normalizeContactsForForm(student.contacts, student as unknown as Record<string, unknown>);
+
+    // Caso más común y sensible: mantener el primer FormGroup evita glitches
+    // de renderizado cuando solo existe un contacto.
+    if (contacts.length === 1) {
+      while (this.contacts.length > 1) {
+        this.contacts.removeAt(this.contacts.length - 1);
+      }
+
+      if (this.contacts.length === 0) {
+        this.contacts.push(this.createContactFormGroup(contacts[0]));
+      } else {
+        this.contacts.at(0).patchValue(contacts[0]);
+      }
+
+      return;
     }
 
-    student.contacts.forEach(contact => {
+    this.contacts.clear();
+
+    contacts.forEach(contact => {
       this.contacts.push(this.createContactFormGroup(contact));
     });
+
+    if (this.contacts.length === 0) {
+      this.contacts.push(this.createContactFormGroup());
+    }
+  }
+
+  /**
+   * Normaliza contactos para evitar fallos con datos incompletos/legacy.
+   */
+  private normalizeContactsForForm(
+    contacts: unknown,
+    fallbackSource?: Record<string, unknown>
+  ): StudentContact[] {
+    const source = Array.isArray(contacts)
+      ? contacts
+      : this.extractContactsFallback(fallbackSource);
+
+    return source.filter((contact): contact is StudentContact => {
+      if (!contact || typeof contact !== 'object') {
+        return false;
+      }
+
+      const candidate = contact as Partial<StudentContact>;
+      return typeof candidate.name === 'string' && candidate.name.trim() !== '' &&
+        typeof candidate.phone === 'string' && candidate.phone.trim() !== '';
+    });
+  }
+
+  /**
+   * Fallback para formatos de contacto legacy a nivel del formulario.
+   */
+  private extractContactsFallback(source?: Record<string, unknown>): unknown[] {
+    if (!source) {
+      return [];
+    }
+
+    const candidates = [
+      source['contacts'],
+      source['contactos'],
+      source['guardians'],
+      source['tutors'],
+      source['responsables']
+    ];
+
+    for (const candidate of candidates) {
+      if (Array.isArray(candidate)) {
+        return candidate;
+      }
+
+      if (candidate && typeof candidate === 'object') {
+        const recordCandidate = candidate as Record<string, unknown>;
+
+        if (this.isLikelyContactRecord(recordCandidate)) {
+          return [recordCandidate];
+        }
+
+        return Object.values(candidate as Record<string, unknown>);
+      }
+    }
+
+    return source['contact'] ? [source['contact']] : [];
+  }
+
+  /**
+   * Determina si un objeto parece un único contacto y no un mapa de contactos.
+   */
+  private isLikelyContactRecord(value: Record<string, unknown>): boolean {
+    const contactKeys = [
+      'name',
+      'nombre',
+      'fullName',
+      'contactName',
+      'phone',
+      'telefono',
+      'phoneNumber',
+      'relationship',
+      'parentesco'
+    ];
+
+    return Object.keys(value).some(key => contactKeys.includes(key));
   }
 
   /**

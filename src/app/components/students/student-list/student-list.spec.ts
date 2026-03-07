@@ -77,11 +77,6 @@ describe('StudentList', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/dashboard/estudiantes/nuevo']);
   });
 
-  it('should get initials from name', () => {
-    expect(component.getInitials('Juan Pérez')).toBe('JP');
-    expect(component.getInitials('María')).toBe('MA');
-  });
-
   it('should call refresh on service', () => {
     component.refresh();
     expect(mockStudentService.refresh).toHaveBeenCalled();

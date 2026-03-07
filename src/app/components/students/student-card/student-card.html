@@ -1,0 +1,74 @@
+<li class="student-card" >
+  <button
+    type="button"
+    class="student-card-button"
+    (click)="onViewStudent()"
+    [attr.aria-label]="'Ver detalles de ' + student().name"
+  >
+    <div class="student-avatar" aria-hidden="true">
+      <span class="avatar-initials">{{ getInitials(student().name) }}</span>
+      @if (student().hasUpcomingBirthday) {
+        <span
+          class="birthday-indicator"
+          role="img"
+          aria-label="Cumpleaños próximo"
+          title="Cumpleaños {{ formatBirthday(student().birthDate) }}"
+        >
+          🎂
+        </span>
+      }
+    </div>
+
+    <div class="student-info">
+      <h3 class="student-name">{{ student().name }}</h3>
+
+      <div class="student-details">
+        <span class="detail-item">
+          <span class="detail-icon" aria-hidden="true">🎂</span>
+          <span class="detail-text">{{ student().age }} años</span>
+        </span>
+
+        <span class="detail-item">
+          <span class="detail-icon" aria-hidden="true">📅</span>
+          <span class="detail-text">{{ student().lastContactFormatted }}</span>
+        </span>
+      </div>
+
+      <div class="student-contact">
+        <span class="contact-icon" aria-hidden="true">📞</span>
+        <span class="contact-text">{{ getMainContact(student()) }}</span>
+      </div>
+
+      @if (student().stats?.totalAttendances) {
+        <div class="student-stats">
+          <span
+            class="stat-badge"
+            [attr.aria-label]="'Total de asistencias: ' + student().stats?.totalAttendances"
+          >
+            ✓ {{ student().stats?.totalAttendances }}
+          </span>
+          @if ((student().stats?.currentStreak ?? 0) > 0) {
+            <span
+              class="stat-badge streak"
+              [attr.aria-label]="'Racha actual: ' + student().stats?.currentStreak + ' clases'"
+            >
+              🔥 {{ student().stats?.currentStreak }}
+            </span>
+          }
+          @if (student().stats?.last3MonthsPercentage !== undefined) {
+            <span
+              class="stat-badge percentage"
+              [attr.aria-label]="
+                'Porcentaje últimos 3 meses: ' + student().stats?.last3MonthsPercentage + '%'
+              "
+            >
+              📊 {{ student().stats?.last3MonthsPercentage }}%
+            </span>
+          }
+        </div>
+      }
+    </div>
+
+    <span class="chevron-icon" aria-hidden="true">›</span>
+  </button>
+</li>

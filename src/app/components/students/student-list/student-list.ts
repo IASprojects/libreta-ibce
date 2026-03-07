@@ -5,11 +5,12 @@ import { Router } from '@angular/router';
 import { StudentService } from '../../../services/student.service';
 import { DateService } from '../../../services/date.service';
 import { Student } from '../../../core/models/student.model';
+import { StudentCard, StudentCardData } from '../student-card/student-card';
 
 /**
  * Estudiante con datos calculados para la vista
  */
-interface StudentDisplay extends Student {
+interface StudentDisplay extends StudentCardData {
   age: number;
   hasUpcomingBirthday: boolean;
   lastContactFormatted: string;
@@ -17,7 +18,7 @@ interface StudentDisplay extends Student {
 
 @Component({
   selector: 'app-student-list',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, StudentCard],
   templateUrl: './student-list.html',
   styleUrl: './student-list.css',
 })
@@ -126,39 +127,6 @@ export class StudentList {
    */
   addNewStudent(): void {
     this.router.navigate(['/dashboard/estudiantes/nuevo']);
-  }
-
-  /**
-   * Obtener iniciales del nombre para avatar
-   */
-  getInitials(name: string): string {
-    const parts = name.trim().split(' ');
-    if (parts.length >= 2) {
-      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
-  }
-
-  /**
-   * Obtener contacto principal del estudiante
-   */
-  getMainContact(student: Student): string {
-    const mainContact = student.contacts.find(c => c.isMain);
-    if (mainContact) {
-      return `${mainContact.name} - ${mainContact.phone}`;
-    }
-    if (student.contacts.length > 0) {
-      return `${student.contacts[0].name} - ${student.contacts[0].phone}`;
-    }
-    return 'Sin contacto';
-  }
-
-  /**
-   * Formatear fecha de cumpleaños
-   */
-  formatBirthday(birthDate: string): string {
-    const date = new Date(birthDate);
-    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
   }
 
   /**
