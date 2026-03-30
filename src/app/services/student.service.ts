@@ -18,12 +18,17 @@ import {
   QuerySnapshot,
   DocumentReference
 } from 'firebase/firestore';
-import { Observable, from, map, catchError, of, BehaviorSubject, throwError } from 'rxjs';
+import { Observable, from, map, catchError, of, BehaviorSubject, throwError, switchMap } from 'rxjs';
 import { FirebaseService } from './firebase.service';
 import { Student, StudentStats, StudentContact } from '../core/models/student.model';
 import { Attendance } from '../core/models/attendance.model';
 import { DateService } from './date.service';
 import { ContactRelationship } from '../core/models/enums';
+
+interface StudentAttendanceSummary {
+  stats: StudentStats;
+  lastAttendance?: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -171,14 +176,21 @@ export class StudentService {
     this.setError(null);
 
     const studentRef = doc(this.firebaseService.db, this.STUDENTS_COLLECTION, studentId);
-    const updateData = {
+    const updateData: Record<string, unknown> = {
       ...updates,
       updatedAt: Timestamp.now()
     };
 
     // Remover campos que no se deben actualizar directamente
-    delete updateData.id;
-    delete updateData.registeredAt;
+    delete updateData['id'];
+    delete updateData['registeredAt'];
+
+    // Firestore no acepta undefined: limpiamos cualquier campo opcional no definido.
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
 
     return from(updateDoc(studentRef, updateData)).pipe(
       map(() => {
@@ -269,8 +281,13 @@ export class StudentService {
   updateStudentStats(studentId: string): Observable<void> {
     this.setError(null);
 
-    return from(this.calculateStudentStats(studentId)).pipe(
-      map(stats => this.updateStudent(studentId, { stats }).subscribe()),
+    return from(this.calculateStudentAttendanceSummary(studentId)).pipe(
+      switchMap(summary =>
+        this.updateStudent(studentId, {
+          stats: summary.stats,
+          lastAttendance: summary.lastAttendance
+        })
+      ),
       catchError(error => this.handleError('Error al actualizar estadísticas', error))
     );
   }
@@ -278,14 +295,13 @@ export class StudentService {
   /**
    * Calcular estadísticas de asistencia para un estudiante
    */
-  private async calculateStudentStats(studentId: string): Promise<StudentStats> {
+  private async calculateStudentAttendanceSummary(studentId: string): Promise<StudentAttendanceSummary> {
     try {
       const attendanceRef = collection(this.firebaseService.db, this.ATTENDANCE_COLLECTION);
       const q = query(
         attendanceRef,
         where('studentId', '==', studentId),
-        where('present', '==', true),
-        orderBy('registeredAt', 'desc')
+        where('present', '==', true)
       );
 
       const querySnapshot = await getDocs(q);
@@ -295,18 +311,27 @@ export class StudentService {
         registeredAt: doc.data()['registeredAt']?.toDate() || new Date()
       })) as Attendance[];
 
+      const activeAttendances = attendances.filter(attendance => attendance.inactive !== true);
+      const sortedActiveAttendances = [...activeAttendances].sort(
+        (a, b) => b.registeredAt.getTime() - a.registeredAt.getTime()
+      );
+
       // Total de asistencias
-      const totalAttendances = attendances.length;
+      const totalAttendances = sortedActiveAttendances.length;
 
       // Streak actual (asistencias consecutivas desde la última clase)
-      const currentStreak = this.calculateCurrentStreak(attendances);
+      const currentStreak = this.calculateCurrentStreak(sortedActiveAttendances);
 
       // Porcentaje de los últimos 3 meses
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-      const recentAttendances = attendances.filter(att => 
+      const recentAttendances = sortedActiveAttendances.filter(att => 
         att.registeredAt >= threeMonthsAgo
       );
+
+      const lastAttendance = sortedActiveAttendances.length > 0
+        ? this.dateService.getDateString(sortedActiveAttendances[0].registeredAt)
+        : '';
 
       // Para calcular el porcentaje necesitamos el total de clases en los últimos 3 meses
       // Esto requiere consultar todas las clases, por simplicidad usaremos una aproximación
@@ -315,17 +340,23 @@ export class StudentService {
         : 0;
 
       return {
-        totalAttendances,
-        currentStreak,
-        last3MonthsPercentage
+        stats: {
+          totalAttendances,
+          currentStreak,
+          last3MonthsPercentage
+        },
+        lastAttendance
       };
 
     } catch (error) {
       console.error('Error calculando estadísticas:', error);
       return {
-        totalAttendances: 0,
-        currentStreak: 0,
-        last3MonthsPercentage: 0
+        stats: {
+          totalAttendances: 0,
+          currentStreak: 0,
+          last3MonthsPercentage: 0
+        },
+        lastAttendance: ''
       };
     }
   }
@@ -389,10 +420,14 @@ export class StudentService {
     return from(Promise.all(
       batches.map(batch => 
         Promise.all(batch.map(studentId => 
-          this.calculateStudentStats(studentId).then(stats =>
+          this.calculateStudentAttendanceSummary(studentId).then(summary =>
             updateDoc(
               doc(this.firebaseService.db, this.STUDENTS_COLLECTION, studentId),
-              { stats, updatedAt: Timestamp.now() }
+              {
+                stats: summary.stats,
+                lastAttendance: summary.lastAttendance,
+                updatedAt: Timestamp.now()
+              }
             )
           )
         ))

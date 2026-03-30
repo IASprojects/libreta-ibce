@@ -220,24 +220,33 @@ export class LessonClassService {
 
   /**
    * Inicializar listener para clases recientes
+   * Nota: Filtramos active === true y ordenamos en cliente para evitar índice composite
    */
   private initializeRecentListener(): void {
     try {
       const lessonClassesRef = collection(this.firebaseService.db, this.LESSON_CLASSES_COLLECTION);
+      // Query simplificada: solo filtro por active, ordenamos en cliente
       const q = query(
         lessonClassesRef,
         where('active', '==', true),
-        orderBy('date', 'desc'),
-        firestoreLimit(10)
+        firestoreLimit(50)  // Traer más registros para filtrar y ordenar en cliente
       );
 
       onSnapshot(q, 
         (snapshot: QuerySnapshot) => {
-          const recentClasses = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-            createdAt: doc.data()['createdAt']?.toDate() || new Date()
-          })) as LessonClass[];
+          const recentClasses = snapshot.docs
+            .map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+              createdAt: doc.data()['createdAt']?.toDate() || new Date()
+            }) as LessonClass)
+            .sort((a, b) => {
+              // Ordenar por date descendente en cliente
+              const dateA = new Date(a.date);
+              const dateB = new Date(b.date);
+              return dateB.getTime() - dateA.getTime();
+            })
+            .slice(0, 10);
           
           this.recentClassesSubject.next(recentClasses);
         },

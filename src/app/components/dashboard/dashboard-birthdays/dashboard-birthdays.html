@@ -2,7 +2,7 @@
 <div class="section-card">
   <h3 class="section-title">🎂 Cumpleañeros de {{ currentMonth() }}</h3>
   <div class="birthday-list">
-    @for (birthday of monthlyBirthdays(); track birthday.name) {
+    @for (birthday of monthlyBirthdays(); track birthday.id) {
       <div class="birthday-item">
         <div class="birthday-avatar">{{ birthday.initials }}</div>
         <div class="birthday-info">

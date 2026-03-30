@@ -4,7 +4,7 @@
   <div class="indicator-card primary">
     <div class="indicator-icon">📚</div>
     <div class="indicator-content">
-      <h3>{{ totalClasses }}</h3>
+      <h3>{{ totalClasses() }}</h3>
       <p>Clases Registradas</p>
     </div>
   </div>
@@ -13,8 +13,8 @@
   <div class="indicator-card success">
     <div class="indicator-icon">👥</div>
     <div class="indicator-content">
-      <h3>{{ averageAttendance }}</h3>
-      <p>Estudiantes por Clase</p>
+      <h3>{{ averageAttendance() }}</h3>
+      <p>Presentes Hoy</p>
     </div>
   </div>
 
@@ -22,9 +22,9 @@
   <div class="indicator-card info">
     <div class="indicator-icon">🕒</div>
     <div class="indicator-content">
-      <h3>{{ lastClassDate }}</h3>
+      <h3>{{ lastClassDate() }}</h3>
       <p>Última Clase</p>
-      <small>Por: {{ lastTeacher }}</small>
+      <small>Por: {{ lastTeacher() }}</small>
     </div>
   </div>
 </div>

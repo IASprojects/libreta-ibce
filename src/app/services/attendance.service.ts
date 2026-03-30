@@ -16,10 +16,9 @@ import {
   DocumentSnapshot,
   QuerySnapshot,
   DocumentReference,
-  and,
   limit
 } from 'firebase/firestore';
-import { Observable, from, map, catchError, of, BehaviorSubject, throwError, forkJoin } from 'rxjs';
+import { Observable, from, map, catchError, of, BehaviorSubject, throwError, switchMap } from 'rxjs';
 import { FirebaseService } from './firebase.service';
 import { StudentService } from './student.service';
 import { DateService } from './date.service';
@@ -105,18 +104,19 @@ export class AttendanceService {
           const q = query(
             attendanceRef,
             where('lessonClassId', '==', lessonClass.id),
-            where('inactive', '!=', true),
-            orderBy('registeredAt', 'desc')
+            where('inactive', '==', false)
           );
 
           onSnapshot(q, 
             (snapshot: QuerySnapshot) => {
-              const attendances = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                registeredAt: doc.data()['registeredAt']?.toDate() || new Date(),
-                updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
-              })) as Attendance[];
+              const attendances = snapshot.docs
+                .map(doc => ({
+                  id: doc.id,
+                  ...doc.data(),
+                  registeredAt: doc.data()['registeredAt']?.toDate() || new Date(),
+                  updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
+                }))
+                .sort((a, b) => b.registeredAt.getTime() - a.registeredAt.getTime()) as Attendance[];
               
               this.todayAttendancesSubject.next(attendances);
               this.setError(null);
@@ -193,6 +193,100 @@ export class AttendanceService {
   }
 
   /**
+   * Guarda el estado completo de asistencia de una clase, creando o actualizando sin duplicados.
+   */
+  saveLessonAttendance(
+    lessonClassId: string,
+    attendances: BatchAttendanceInput[],
+    registeredBy: string
+  ): Observable<void> {
+    this.setLoading(true);
+    this.setError(null);
+
+    return this.getByLessonClass(lessonClassId).pipe(
+      switchMap(existingAttendances => {
+        const batch = writeBatch(this.firebaseService.db);
+        const existingByStudentId = new Map(
+          existingAttendances.map(attendance => [attendance.studentId, attendance])
+        );
+        const submittedStudentIds = new Set(attendances.map(attendance => attendance.studentId));
+
+        attendances.forEach(attendance => {
+          const existingAttendance = existingByStudentId.get(attendance.studentId);
+
+          if (existingAttendance) {
+            batch.update(
+              doc(this.firebaseService.db, this.ATTENDANCE_COLLECTION, existingAttendance.id),
+              {
+                present: attendance.present,
+                notes: attendance.notes || '',
+                type: attendance.type || AttendanceType.REGULAR,
+                registeredBy,
+                inactive: false,
+                synced: true,
+                updatedAt: Timestamp.now()
+              }
+            );
+            return;
+          }
+
+          const attendanceRef = doc(collection(this.firebaseService.db, this.ATTENDANCE_COLLECTION));
+          const attendanceData: Omit<Attendance, 'id'> = {
+            lessonClassId,
+            studentId: attendance.studentId,
+            present: attendance.present,
+            notes: attendance.notes || '',
+            type: attendance.type || AttendanceType.REGULAR,
+            registeredBy,
+            registeredAt: Timestamp.now() as any,
+            updatedAt: Timestamp.now() as any,
+            inactive: false,
+            synced: true
+          };
+
+          batch.set(attendanceRef, attendanceData);
+        });
+
+        existingAttendances.forEach(attendance => {
+          if (submittedStudentIds.has(attendance.studentId)) {
+            return;
+          }
+
+          batch.update(
+            doc(this.firebaseService.db, this.ATTENDANCE_COLLECTION, attendance.id),
+            {
+              inactive: true,
+              updatedAt: Timestamp.now(),
+              notes: attendance.notes || '[CORREGIDO] Registro reemplazado por una edición posterior'
+            }
+          );
+        });
+
+        const affectedStudentIds = [
+          ...new Set([
+            ...existingAttendances.map(attendance => attendance.studentId),
+            ...attendances.map(attendance => attendance.studentId)
+          ])
+        ];
+
+        if (affectedStudentIds.length === 0) {
+          this.setLoading(false);
+          return of(void 0);
+        }
+
+        return from(batch.commit()).pipe(
+          map(() => {
+            console.log(`✅ Asistencia sincronizada para clase: ${lessonClassId}`);
+            this.setLoading(false);
+            this.updateAffectedStudentsStats(affectedStudentIds);
+          })
+        );
+      }),
+      catchError(error => this.handleError('Error al guardar asistencia de la clase', error))
+    );
+  }
+
+  /**
    * Obtener asistencias por clase
    */
   getByLessonClass(lessonClassId: string): Observable<Attendance[]> {
@@ -202,18 +296,19 @@ export class AttendanceService {
     const q = query(
       attendanceRef,
       where('lessonClassId', '==', lessonClassId),
-      where('inactive', '!=', true),
-      orderBy('registeredAt', 'desc')
+      where('inactive', '==', false)
     );
 
     return from(getDocs(q)).pipe(
-      map((querySnapshot: QuerySnapshot) => 
-        querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          registeredAt: doc.data()['registeredAt']?.toDate() || new Date(),
-          updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
-        })) as Attendance[]
+      map((querySnapshot: QuerySnapshot) =>
+        querySnapshot.docs
+          .map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            registeredAt: doc.data()['registeredAt']?.toDate() || new Date(),
+            updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
+          }))
+          .sort((a, b) => b.registeredAt.getTime() - a.registeredAt.getTime()) as Attendance[]
       ),
       catchError(error => this.handleError('Error al obtener asistencias por clase', error))
     );
@@ -226,11 +321,10 @@ export class AttendanceService {
     this.setError(null);
     
     const attendanceRef = collection(this.firebaseService.db, this.ATTENDANCE_COLLECTION);
-    let q = query(
+    const q = query(
       attendanceRef,
       where('studentId', '==', studentId),
-      where('inactive', '!=', true),
-      orderBy('registeredAt', 'desc')
+      where('inactive', '==', false)
     );
 
     return from(getDocs(q)).pipe(
@@ -241,6 +335,8 @@ export class AttendanceService {
           registeredAt: doc.data()['registeredAt']?.toDate() || new Date(),
           updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
         })) as Attendance[];
+
+        attendances = attendances.sort((a, b) => b.registeredAt.getTime() - a.registeredAt.getTime());
 
         // Filtrar por rango de fechas en el frontend si es necesario
         if (dateRange) {
@@ -468,7 +564,7 @@ export class AttendanceService {
       attendanceRef,
       where('registeredAt', '>=', Timestamp.fromDate(startDate)),
       where('registeredAt', '<=', Timestamp.fromDate(endDate)),
-      where('inactive', '!=', true)
+      where('inactive', '==', false)
     );
 
     return from(getDocs(q)).pipe(
