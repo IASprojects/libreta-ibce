@@ -69,7 +69,7 @@
       <!-- Campo: Teléfono -->
       <div class="form-group">
         <label for="student-phone" class="form-label">
-          Teléfono <span class="required-mark" aria-label="requerido">*</span>
+          Teléfono
         </label>
         <input
           id="student-phone"
@@ -79,7 +79,6 @@
           [class.input-error]="hasError('phone')"
           placeholder="1234-5678 o +506 1234-5678"
           autocomplete="tel"
-          aria-required="true"
           [attr.aria-invalid]="hasError('phone')"
           [attr.aria-describedby]="hasError('phone') ? 'phone-error' : null"
         />
@@ -174,7 +173,7 @@
           <span aria-hidden="true">+ Agregar</span>
         </button>
       </div>
-      <p class="section-description">Agregue al menos un contacto principal</p>
+      <p class="section-description">Puede agregar contactos si los tiene disponibles</p>
 
       <!-- Lista de contactos -->
       <div formArrayName="contacts" class="contacts-list">
@@ -182,15 +181,13 @@
           <div [formGroupName]="i" class="contact-card">
             <div class="contact-header">
               <h3 class="contact-title">Contacto {{ i + 1 }}</h3>
-              @if (contacts.length > 1) {
-                <button
-                  type="button"
-                  class="remove-contact-btn"
-                  (click)="removeContact(i)"
-                  [attr.aria-label]="'Eliminar contacto ' + (i + 1)">
-                  <span aria-hidden="true">✕</span>
-                </button>
-              }
+              <button
+                type="button"
+                class="remove-contact-btn"
+                (click)="removeContact(i)"
+                [attr.aria-label]="'Eliminar contacto ' + (i + 1)">
+                <span aria-hidden="true">✕</span>
+              </button>
             </div>
 
             <div class="contact-fields">
@@ -238,7 +235,7 @@
               <!-- Teléfono -->
               <div class="form-group">
                 <label [for]="'contact-phone-' + i" class="form-label">
-                  Teléfono <span class="required-mark" aria-label="requerido">*</span>
+                  Teléfono
                 </label>
                 <input
                   [id]="'contact-phone-' + i"
@@ -248,7 +245,6 @@
                   [class.input-error]="hasContactError(i, 'phone')"
                   placeholder="1234-5678 o +506 1234-5678"
                   autocomplete="tel"
-                  aria-required="true"
                   [attr.aria-invalid]="hasContactError(i, 'phone')"
                 />
                 @if (hasContactError(i, 'phone')) {
@@ -280,6 +276,16 @@
 
     <!-- Botones de acción -->
     <div class="form-actions">
+      @if (mode() === 'edit') {
+        <button
+          type="button"
+          class="btn btn-outline"
+          (click)="toggleStudentStatus()"
+          [disabled]="isSubmitting()">
+          {{ studentIsActive() ? 'Inactivar Estudiante' : 'Reactivar Estudiante' }}
+        </button>
+      }
+
       <button
         type="button"
         class="btn btn-secondary"

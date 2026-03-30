@@ -13,7 +13,7 @@ export function createStudentForm(
 ): FormGroup {
   return fb.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-    phone: ['', [Validators.required, phoneValidator]],
+    phone: ['', [phoneValidator]],
     birthDate: [
       minAllowedBirthDate,
       [
@@ -23,7 +23,7 @@ export function createStudentForm(
     ],
     address: ['', [Validators.maxLength(200)]],
     notes: ['', [Validators.maxLength(500)]],
-    contacts: fb.array([], [Validators.required, Validators.minLength(1)])
+    contacts: fb.array([])
   });
 }
 
@@ -34,7 +34,7 @@ export function createContactFormGroup(fb: FormBuilder, contact?: StudentContact
   return fb.group({
     name: [contact?.name || '', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     relationship: [contact?.relationship || ContactRelationship.PADRE, [Validators.required]],
-    phone: [contact?.phone || '', [Validators.required, phoneValidator]],
+    phone: [contact?.phone || '', [phoneValidator]],
     isMain: [contact?.isMain || false]
   });
 }

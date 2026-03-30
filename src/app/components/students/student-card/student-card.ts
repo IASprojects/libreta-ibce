@@ -30,13 +30,14 @@ export class StudentCard {
   }
 
   getMainContact(student: Student): string {
-    const mainContact = student.contacts.find((contact) => contact.isMain);
+    const contacts = student.contacts ?? [];
+    const mainContact = contacts.find((contact) => contact.isMain);
     if (mainContact) {
-      return `${mainContact.name} - ${mainContact.phone}`;
+      return `${mainContact.name} - ${mainContact.phone || 'Sin teléfono'}`;
     }
 
-    if (student.contacts.length > 0) {
-      return `${student.contacts[0].name} - ${student.contacts[0].phone}`;
+    if (contacts.length > 0) {
+      return `${contacts[0].name} - ${contacts[0].phone || 'Sin teléfono'}`;
     }
 
     return 'Sin contacto';

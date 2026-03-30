@@ -29,8 +29,10 @@ import { PlannedLesson } from '../core/models/planned-lesson.model';
  */
 export interface CreatePlannedLessonInput {
   plannedDate: string;
-  unitNumber: string;
-  lessonNumber: string;
+  IsFormalClass?: boolean;
+  title?: string;
+  unitNumber?: string;
+  lessonNumber?: string;
   plannedTeacherId: string;
 }
 
@@ -270,8 +272,10 @@ export class PlannedLessonService {
 
     const newLesson: Omit<PlannedLesson, 'id'> = {
       plannedDate: lessonInput.plannedDate,
-      unitNumber: lessonInput.unitNumber,
-      lessonNumber: lessonInput.lessonNumber,
+      IsFormalClass: lessonInput.IsFormalClass ?? true,
+      title: lessonInput.title || '',
+      unitNumber: lessonInput.unitNumber || '',
+      lessonNumber: lessonInput.lessonNumber || '',
       plannedTeacherId: lessonInput.plannedTeacherId,
       active: true,
       createdBy,
@@ -522,8 +526,13 @@ export class PlannedLessonService {
         // Conteo por unidad
         const unitCounts = new Map<string, number>();
         lessons.forEach(lesson => {
-          const current = unitCounts.get(lesson.unitNumber) || 0;
-          unitCounts.set(lesson.unitNumber, current + 1);
+          const unit = lesson.unitNumber?.trim();
+          if (!unit) {
+            return;
+          }
+
+          const current = unitCounts.get(unit) || 0;
+          unitCounts.set(unit, current + 1);
         });
 
         return {

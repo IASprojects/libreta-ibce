@@ -299,8 +299,8 @@ export class LessonClassService {
           const classData: Omit<LessonClass, 'id'> = {
             date: actualData.date || plannedLesson.plannedDate,
             plannedLessonId: plannedLessonId,
-            unitNumber: actualData.unitNumber || plannedLesson.unitNumber,
-            lessonNumber: actualData.lessonNumber || plannedLesson.lessonNumber,
+            unitNumber: actualData.unitNumber || plannedLesson.unitNumber || '',
+            lessonNumber: actualData.lessonNumber || plannedLesson.lessonNumber || '',
             teacherId: actualData.teacherId || plannedLesson.plannedTeacherId,
             notes: actualData.notes || '',
             active: true,

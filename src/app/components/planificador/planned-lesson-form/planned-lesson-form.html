@@ -25,6 +25,21 @@
     
     <!-- Sección: Información de la Lección -->
     <section class="form-section">
+
+      <!-- Campo: Tipo de clase -->
+      <div class="form-group">
+        <label for="lesson-type" class="form-label">Tipo de clase</label>
+        <select
+          id="lesson-type"
+          class="form-select"
+          [value]="formData().IsFormalClass ? 'formal' : 'informal'"
+          (change)="updateField('IsFormalClass', $any($event.target).value === 'formal')"
+        >
+          <option value="formal">Formal</option>
+          <option value="informal">Informal</option>
+        </select>
+        <p class="field-hint">Formal usa unidad/lección. Informal permite título libre.</p>
+      </div>
       
       <!-- Campo: Fecha Planificada -->
       <div class="form-group">
@@ -51,62 +66,79 @@
         <p class="field-hint">La fecha no puede ser en el pasado</p>
       </div>
 
-      <!-- Fila: Unidad y Lección -->
-      <div class="form-row">
-        <!-- Campo: Unidad -->
-        <div class="form-group">
-          <label for="unit-number" class="form-label">
-            Unidad <span class="required-mark" aria-label="requerido">*</span>
-          </label>
-          <select
-            id="unit-number"
-            class="form-select"
-            [class.input-error]="hasFieldError('unitNumber')"
-            [value]="formData().unitNumber"
-            (change)="updateField('unitNumber', $any($event.target).value)"
-            aria-required="true"
-            [attr.aria-invalid]="hasFieldError('unitNumber')"
-            [attr.aria-describedby]="hasFieldError('unitNumber') ? 'unit-number-error' : null"
-          >
-            <option value="" disabled>Seleccionar unidad</option>
-            @for (unit of unitNumbers; track unit) {
-              <option [value]="unit">Unidad {{ unit }}</option>
+      @if (formData().IsFormalClass) {
+        <!-- Fila: Unidad y Lección -->
+        <div class="form-row">
+          <!-- Campo: Unidad -->
+          <div class="form-group">
+            <label for="unit-number" class="form-label">Unidad</label>
+            <select
+              id="unit-number"
+              class="form-select"
+              [class.input-error]="hasFieldError('unitNumber')"
+              [value]="formData().unitNumber"
+              (change)="updateField('unitNumber', $any($event.target).value)"
+              [attr.aria-invalid]="hasFieldError('unitNumber')"
+              [attr.aria-describedby]="hasFieldError('unitNumber') ? 'unit-number-error' : null"
+            >
+              <option value="">Sin unidad</option>
+              @for (unit of unitNumbers; track unit) {
+                <option [value]="unit">Unidad {{ unit }}</option>
+              }
+            </select>
+            @if (hasFieldError('unitNumber')) {
+              <p id="unit-number-error" class="error-message" role="alert">
+                {{ getFieldError('unitNumber') }}
+              </p>
             }
-          </select>
-          @if (hasFieldError('unitNumber')) {
-            <p id="unit-number-error" class="error-message" role="alert">
-              {{ getFieldError('unitNumber') }}
-            </p>
-          }
-        </div>
+          </div>
 
-        <!-- Campo: Lección -->
-        <div class="form-group">
-          <label for="lesson-number" class="form-label">
-            Lección <span class="required-mark" aria-label="requerido">*</span>
-          </label>
-          <select
-            id="lesson-number"
-            class="form-select"
-            [class.input-error]="hasFieldError('lessonNumber')"
-            [value]="formData().lessonNumber"
-            (change)="updateField('lessonNumber', $any($event.target).value)"
-            aria-required="true"
-            [attr.aria-invalid]="hasFieldError('lessonNumber')"
-            [attr.aria-describedby]="hasFieldError('lessonNumber') ? 'lesson-number-error' : null"
-          >
-            <option value="" disabled>Seleccionar lección</option>
-            @for (lesson of lessonNumbers; track lesson) {
-              <option [value]="lesson">Lección {{ lesson }}</option>
+          <!-- Campo: Lección -->
+          <div class="form-group">
+            <label for="lesson-number" class="form-label">Lección</label>
+            <select
+              id="lesson-number"
+              class="form-select"
+              [class.input-error]="hasFieldError('lessonNumber')"
+              [value]="formData().lessonNumber"
+              (change)="updateField('lessonNumber', $any($event.target).value)"
+              [attr.aria-invalid]="hasFieldError('lessonNumber')"
+              [attr.aria-describedby]="hasFieldError('lessonNumber') ? 'lesson-number-error' : null"
+            >
+              <option value="">Sin lección</option>
+              @for (lesson of lessonNumbers; track lesson) {
+                <option [value]="lesson">Lección {{ lesson }}</option>
+              }
+            </select>
+            @if (hasFieldError('lessonNumber')) {
+              <p id="lesson-number-error" class="error-message" role="alert">
+                {{ getFieldError('lessonNumber') }}
+              </p>
             }
-          </select>
-          @if (hasFieldError('lessonNumber')) {
-            <p id="lesson-number-error" class="error-message" role="alert">
-              {{ getFieldError('lessonNumber') }}
+          </div>
+        </div>
+      } @else {
+        <div class="form-group">
+          <label for="lesson-title" class="form-label">Título (opcional)</label>
+          <input
+            id="lesson-title"
+            type="text"
+            class="form-input"
+            [class.input-error]="hasFieldError('title')"
+            [value]="formData().title"
+            (input)="updateField('title', $any($event.target).value)"
+            maxlength="100"
+            placeholder="Ej: Clase Especial de Navidad"
+            [attr.aria-invalid]="hasFieldError('title')"
+            [attr.aria-describedby]="hasFieldError('title') ? 'lesson-title-error' : null"
+          />
+          @if (hasFieldError('title')) {
+            <p id="lesson-title-error" class="error-message" role="alert">
+              {{ getFieldError('title') }}
             </p>
           }
         </div>
-      </div>
+      }
 
       <!-- Campo: Maestro -->
       <div class="form-group">

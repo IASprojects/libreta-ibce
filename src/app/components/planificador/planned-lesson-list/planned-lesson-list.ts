@@ -12,6 +12,8 @@ import { PlannedLessonForm } from '../planned-lesson-form/planned-lesson-form';
 interface PlannedLessonDisplay extends PlannedLesson {
   formattedDate: string;
   formattedShortDate: string;
+  displayTitle: string;
+  searchText: string;
   isUpcoming: boolean;
   isToday: boolean;
   isPast: boolean;
@@ -75,10 +77,7 @@ export class PlannedLessonList {
     // Filtrar por búsqueda
     if (search) {
       lessons = lessons.filter(lesson => 
-        lesson.unitNumber.toLowerCase().includes(search) ||
-        lesson.lessonNumber.toLowerCase().includes(search) ||
-        lesson.plannedTeacherId.toLowerCase().includes(search) ||
-        lesson.formattedDate.toLowerCase().includes(search)
+        lesson.searchText.includes(search)
       );
     }
 
@@ -124,14 +123,43 @@ export class PlannedLessonList {
     today.setHours(0, 0, 0, 0);
     lessonDate.setHours(0, 0, 0, 0);
 
+    const displayTitle = this.getLessonDisplayTitle(lesson);
+
     return {
       ...lesson,
       formattedDate: this.formatDate(lesson.plannedDate),
       formattedShortDate: this.formatShortDate(lesson.plannedDate),
+      displayTitle,
+      searchText: `${displayTitle} ${lesson.plannedTeacherId} ${lesson.title || ''}`.toLowerCase(),
       isUpcoming: lessonDate >= today,
       isToday: lessonDate.getTime() === today.getTime(),
       isPast: lessonDate < today
     };
+  }
+
+  private getLessonDisplayTitle(lesson: PlannedLesson): string {
+    const isFormal = lesson.IsFormalClass ?? true;
+
+    if (!isFormal) {
+      return lesson.title?.trim() || 'Clase informal';
+    }
+
+    const unit = lesson.unitNumber?.trim();
+    const lessonNumber = lesson.lessonNumber?.trim();
+
+    if (unit && lessonNumber) {
+      return `Unidad ${unit} - Lección ${lessonNumber}`;
+    }
+
+    if (unit) {
+      return `Unidad ${unit}`;
+    }
+
+    if (lessonNumber) {
+      return `Lección ${lessonNumber}`;
+    }
+
+    return 'Clase formal sin detalle';
   }
 
   /**

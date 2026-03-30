@@ -10,9 +10,10 @@ Somos un grupo de 6 profesores de escuela dominical de una iglesia en un pueblo.
 Sistema de gestión gratuito para:
 1. Control de asistencia diaria
 2. Registro de información básica de estudiantes
-3. Seguimiento de asistencia anual
-4. Contacto de padres/encargados
-5. Recordatorios de cumpleaños
+3. Planificar clases formales mediante el planificador de clases.
+4. Seguimiento de asistencia anual
+5. Contacto de padres/encargados
+6. Recordatorios de cumpleaños
 
 ## Requisitos Específicos
 
@@ -24,6 +25,15 @@ Sistema de gestión gratuito para:
 - Gestión de contactos de padres/encargados
 - Alertas de cumpleaños
 - Funciona con 1 solo usuario (profesor) los 6 maestro vamos a usar la misma cuenta
+
+## Regla Fundamental de Datos (SOT)
+
+- La Source of Truth (SOT) para modelos, enums, relaciones, índices y validaciones de datos es `.github/data.persistance.json`.
+- Ante cada cambio funcional o técnico que afecte persistencia, primero validar y alinear con `.github/data.persistance.json`.
+- No crear campos, colecciones, enums o relaciones fuera de lo definido en `.github/data.persistance.json` sin actualizar explícitamente ese archivo.
+- Si existe conflicto entre código/documentación y el modelo de datos, prevalece `.github/data.persistance.json`.
+- Toda propuesta de cambio de datos debe incluir el impacto en `.github/data.persistance.json` como parte obligatoria de la implementación.
+
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
 ## TypeScript Best Practices

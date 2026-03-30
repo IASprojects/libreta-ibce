@@ -2,6 +2,8 @@
   min-height: 100vh;
   background: #f8f9fa;
 }
+
+.action-link {
   border-radius: 10px;
   border: 1px solid #3e79a3;
   text-decoration: none;

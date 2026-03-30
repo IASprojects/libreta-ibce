@@ -29,11 +29,11 @@ interface RelationshipOption {
 
 interface StudentFormData {
   name: string;
-  phone: string;
+  phone?: string;
   birthDate: string;
   address: string;
   notes: string;
-  contacts: StudentContact[];
+  contacts?: StudentContact[];
 }
 
 @Component({
@@ -59,6 +59,7 @@ export class StudentForm implements OnInit {
   isSubmitting = signal(false);
   submitError = signal<string | null>(null);
   submitSuccess = signal(false);
+  studentIsActive = signal(true);
 
   // Título del formulario
   formTitle = computed(() => (this.mode() === 'create' ? 'Nuevo Estudiante' : 'Editar Estudiante'));
@@ -124,7 +125,7 @@ export class StudentForm implements OnInit {
    * Remover contacto por índice
    */
   removeContact(index: number): void {
-    if (this.contacts.length > 1) {
+    if (this.contacts.length > 0) {
       this.contacts.removeAt(index);
     }
   }
@@ -162,9 +163,11 @@ export class StudentForm implements OnInit {
    * Poblar formulario con datos del estudiante
    */
   private populateForm(student: Student): void {
+    this.studentIsActive.set(student.active);
+
     this.studentForm.patchValue({
       name: student.name,
-      phone: student.phone,
+      phone: student.phone || '',
       birthDate: student.birthDate || this.minAllowedBirthDate,
       address: student.address || '',
       notes: student.notes || '',
@@ -194,11 +197,6 @@ export class StudentForm implements OnInit {
     contacts.forEach((contact) => {
       this.contacts.push(createContactFormGroup(this.fb, contact));
     });
-
-    // Asegurar al menos un contacto si no hay ninguno
-    if (this.contacts.length === 0) {
-      this.contacts.push(createContactFormGroup(this.fb));
-    }
   }
 
   /**
@@ -220,9 +218,7 @@ export class StudentForm implements OnInit {
       const candidate = contact as Partial<StudentContact>;
       return (
         typeof candidate.name === 'string' &&
-        candidate.name.trim() !== '' &&
-        typeof candidate.phone === 'string' &&
-        candidate.phone.trim() !== ''
+        candidate.name.trim() !== ''
       );
     });
   }
@@ -320,15 +316,11 @@ export class StudentForm implements OnInit {
 
     const formData = this.studentForm.getRawValue() as StudentFormData;
 
-    if (!formData.contacts || formData.contacts.length === 0) {
-      this.isSubmitting.set(false);
-      this.submitError.set('Debe agregar al menos un contacto');
-      return;
-    }
-
     // Asegurar que hay al menos un contacto principal
-    const hasMainContact = formData.contacts.some((c: StudentContact) => c.isMain);
-    if (!hasMainContact && formData.contacts.length > 0) {
+    const contacts = formData.contacts ?? [];
+    const hasMainContact = contacts.some((c: StudentContact) => c.isMain);
+    if (!hasMainContact && contacts.length > 0) {
+      formData.contacts = contacts;
       formData.contacts[0].isMain = true;
     }
 
@@ -369,7 +361,6 @@ export class StudentForm implements OnInit {
               notes: '',
             });
             this.contacts.clear();
-            this.addContact();
             this.submitSuccess.set(false);
 
             // Scroll al inicio
@@ -435,6 +426,44 @@ export class StudentForm implements OnInit {
             error?.name === 'TimeoutError'
               ? 'No se pudo confirmar el guardado por conexion lenta. Revise la lista de estudiantes y luego intente nuevamente.'
               : `Error al actualizar el estudiante: ${error?.code || error?.message || 'Error desconocido'}`,
+          );
+        },
+      });
+  }
+
+  toggleStudentStatus(): void {
+    const studentId = this.studentId();
+    if (!studentId) {
+      this.submitError.set('No se pudo identificar el estudiante');
+      return;
+    }
+
+    const willDeactivate = this.studentIsActive();
+    const actionLabel = willDeactivate ? 'inactivar' : 'reactivar';
+    const confirmed = window.confirm(`¿Desea ${actionLabel} este estudiante?`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.isSubmitting.set(true);
+    this.submitError.set(null);
+
+    const request$ = willDeactivate
+      ? this.studentService.deactivateStudent(studentId)
+      : this.studentService.reactivateStudent(studentId);
+
+    request$
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.studentIsActive.set(!willDeactivate);
+          void this.router.navigate(['/dashboard/estudiantes']);
+        },
+        error: (error) => {
+          console.error('❌ Error al cambiar estado del estudiante:', error);
+          this.submitError.set(
+            `Error al ${actionLabel} el estudiante: ${error?.code || error?.message || 'Error desconocido'}`,
           );
         },
       });

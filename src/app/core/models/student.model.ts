@@ -9,7 +9,7 @@ export interface StudentContact {
   /** Parentesco con el estudiante */
   relationship: ContactRelationship;
   /** Teléfono principal */
-  phone: string;
+  phone?: string;
   /** ¿Es el contacto principal? */
   isMain: boolean;
 }
@@ -35,11 +35,11 @@ export interface Student {
   /** Nombre completo del estudiante */
   name: string;
   /** Teléfono principal del estudiante */
-  phone: string;
+  phone?: string;
   /** Fecha de nacimiento (formato ISO) */
   birthDate: string;
   /** Lista de contactos/tutores */
-  contacts: StudentContact[];
+  contacts?: StudentContact[];
   /** Dirección de domicilio */
   address?: string;
   /** Notas generales sobre el estudiante */

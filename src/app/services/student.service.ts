@@ -552,13 +552,13 @@ export class StudentService {
       'numero'
     ]);
 
-    if (!name || !phone) {
+    if (!name) {
       return null;
     }
 
     return {
       name,
-      phone,
+      phone: phone || undefined,
       relationship: this.normalizeRelationship(raw['relationship'] ?? raw['parentesco']),
       isMain: Boolean(raw['isMain'] ?? raw['main'] ?? raw['isPrimary'] ?? raw['principal'])
     };

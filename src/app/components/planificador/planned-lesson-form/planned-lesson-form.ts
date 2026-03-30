@@ -12,6 +12,8 @@ import { TeacherNames } from '../../../core/models/enums';
  */
 interface LessonFormData {
   plannedDate: string;
+  IsFormalClass: boolean;
+  title: string;
   unitNumber: string;
   lessonNumber: string;
   plannedTeacherId: string;
@@ -44,8 +46,10 @@ export class PlannedLessonForm implements OnInit {
   // Estados del formulario
   formData = signal<LessonFormData>({
     plannedDate: '',
-    unitNumber: '1',
-    lessonNumber: '1',
+    IsFormalClass: true,
+    title: '',
+    unitNumber: '',
+    lessonNumber: '',
     plannedTeacherId: ''
   });
 
@@ -85,8 +89,10 @@ export class PlannedLessonForm implements OnInit {
       const normalizedDate = this.normalizeDateString(currentLesson.plannedDate);
       this.formData.set({
         plannedDate: normalizedDate,
-        unitNumber: currentLesson.unitNumber,
-        lessonNumber: currentLesson.lessonNumber,
+        IsFormalClass: currentLesson.IsFormalClass ?? true,
+        title: currentLesson.title || '',
+        unitNumber: currentLesson.unitNumber || '',
+        lessonNumber: currentLesson.lessonNumber || '',
         plannedTeacherId: currentLesson.plannedTeacherId
       });
     } else {
@@ -138,16 +144,6 @@ export class PlannedLessonForm implements OnInit {
       }
     }
 
-    // Validar unidad
-    if (!data.unitNumber || data.unitNumber === '') {
-      errors['unitNumber'] = 'La unidad es obligatoria';
-    }
-
-    // Validar lección
-    if (!data.lessonNumber || data.lessonNumber === '') {
-      errors['lessonNumber'] = 'La lección es obligatoria';
-    }
-
     // Validar maestro
     if (!data.plannedTeacherId || data.plannedTeacherId === '') {
       errors['plannedTeacherId'] = 'El maestro es obligatorio';
@@ -165,6 +161,16 @@ export class PlannedLessonForm implements OnInit {
       ...data,
       [field]: value
     }));
+
+    if (field === 'IsFormalClass') {
+      this.formData.update(data => {
+        if (value) {
+          return { ...data, title: '' };
+        }
+
+        return { ...data, unitNumber: '', lessonNumber: '' };
+      });
+    }
     
     // Limpiar error del campo
     this.fieldErrors.update(errors => {
@@ -208,6 +214,8 @@ export class PlannedLessonForm implements OnInit {
 
         await this.plannedLessonService.update(currentLesson.id, {
           plannedDate: data.plannedDate,
+          IsFormalClass: data.IsFormalClass,
+          title: data.title || '',
           unitNumber: data.unitNumber,
           lessonNumber: data.lessonNumber,
           plannedTeacherId: data.plannedTeacherId
@@ -218,6 +226,8 @@ export class PlannedLessonForm implements OnInit {
         // Crear nueva lección
         const createInput: CreatePlannedLessonInput = {
           plannedDate: data.plannedDate,
+          IsFormalClass: data.IsFormalClass,
+          title: data.title || '',
           unitNumber: data.unitNumber,
           lessonNumber: data.lessonNumber,
           plannedTeacherId: data.plannedTeacherId

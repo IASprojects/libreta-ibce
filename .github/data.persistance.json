@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "Modelos de datos para Sistema de Gestión de Escuela Dominical",
-  "lastUpdated": "2026-03-05",
+  "lastUpdated": "2026-03-29",
 
   "models": {
     "Student": {
@@ -24,10 +24,16 @@
           "required": true,
           "description": "Fecha de nacimiento (formato ISO)"
         },
+        "phone": {
+          "type": "string",
+          "required": false,
+          "description": "Teléfono principal del estudiante"
+        },
         "contacts": {
           "type": "array",
-          "required": true,
-          "description": "Lista de contactos/tutores",
+          "required": false,
+          "description": "Lista opcional de contactos/tutores",
+          "default": [],
           "items": {
             "type": "object",
             "fields": {
@@ -44,7 +50,7 @@
               },
               "phone": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "description": "Teléfono principal"
               },
               "isMain": {
@@ -71,7 +77,7 @@
           "type": "boolean",
           "required": true,
           "default": true,
-          "description": "¿Está activo en la clase?"
+          "description": "Activo = true (visible en la app), Inactivo = false (oculto pero no eliminado)"
         },
         "registeredAt": {
           "type": "timestamp",
@@ -193,16 +199,28 @@
           "required": true,
           "description": "Fecha para la cual se planifica esta clase (calendario)"
         },
+        "IsFormalClass": {
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "description": "¿Es una clase formal del planificador? (false para eventos especiales)"
+        },
+        "title": {
+          "type": "string",
+          "required": false,
+          "description": "Habilitado cuando se trata de una clase no formal.Título opcional para la clase (ej. 'Clase Especial de Navidad')",
+          "maxLength": 100
+        },
         "unitNumber": {
           "type": "string",
-          "required": true,
-          "description": "Unidad del Libro de Lecciones",
+          "required": false,
+          "description": "Habilitado cuando se trata de una clase formal. Unidad del Libro de Lecciones",
           "maxLength": 100
         },
         "lessonNumber": {
           "type": "string",
-          "required": true,
-          "description": "Número de Lección dentro de la unidad",
+          "required": false,
+          "description": "Habilitado cuando se trata de una clase formal. Número de lección dentro de la unidad",
           "maxLength": 50
         },
         "plannedTeacherId": {
@@ -234,7 +252,7 @@
     },
 
     "LessonClass": {
-      "description": "Instancia real de la clase (la que realmente ocurre, puede variar de lo planificado)",
+      "description": "Instancia real de la clase (la que realmente ocurre, puede variar de lo planificado, el maestro puede seleccionar una clase planificada o crear una nueva en el momento)",
       "collection": "lesson_classes",
       "fields": {
         "id": {
