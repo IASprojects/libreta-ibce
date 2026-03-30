@@ -19,6 +19,32 @@ export interface Teacher {
 }
 
 /**
+ * Lección disponible dentro de una unidad del catálogo
+ */
+export interface LessonCatalogLesson {
+  /** Número o identificador de la lección */
+  lessonNumber: string;
+  /** Nombre opcional de la lección */
+  lessonTitle?: string;
+  /** ¿Está disponible para selección? */
+  isActive: boolean;
+}
+
+/**
+ * Unidad disponible dentro del catálogo global de lecciones
+ */
+export interface LessonCatalogUnit {
+  /** Número o identificador de la unidad */
+  unitNumber: string;
+  /** Nombre opcional de la unidad */
+  unitTitle?: string;
+  /** Lecciones habilitadas para esta unidad */
+  lessons: LessonCatalogLesson[];
+  /** ¿Está disponible para selección? */
+  isActive: boolean;
+}
+
+/**
  * Configuración de alertas
  */
 export interface AlertsConfig {
@@ -44,6 +70,8 @@ export interface AppConfig {
   churchAddress?: string;
   /** Lista de maestros (fuente única) */
   teachers: Teacher[];
+  /** Catálogo global de unidades y lecciones por unidad */
+  lessonCatalog?: LessonCatalogUnit[];
   /** Configuración de alertas */
   alerts?: AlertsConfig;
   /** Fecha del último backup */

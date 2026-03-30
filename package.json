@@ -8,6 +8,7 @@
     "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "seed:app-config": "node scripts/seed-app-config.mjs",
     "firebase:deploy": "firebase deploy --only hosting",
     "firebase:deploy:prod": "firebase deploy --only hosting",
     "firebase:preview": "firebase hosting:channel:deploy preview",

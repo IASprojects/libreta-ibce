@@ -208,7 +208,7 @@
         "title": {
           "type": "string",
           "required": false,
-          "description": "Habilitado cuando se trata de una clase no formal.Título opcional para la clase (ej. 'Clase Especial de Navidad')",
+          "description": "Habilitado cuando se trata de una clase no formal. Título para la clase (ej. 'Clase Especial de Navidad')",
           "maxLength": 100
         },
         "unitNumber": {
@@ -370,6 +370,63 @@
                 "type": "date",
                 "required": true,
                 "description": "Fecha de ingreso"
+              }
+            }
+          }
+        },
+        "lessonCatalog": {
+          "type": "array",
+          "required": false,
+          "description": "Configuración del catálogo de unidades y lecciones disponibles por unidad",
+          "default": [],
+          "items": {
+            "type": "object",
+            "fields": {
+              "unitNumber": {
+                "type": "string",
+                "required": true,
+                "description": "Número o identificador de la unidad (ej. '1')",
+                "maxLength": 50
+              },
+              "unitTitle": {
+                "type": "string",
+                "required": false,
+                "description": "Nombre opcional de la unidad",
+                "maxLength": 100
+              },
+              "lessons": {
+                "type": "array",
+                "required": true,
+                "description": "Listado de lecciones habilitadas para esta unidad",
+                "items": {
+                  "type": "object",
+                  "fields": {
+                    "lessonNumber": {
+                      "type": "string",
+                      "required": true,
+                      "description": "Número o identificador de la lección (ej. '1', '3', '4')",
+                      "maxLength": 50
+                    },
+                    "lessonTitle": {
+                      "type": "string",
+                      "required": false,
+                      "description": "Nombre opcional de la lección",
+                      "maxLength": 100
+                    },
+                    "isActive": {
+                      "type": "boolean",
+                      "required": true,
+                      "default": true,
+                      "description": "Define si la lección está disponible para selección"
+                    }
+                  }
+                }
+              },
+              "isActive": {
+                "type": "boolean",
+                "required": true,
+                "default": true,
+                "description": "Define si la unidad está disponible para selección"
               }
             }
           }
@@ -560,7 +617,19 @@
 
   "validation": {
     "phoneRegex": "^\\+?[0-9]{7,15}$",
-    "emailRegex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    "emailRegex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+    "plannedLessonConditionalRules": {
+      "formalClass": {
+        "when": "PlannedLesson.IsFormalClass = true",
+        "requires": ["unitNumber", "lessonNumber"],
+        "forbids": ["title"]
+      },
+      "informalClass": {
+        "when": "PlannedLesson.IsFormalClass = false",
+        "requires": ["title"],
+        "forbids": ["unitNumber", "lessonNumber"]
+      }
+    }
   },
 
   "notes": {
@@ -568,6 +637,7 @@
     "dailyAttendance": "Se genera en tiempo real desde Attendance",
     "studentStats": "Se calculan automáticamente desde Attendance",
     "teacherSource": "AppConfig.teachers es la fuente única de maestros",
+    "lessonCatalogSource": "AppConfig.lessonCatalog es la fuente única del listado de unidades y lecciones por unidad (ej. Unidad 1 -> Lección 1, 3, 4)",
     "lessonContent": "El contenido (título, versículos) está en el libro físico, no se duplica en la app"
   }
 }

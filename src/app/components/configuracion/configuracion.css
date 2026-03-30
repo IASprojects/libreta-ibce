@@ -4,6 +4,11 @@
   background: radial-gradient(circle at top left, #fff7e9 0%, #ffe9d1 45%, #ffe0c8 100%);
 }
 
+.settings-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
 .page-header h1 {
   margin: 0;
   font-size: 2rem;
@@ -17,12 +22,174 @@
 
 .settings-panel {
   margin-top: 1.5rem;
-  max-width: 760px;
   border-radius: 16px;
   background: #ffffff;
   border: 1px solid #f2d7bb;
   padding: 1.5rem;
   box-shadow: 0 10px 22px rgba(114, 72, 31, 0.12);
+}
+
+.panel-header,
+.panel-actions,
+.card-actions,
+.lesson-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.panel-header {
+  margin-bottom: 1rem;
+}
+
+.panel-header p,
+.lesson-list-header h3 {
+  margin: 0.4rem 0 0;
+}
+
+.stack-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.editor-card {
+  border: 1px solid #edd0b2;
+  border-radius: 14px;
+  padding: 1rem;
+  background: linear-gradient(180deg, #fffdfa 0%, #fff5ea 100%);
+}
+
+.editor-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.teacher-grid,
+.unit-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.field-group {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #7a451a;
+}
+
+.field-control {
+  width: 100%;
+  border: 1px solid #ddb894;
+  border-radius: 10px;
+  padding: 0.72rem 0.85rem;
+  color: #5b3314;
+  background: #fffdf9;
+}
+
+.field-control:focus {
+  outline: 2px solid #d97b2a;
+  outline-offset: 2px;
+  border-color: #d97b2a;
+}
+
+.toggle-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 100%;
+  color: #6d4322;
+  font-weight: 600;
+}
+
+.compact-toggle {
+  align-self: end;
+  padding-bottom: 0.5rem;
+}
+
+.lesson-list {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.lesson-row {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: minmax(110px, 140px) minmax(0, 1fr) auto auto;
+  align-items: end;
+}
+
+.small-field {
+  max-width: 160px;
+}
+
+.btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.75rem 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.btn-primary {
+  background: #c7661a;
+  color: #fff9f4;
+}
+
+.btn-secondary {
+  background: #f5e1cc;
+  color: #77411a;
+}
+
+.btn-danger {
+  background: #fff0eb;
+  color: #b14a2b;
+}
+
+.btn-small {
+  padding: 0.55rem 0.85rem;
+}
+
+.feedback-banner,
+.feedback-inline,
+.empty-copy {
+  color: #7a4b25;
+}
+
+.feedback-banner {
+  margin-top: 1rem;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  background: #fff2eb;
+  border: 1px solid #efc6b4;
+}
+
+.feedback-inline {
+  margin: 0 0 1rem;
+  font-weight: 600;
+}
+
+.error,
+.error-text {
+  color: #9f3217;
+}
+
+.catalog-card {
+  border-left: 4px solid #d97b2a;
+}
+
+.card-actions,
+.panel-actions {
+  margin-top: 1rem;
 }
 
 .settings-panel h2 {
@@ -48,5 +215,23 @@
 @media (max-width: 768px) {
   .page-container {
     padding: 1rem;
+  }
+
+  .settings-panel {
+    padding: 1rem;
+  }
+
+  .panel-header,
+  .panel-actions,
+  .card-actions,
+  .lesson-list-header,
+  .lesson-row {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .small-field {
+    max-width: none;
   }
 }

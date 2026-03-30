@@ -1,10 +1,11 @@
-import { Component, inject, signal, computed, input, output, effect, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, input, output, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlannedLessonService, CreatePlannedLessonInput } from '../../../services/planned-lesson.service';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
 import { UserService } from '../../../services/user.service';
 import { DateService } from '../../../services/date.service';
+import { AppConfigService } from '../../../services/app-config.service';
 import { TeacherNames } from '../../../core/models/enums';
 
 /**
@@ -30,10 +31,11 @@ type FormMode = 'create' | 'edit';
   templateUrl: './planned-lesson-form.html',
   styleUrl: './planned-lesson-form.css',
 })
-export class PlannedLessonForm implements OnInit {
+export class PlannedLessonForm {
   private plannedLessonService = inject(PlannedLessonService);
   private userService = inject(UserService);
   private dateService = inject(DateService);
+  private appConfigService = inject(AppConfigService);
 
   // Inputs
   lesson = input<PlannedLesson | null>(null);
@@ -62,11 +64,63 @@ export class PlannedLessonForm implements OnInit {
   currentUser = this.userService.user;
 
   // Maestros disponibles
-  teacherNames = Object.values(TeacherNames);
+  teacherNames = computed(() => {
+    const configuredTeachers = this.appConfigService.activeTeachers().map(teacher => teacher.name);
+    return configuredTeachers.length > 0 ? configuredTeachers : Object.values(TeacherNames);
+  });
 
-  // Unidades y lecciones disponibles (1-52 para unidades, 1-7 para lecciones)
-  unitNumbers = Array.from({ length: 52 }, (_, i) => (i + 1).toString());
-  lessonNumbers = Array.from({ length: 7 }, (_, i) => (i + 1).toString());
+  private legacyUnitNumbers = Array.from({ length: 52 }, (_, i) => (i + 1).toString());
+  private legacyLessonNumbers = Array.from({ length: 7 }, (_, i) => (i + 1).toString());
+
+  unitNumbers = computed(() => {
+    const configuredUnits = this.appConfigService
+      .lessonCatalog()
+      .map(unit => unit.unitNumber.trim())
+      .filter(unitNumber => unitNumber !== '');
+
+    return configuredUnits.length > 0 ? configuredUnits : this.legacyUnitNumbers;
+  });
+
+  lessonNumbers = computed(() => {
+    const selectedUnit = this.formData().unitNumber.trim();
+    if (!selectedUnit) {
+      return this.legacyLessonNumbers;
+    }
+
+    const configuredUnit = this.appConfigService
+      .lessonCatalog()
+      .find(unit => unit.unitNumber.trim() === selectedUnit);
+
+    if (!configuredUnit) {
+      return this.legacyLessonNumbers;
+    }
+
+    const configuredLessons = configuredUnit.lessons
+      .filter(lesson => lesson.isActive)
+      .map(lesson => lesson.lessonNumber.trim())
+      .filter(lessonNumber => lessonNumber !== '');
+
+    return configuredLessons.length > 0 ? configuredLessons : this.legacyLessonNumbers;
+  });
+
+  // Cuando el valor guardado no existe en el catálogo actual, se muestra como opción legada.
+  customUnitOption = computed(() => {
+    const value = this.formData().unitNumber.trim();
+    if (!value) {
+      return null;
+    }
+
+    return this.unitNumbers().includes(value) ? null : value;
+  });
+
+  customLessonOption = computed(() => {
+    const value = this.formData().lessonNumber.trim();
+    if (!value) {
+      return null;
+    }
+
+    return this.lessonNumbers().includes(value) ? null : value;
+  });
 
   // Título del formulario
   formTitle = computed(() => 
@@ -81,27 +135,43 @@ export class PlannedLessonForm implements OnInit {
   // Fecha mínima permitida (hoy)
   minDate = computed(() => this.dateService.getTodayDateString());
 
-  ngOnInit(): void {
-    // Si estamos editando, cargar los datos de la lección
-    const currentLesson = this.lesson();
-    if (currentLesson && this.mode() === 'edit') {
-      // Normalizar la fecha para evitar problemas de zona horaria
-      const normalizedDate = this.normalizeDateString(currentLesson.plannedDate);
+  constructor() {
+    // Reaccionar a cambios de input para asegurar carga correcta en edición.
+    effect(() => {
+      const currentLesson = this.lesson();
+      this.mode();
+      this.appConfigService.lessonCatalog();
+      this.appConfigService.activeTeachers();
+
+      // Si hay lección, siempre hidratar como edición para evitar problemas de orden de inputs.
+      if (currentLesson) {
+        const normalizedDate = this.normalizeDateString(currentLesson.plannedDate);
+        const normalizedUnitNumber = this.normalizeUnitSelectValue(currentLesson.unitNumber);
+        const normalizedLessonNumber = this.normalizeLessonSelectValue(
+          currentLesson.lessonNumber,
+          normalizedUnitNumber
+        );
+
+        this.formData.set({
+          plannedDate: normalizedDate,
+          IsFormalClass: currentLesson.IsFormalClass ?? true,
+          title: currentLesson.title || '',
+          unitNumber: normalizedUnitNumber,
+          lessonNumber: normalizedLessonNumber,
+          plannedTeacherId: currentLesson.plannedTeacherId
+        });
+        return;
+      }
+
       this.formData.set({
-        plannedDate: normalizedDate,
-        IsFormalClass: currentLesson.IsFormalClass ?? true,
-        title: currentLesson.title || '',
-        unitNumber: currentLesson.unitNumber || '',
-        lessonNumber: currentLesson.lessonNumber || '',
-        plannedTeacherId: currentLesson.plannedTeacherId
+        plannedDate: this.dateService.getTodayDateString(),
+        IsFormalClass: true,
+        title: '',
+        unitNumber: '',
+        lessonNumber: '',
+        plannedTeacherId: ''
       });
-    } else {
-      // Modo creación: establecer fecha de hoy por defecto
-      this.formData.update(data => ({
-        ...data,
-        plannedDate: this.dateService.getTodayDateString()
-      }));
-    }
+    });
   }
 
   /**
@@ -120,6 +190,64 @@ export class PlannedLessonForm implements OnInit {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private normalizeUnitSelectValue(value: unknown): string {
+    return this.normalizeSelectValue(value, this.unitNumbers());
+  }
+
+  private normalizeLessonSelectValue(value: unknown, unitNumber?: string): string {
+    return this.normalizeSelectValue(value, this.getAllowedLessonNumbers(unitNumber));
+  }
+
+  private getAllowedLessonNumbers(unitNumber?: string): string[] {
+    const selectedUnit = unitNumber?.trim() || this.formData().unitNumber.trim();
+    if (!selectedUnit) {
+      return this.legacyLessonNumbers;
+    }
+
+    const configuredUnit = this.appConfigService
+      .lessonCatalog()
+      .find(unit => unit.unitNumber.trim() === selectedUnit);
+
+    if (!configuredUnit) {
+      return this.legacyLessonNumbers;
+    }
+
+    const configuredLessons = configuredUnit.lessons
+      .filter(lesson => lesson.isActive)
+      .map(lesson => lesson.lessonNumber.trim())
+      .filter(lessonNumber => lessonNumber !== '');
+
+    return configuredLessons.length > 0 ? configuredLessons : this.legacyLessonNumbers;
+  }
+
+  private normalizeSelectValue(value: unknown, allowedValues: string[]): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    const raw = String(value).trim();
+    if (!raw) {
+      return '';
+    }
+
+    if (allowedValues.includes(raw)) {
+      return raw;
+    }
+
+    const numericMatch = raw.match(/\d+/);
+    if (!numericMatch) {
+      return raw;
+    }
+
+    const numeric = Number(numericMatch[0]);
+    if (!Number.isFinite(numeric)) {
+      return '';
+    }
+
+    const normalized = String(numeric);
+    return allowedValues.includes(normalized) ? normalized : raw;
   }
 
   /**
@@ -149,6 +277,18 @@ export class PlannedLessonForm implements OnInit {
       errors['plannedTeacherId'] = 'El maestro es obligatorio';
     }
 
+    // Validaciones condicionales por tipo de clase
+    if (data.IsFormalClass) {
+      if (!data.unitNumber.trim()) {
+        errors['unitNumber'] = 'La unidad es obligatoria en clases formales';
+      }
+      if (!data.lessonNumber.trim()) {
+        errors['lessonNumber'] = 'La lección es obligatoria en clases formales';
+      }
+    } else if (!data.title.trim()) {
+      errors['title'] = 'El título es obligatorio en clases no formales';
+    }
+
     this.fieldErrors.set(errors);
     return Object.keys(errors).length === 0;
   }
@@ -161,6 +301,18 @@ export class PlannedLessonForm implements OnInit {
       ...data,
       [field]: value
     }));
+
+    if (field === 'unitNumber') {
+      this.formData.update(data => {
+        const availableLessons = this.lessonNumbers();
+        const normalizedLesson = this.normalizeLessonSelectValue(data.lessonNumber, data.unitNumber);
+
+        return {
+          ...data,
+          lessonNumber: availableLessons.includes(normalizedLesson) ? normalizedLesson : ''
+        };
+      });
+    }
 
     if (field === 'IsFormalClass') {
       this.formData.update(data => {
@@ -205,9 +357,11 @@ export class PlannedLessonForm implements OnInit {
     this.isSaving.set(true);
 
     try {
-      if (this.mode() === 'edit') {
+      const currentLesson = this.lesson();
+      const isEditMode = this.mode() === 'edit' || !!currentLesson;
+
+      if (isEditMode) {
         // Actualizar lección existente
-        const currentLesson = this.lesson();
         if (!currentLesson) {
           throw new Error('No se encontró la lección a editar');
         }

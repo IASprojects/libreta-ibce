@@ -25,3 +25,13 @@ export interface PlannedLesson {
   /** Fecha de última modificación */
   updatedAt: Date;
 }
+
+/** Variante formal (sin título) */
+export type FormalPlannedLesson = PlannedLesson & {
+  IsFormalClass?: true;
+};
+
+/** Variante no formal (sin unidad ni lección) */
+export type InformalPlannedLesson = PlannedLesson & {
+  IsFormalClass: false;
+};

@@ -9,15 +9,13 @@ import {
   getDocs, 
   getDoc, 
   query, 
-  where, 
   orderBy, 
   onSnapshot,
   Timestamp,
   DocumentSnapshot,
   QuerySnapshot,
   DocumentReference,
-  limit as firestoreLimit,
-  and
+  limit as firestoreLimit
 } from 'firebase/firestore';
 import { Observable, from, map, catchError, of, BehaviorSubject, throwError } from 'rxjs';
 import { FirebaseService } from './firebase.service';
@@ -29,7 +27,7 @@ import { PlannedLesson } from '../core/models/planned-lesson.model';
  */
 export interface CreatePlannedLessonInput {
   plannedDate: string;
-  IsFormalClass?: boolean;
+  IsFormalClass: boolean;
   title?: string;
   unitNumber?: string;
   lessonNumber?: string;
@@ -124,6 +122,23 @@ export class PlannedLessonService {
     this.initializeUpcomingListener();
   }
 
+  private mapLessonSnapshot(snapshot: QuerySnapshot): PlannedLesson[] {
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data()['createdAt']?.toDate() || new Date(),
+      updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
+    })) as PlannedLesson[];
+  }
+
+  private isUpcomingLesson(lesson: PlannedLesson, startDate: string): boolean {
+    return !!lesson.active && lesson.plannedDate >= startDate;
+  }
+
+  private isLessonWithinRange(lesson: PlannedLesson, startDate: string, endDate: string): boolean {
+    return !!lesson.active && lesson.plannedDate >= startDate && lesson.plannedDate <= endDate;
+  }
+
   /**
    * Inicializar listener en tiempo real para todas las lecciones planificadas
    */
@@ -167,20 +182,15 @@ export class PlannedLessonService {
       const plannedLessonsRef = collection(this.firebaseService.db, this.PLANNED_LESSONS_COLLECTION);
       const q = query(
         plannedLessonsRef,
-        where('active', '==', true),
-        where('plannedDate', '>=', today),
         orderBy('plannedDate', 'asc'),
-        firestoreLimit(10)
+        firestoreLimit(50)
       );
 
       onSnapshot(q, 
         (snapshot: QuerySnapshot) => {
-          const upcomingLessons = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-            createdAt: doc.data()['createdAt']?.toDate() || new Date(),
-            updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
-          })) as PlannedLesson[];
+          const upcomingLessons = this.mapLessonSnapshot(snapshot)
+            .filter(lesson => this.isUpcomingLesson(lesson, today))
+            .slice(0, 10);
           
           this.upcomingLessonsSubject.next(upcomingLessons);
         },
@@ -203,20 +213,15 @@ export class PlannedLessonService {
     const plannedLessonsRef = collection(this.firebaseService.db, this.PLANNED_LESSONS_COLLECTION);
     const q = query(
       plannedLessonsRef,
-      where('active', '==', true),
-      where('plannedDate', '>=', today),
       orderBy('plannedDate', 'asc'),
-      firestoreLimit(limit)
+      firestoreLimit(50)
     );
 
     return from(getDocs(q)).pipe(
-      map((querySnapshot: QuerySnapshot) => 
-        querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data()['createdAt']?.toDate() || new Date(),
-          updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
-        })) as PlannedLesson[]
+      map((querySnapshot: QuerySnapshot) =>
+        this.mapLessonSnapshot(querySnapshot)
+          .filter(lesson => this.isUpcomingLesson(lesson, today))
+          .slice(0, limit)
       ),
       catchError(error => this.handleError('Error al obtener próximas lecciones', error))
     );
@@ -234,23 +239,57 @@ export class PlannedLessonService {
     const plannedLessonsRef = collection(this.firebaseService.db, this.PLANNED_LESSONS_COLLECTION);
     const q = query(
       plannedLessonsRef,
-      where('active', '==', true),
-      where('plannedDate', '>=', startDateString),
-      where('plannedDate', '<=', endDateString),
       orderBy('plannedDate', 'asc')
     );
 
     return from(getDocs(q)).pipe(
-      map((querySnapshot: QuerySnapshot) => 
-        querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data()['createdAt']?.toDate() || new Date(),
-          updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
-        })) as PlannedLesson[]
+      map((querySnapshot: QuerySnapshot) =>
+        this.mapLessonSnapshot(querySnapshot)
+          .filter(lesson => this.isLessonWithinRange(lesson, startDateString, endDateString))
       ),
       catchError(error => this.handleError('Error al obtener lecciones por rango de fechas', error))
     );
+  }
+
+  /**
+   * Normaliza datos para mantener coherencia entre tipo de clase y campos relacionados.
+   */
+  private normalizeLessonByType<T extends { IsFormalClass?: boolean; title?: string; unitNumber?: string; lessonNumber?: string }>(
+    lesson: T
+  ): T {
+    const isFormal = lesson.IsFormalClass ?? true;
+
+    if (isFormal) {
+      return {
+        ...lesson,
+        IsFormalClass: true,
+        title: '',
+        unitNumber: lesson.unitNumber?.trim() ?? '',
+        lessonNumber: lesson.lessonNumber?.trim() ?? ''
+      };
+    }
+
+    return {
+      ...lesson,
+      IsFormalClass: false,
+      title: lesson.title?.trim() ?? '',
+      unitNumber: '',
+      lessonNumber: ''
+    };
+  }
+
+  private normalizePartialLessonUpdate(updates: Partial<PlannedLesson>): Partial<PlannedLesson> {
+    const affectsLessonTypeFields =
+      Object.prototype.hasOwnProperty.call(updates, 'IsFormalClass') ||
+      Object.prototype.hasOwnProperty.call(updates, 'title') ||
+      Object.prototype.hasOwnProperty.call(updates, 'unitNumber') ||
+      Object.prototype.hasOwnProperty.call(updates, 'lessonNumber');
+
+    if (!affectsLessonTypeFields) {
+      return updates;
+    }
+
+    return this.normalizeLessonByType(updates);
   }
 
   /**
@@ -270,13 +309,15 @@ export class PlannedLessonService {
       return this.handleError('No se puede planificar una lección en el pasado', new Error('Fecha inválida'));
     }
 
+    const normalizedInput = this.normalizeLessonByType(lessonInput);
+
     const newLesson: Omit<PlannedLesson, 'id'> = {
-      plannedDate: lessonInput.plannedDate,
-      IsFormalClass: lessonInput.IsFormalClass ?? true,
-      title: lessonInput.title || '',
-      unitNumber: lessonInput.unitNumber || '',
-      lessonNumber: lessonInput.lessonNumber || '',
-      plannedTeacherId: lessonInput.plannedTeacherId,
+      plannedDate: normalizedInput.plannedDate,
+      IsFormalClass: normalizedInput.IsFormalClass,
+      title: normalizedInput.title || '',
+      unitNumber: normalizedInput.unitNumber || '',
+      lessonNumber: normalizedInput.lessonNumber || '',
+      plannedTeacherId: normalizedInput.plannedTeacherId,
       active: true,
       createdBy,
       createdAt: Timestamp.now() as any,
@@ -328,8 +369,9 @@ export class PlannedLessonService {
     this.setError(null);
 
     const lessonRef = doc(this.firebaseService.db, this.PLANNED_LESSONS_COLLECTION, lessonId);
+    const normalizedUpdates = this.normalizePartialLessonUpdate(updates);
     const updateData = {
-      ...updates,
+      ...normalizedUpdates,
       updatedAt: Timestamp.now()
     };
 
@@ -339,8 +381,8 @@ export class PlannedLessonService {
     delete updateData.createdBy;
 
     // Validar fecha si se está actualizando
-    if (updates.plannedDate) {
-      const plannedDate = new Date(updates.plannedDate);
+    if (normalizedUpdates.plannedDate) {
+      const plannedDate = new Date(normalizedUpdates.plannedDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
@@ -406,32 +448,17 @@ export class PlannedLessonService {
     this.setError(null);
     
     const plannedLessonsRef = collection(this.firebaseService.db, this.PLANNED_LESSONS_COLLECTION);
-    let q = query(
+    const q = query(
       plannedLessonsRef,
-      where('plannedTeacherId', '==', teacherId),
       orderBy('plannedDate', 'desc')
     );
 
-    // Si no incluir inactivas, agregar filtro
-    if (!includeInactive) {
-      q = query(
-        plannedLessonsRef,
-        where('plannedTeacherId', '==', teacherId),
-        where('active', '==', true),
-        orderBy('plannedDate', 'desc')
-      );
-    }
-
     return from(getDocs(q)).pipe(
       map((querySnapshot: QuerySnapshot) => {
-        let lessons = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data()['createdAt']?.toDate() || new Date(),
-          updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
-        })) as PlannedLesson[];
+        let lessons = this.mapLessonSnapshot(querySnapshot).filter(
+          lesson => lesson.plannedTeacherId === teacherId
+        );
 
-        // Si includeInactive es false pero no se pudo usar en la query, filtrar aquí
         if (!includeInactive) {
           lessons = lessons.filter(lesson => lesson.active);
         }
@@ -452,21 +479,16 @@ export class PlannedLessonService {
     const plannedLessonsRef = collection(this.firebaseService.db, this.PLANNED_LESSONS_COLLECTION);
     const q = query(
       plannedLessonsRef,
-      where('plannedTeacherId', '==', teacherId),
-      where('active', '==', true),
-      where('plannedDate', '>=', today),
       orderBy('plannedDate', 'asc'),
-      firestoreLimit(limit)
+      firestoreLimit(50)
     );
 
     return from(getDocs(q)).pipe(
-      map((querySnapshot: QuerySnapshot) => 
-        querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data()['createdAt']?.toDate() || new Date(),
-          updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
-        })) as PlannedLesson[]
+      map((querySnapshot: QuerySnapshot) =>
+        this.mapLessonSnapshot(querySnapshot)
+          .filter(lesson => lesson.plannedTeacherId === teacherId)
+          .filter(lesson => this.isUpcomingLesson(lesson, today))
+          .slice(0, limit)
       ),
       catchError(error => this.handleError('Error al obtener próximas lecciones del maestro', error))
     );
@@ -481,19 +503,14 @@ export class PlannedLessonService {
     const plannedLessonsRef = collection(this.firebaseService.db, this.PLANNED_LESSONS_COLLECTION);
     const q = query(
       plannedLessonsRef,
-      where('plannedTeacherId', '==', teacherId),
-      where('plannedDate', '==', plannedDate),
-      where('active', '==', true)
+      orderBy('plannedDate', 'asc')
     );
 
     return from(getDocs(q)).pipe(
       map((querySnapshot: QuerySnapshot) => {
-        let conflicts = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data()['createdAt']?.toDate() || new Date(),
-          updatedAt: doc.data()['updatedAt']?.toDate() || new Date()
-        })) as PlannedLesson[];
+        let conflicts = this.mapLessonSnapshot(querySnapshot).filter(
+          lesson => lesson.active && lesson.plannedTeacherId === teacherId && lesson.plannedDate === plannedDate
+        );
 
         // Excluir la lección que se está editando
         if (excludeLessonId) {
