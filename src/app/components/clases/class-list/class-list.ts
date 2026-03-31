@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { concatMap, finalize, map, Observable } from 'rxjs';
 import {
   CreateCustomClassInput,
@@ -51,6 +50,12 @@ interface ClassEditorFormData {
   notes: string;
 }
 
+interface QuickStudentFormData {
+  name: string;
+  birthDate: string;
+  phone: string;
+}
+
 @Component({
   selector: 'app-class-list',
   imports: [CommonModule],
@@ -66,7 +71,6 @@ export class ClassList {
   private dateService = inject(DateService);
   private userService = inject(UserService);
   private appConfigService = inject(AppConfigService);
-  private router = inject(Router);
 
   classStats = this.lessonClassService.classStats;
   todayClass = this.lessonClassService.todayClass;
@@ -91,6 +95,11 @@ export class ClassList {
   attendanceFocus = signal<AttendanceFocus>('absent');
   studentSearchTerm = signal('');
   attendanceByStudent = signal<Record<string, boolean>>({});
+  showQuickStudentModal = signal(false);
+  quickStudentForm = signal<QuickStudentFormData>(this.buildDefaultQuickStudentFormData());
+  quickStudentErrors = signal<Record<string, string>>({});
+  isCreatingStudent = signal(false);
+  isDeactivatingClass = signal(false);
 
   formData = signal<ClassEditorFormData>(this.buildDefaultFormData('planned'));
 
@@ -318,6 +327,14 @@ export class ClassList {
     }, {});
   }
 
+  private buildDefaultQuickStudentFormData(): QuickStudentFormData {
+    return {
+      name: '',
+      birthDate: '',
+      phone: '',
+    };
+  }
+
   private parseLocalDate(dateString: string): Date {
     const [year, month, day] = dateString.split('-').map(Number);
     return new Date(year, month - 1, day);
@@ -495,6 +512,51 @@ export class ClassList {
     }
 
     return this.lessonClassService.createCustom(classPayload, currentUserId);
+  }
+
+  private isQuickStudentBirthDateValid(birthDate: string): boolean {
+    const parsedBirthDate = this.parseLocalDate(birthDate);
+    const today = this.startOfDay(new Date());
+
+    if (parsedBirthDate.getTime() > today.getTime()) {
+      return false;
+    }
+
+    const youngestAllowedDate = new Date(today);
+    youngestAllowedDate.setFullYear(today.getFullYear() - 11);
+
+    const oldestAllowedDate = new Date(today);
+    oldestAllowedDate.setFullYear(today.getFullYear() - 20);
+
+    return parsedBirthDate.getTime() <= youngestAllowedDate.getTime() && parsedBirthDate.getTime() >= oldestAllowedDate.getTime();
+  }
+
+  private validateQuickStudentForm(): boolean {
+    const form = this.quickStudentForm();
+    const errors: Record<string, string> = {};
+
+    if (!form.name.trim()) {
+      errors['name'] = 'El nombre es obligatorio.';
+    } else if (form.name.trim().length < 2) {
+      errors['name'] = 'El nombre debe tener al menos 2 caracteres.';
+    }
+
+    if (!form.birthDate.trim()) {
+      errors['birthDate'] = 'El cumpleaños es obligatorio.';
+    } else if (!this.isQuickStudentBirthDateValid(form.birthDate)) {
+      errors['birthDate'] = 'La edad permitida es entre 11 y 20 años.';
+    }
+
+    const normalizedPhone = form.phone.trim();
+    const phoneRegex = /^[\d\s\-\+\(\)]{8,20}$/;
+    if (!normalizedPhone) {
+      errors['phone'] = 'El teléfono es obligatorio.';
+    } else if (!phoneRegex.test(normalizedPhone) || normalizedPhone.replace(/\D/g, '').length < 8) {
+      errors['phone'] = 'Ingrese un teléfono válido.';
+    }
+
+    this.quickStudentErrors.set(errors);
+    return Object.keys(errors).length === 0;
   }
 
   getRelativeTime(daysSince: number): string {
@@ -739,8 +801,101 @@ export class ClassList {
       });
   }
 
+  deactivateCurrentClass(): void {
+    const classId = this.selectedClassId();
+
+    if (this.editorMode() !== 'edit' || !classId) {
+      return;
+    }
+
+    const shouldDeactivate = window.confirm(
+      'Esta accion inactivara la clase para quitar pruebas o errores. Desea continuar?'
+    );
+
+    if (!shouldDeactivate) {
+      return;
+    }
+
+    this.isDeactivatingClass.set(true);
+    this.saveError.set(null);
+    this.saveSuccess.set(null);
+
+    this.lessonClassService
+      .deactivate(classId, 'Inactivada desde editor de asistencia')
+      .pipe(finalize(() => this.isDeactivatingClass.set(false)))
+      .subscribe({
+        next: () => {
+          this.saveSuccess.set('Clase inactivada correctamente.');
+          this.closeEditor();
+        },
+        error: error => {
+          console.error('Error inactivando clase:', error);
+          this.saveError.set('No se pudo inactivar la clase. Intente nuevamente.');
+        },
+      });
+  }
+
   openNewStudentForm(): void {
-    void this.router.navigate(['/dashboard/estudiantes/nuevo']);
+    this.showQuickStudentModal.set(true);
+    this.quickStudentForm.set(this.buildDefaultQuickStudentFormData());
+    this.quickStudentErrors.set({});
+    this.saveError.set(null);
+  }
+
+  closeQuickStudentModal(): void {
+    if (this.isCreatingStudent()) {
+      return;
+    }
+
+    this.showQuickStudentModal.set(false);
+    this.quickStudentErrors.set({});
+  }
+
+  updateQuickStudentField(field: keyof QuickStudentFormData, value: string): void {
+    this.quickStudentForm.update(current => ({
+      ...current,
+      [field]: value,
+    }));
+
+    this.quickStudentErrors.update(current => {
+      const nextErrors = { ...current };
+      delete nextErrors[field];
+      return nextErrors;
+    });
+  }
+
+  saveQuickStudent(): void {
+    if (!this.validateQuickStudentForm()) {
+      return;
+    }
+
+    const form = this.quickStudentForm();
+    this.isCreatingStudent.set(true);
+    this.saveError.set(null);
+
+    this.studentService
+      .createStudent({
+        name: form.name.trim(),
+        birthDate: form.birthDate.trim(),
+        phone: form.phone.trim(),
+      })
+      .pipe(finalize(() => this.isCreatingStudent.set(false)))
+      .subscribe({
+        next: studentId => {
+          this.attendanceByStudent.update(current => ({
+            ...current,
+            [studentId]: true,
+          }));
+          this.showQuickStudentModal.set(false);
+          this.quickStudentForm.set(this.buildDefaultQuickStudentFormData());
+          this.quickStudentErrors.set({});
+          this.saveSuccess.set('Estudiante agregado. Ya puede marcar su asistencia.');
+        },
+        error: error => {
+          console.error('Error creando estudiante rapido:', error);
+          this.saveError.set('No se pudo crear el estudiante. Intente nuevamente.');
+        },
+      });
   }
 
   refresh(): void {

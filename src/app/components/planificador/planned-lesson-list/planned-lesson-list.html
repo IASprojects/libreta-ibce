@@ -180,10 +180,25 @@
               type="button"
               class="action-btn action-edit"
               (click)="openEditLessonForm(lesson)"
+              [disabled]="isDeactivatingLesson(lesson.id)"
               aria-label="Editar lección"
               title="Editar"
             >
               ✏️ Editar
+            </button>
+            <button
+              type="button"
+              class="action-btn action-deactivate"
+              (click)="deactivateLesson(lesson)"
+              [disabled]="isDeactivatingLesson(lesson.id)"
+              [attr.aria-label]="'Inactivar lección ' + lesson.displayTitle"
+              title="Inactivar"
+            >
+              @if (isDeactivatingLesson(lesson.id)) {
+                Inactivando...
+              } @else {
+                🛑 Inactivar
+              }
             </button>
           </div>
         </article>

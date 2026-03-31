@@ -90,6 +90,11 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
 
+## Validación Obligatoria
+
+- Después de cada cambio aplicado por Copilot, ejecutar ng build.
+- Si ng build falla, corregir los errores relacionados con el cambio antes de dar la tarea por finalizada.
+
 Switch to the spanish language for explain context and requirements:
 ## Contexto del Proyecto
 

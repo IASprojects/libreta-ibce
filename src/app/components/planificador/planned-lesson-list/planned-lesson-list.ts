@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 import { PlannedLessonService } from '../../../services/planned-lesson.service';
 import { DateService } from '../../../services/date.service';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
@@ -46,6 +47,7 @@ export class PlannedLessonList {
   showForm = signal(false);
   editingLesson = signal<PlannedLesson | null>(null);
   formMode = computed(() => this.editingLesson() ? 'edit' : 'create');
+  deactivatingLessonId = signal<string | null>(null);
 
   // Lecciones con datos calculados para la vista
   lessonsDisplay = computed(() => {
@@ -246,6 +248,35 @@ export class PlannedLessonList {
 
   onFormCancelled(): void {
     this.closeForm();
+  }
+
+  deactivateLesson(lesson: PlannedLesson): void {
+    const shouldDeactivate = window.confirm(
+      'Esta accion inactivara la clase planificada y no se mostrara para crear clases reales. Desea continuar?'
+    );
+
+    if (!shouldDeactivate) {
+      return;
+    }
+
+    this.deactivatingLessonId.set(lesson.id);
+    this.plannedLessonService
+      .deactivate(lesson.id)
+      .pipe(finalize(() => this.deactivatingLessonId.set(null)))
+      .subscribe({
+        next: () => {
+          if (this.editingLesson()?.id === lesson.id) {
+            this.closeForm();
+          }
+        },
+        error: error => {
+          console.error('Error inactivando clase planificada:', error);
+        },
+      });
+  }
+
+  isDeactivatingLesson(lessonId: string): boolean {
+    return this.deactivatingLessonId() === lessonId;
   }
 
   // Track by para rendimiento

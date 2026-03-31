@@ -232,7 +232,7 @@
           "type": "boolean",
           "required": true,
           "default": true,
-          "description": "¿La planificación está activa? (false si se canceló)"
+          "description": "Activo = true (visible en la app), Inactivo = false (oculto pero no eliminado) - no debe aparecer en el calendario si es inactivo, ni permitirse seleccionar al crear una clase real a partir de esta planificación"
         },
         "createdBy": {
           "type": "string",
@@ -295,7 +295,7 @@
           "type": "boolean",
           "required": true,
           "default": true,
-          "description": "¿La clase está activa o fue cancelada?"
+          "description": "Activo = true (visible en la app), Inactivo = false (oculto pero no eliminado, no se toma en cuenta en cálculos de asistencia)"
         },
         "createdBy": {
           "type": "string",

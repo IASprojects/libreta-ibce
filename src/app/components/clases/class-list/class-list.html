@@ -366,12 +366,26 @@
 
       <!-- Form Actions -->
       <div class="editor-actions">
+        @if (editorMode() === 'edit') {
+          <button
+            type="button"
+            class="btn-danger"
+            (click)="deactivateCurrentClass()"
+            (keydown.enter)="deactivateCurrentClass()"
+            [disabled]="isSaving() || isDeactivatingClass()">
+            @if (isDeactivatingClass()) {
+              Inactivando...
+            } @else {
+              Inactivar Clase
+            }
+          </button>
+        }
         <button
           type="button"
           class="btn-secondary"
           (click)="closeEditor()"
           (keydown.enter)="closeEditor()"
-          [disabled]="isSaving()">
+          [disabled]="isSaving() || isDeactivatingClass()">
           Cancelar
         </button>
         <button
@@ -379,7 +393,7 @@
           class="btn-primary"
           (click)="saveClassAttendance()"
           (keydown.enter)="saveClassAttendance()"
-          [disabled]="isSaving()">
+          [disabled]="isSaving() || isDeactivatingClass()">
           @if (isSaving()) {
             Guardando...
           } @else {
@@ -563,4 +577,115 @@
     </section>
   }
 </main>
+
+@if (showQuickStudentModal()) {
+  <div
+    class="quick-student-modal-backdrop"
+    role="presentation"
+    (click)="closeQuickStudentModal()"
+    (keydown.enter)="closeQuickStudentModal()">
+    <section
+      class="quick-student-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="quick-student-modal-title"
+      aria-describedby="quick-student-modal-description"
+      (click)="$event.stopPropagation()"
+      (keydown.enter)="$event.stopPropagation()">
+      <header class="quick-student-modal-header">
+        <div>
+          <h3 id="quick-student-modal-title">Agregar estudiante rápido</h3>
+          <p id="quick-student-modal-description">Solo complete los datos esenciales para marcar asistencia.</p>
+        </div>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeQuickStudentModal()"
+          (keydown.enter)="closeQuickStudentModal()"
+          [disabled]="isCreatingStudent()"
+          aria-label="Cerrar modal de estudiante rápido">
+          ✕
+        </button>
+      </header>
+
+      <div class="quick-student-modal-body">
+        <div class="form-row">
+          <label for="quickStudentName" class="form-label">Nombre</label>
+          <input
+            id="quickStudentName"
+            type="text"
+            class="form-control"
+            [value]="quickStudentForm().name"
+            (input)="updateQuickStudentField('name', $any($event.target).value)"
+            [class.error]="!!quickStudentErrors()['name']"
+            [disabled]="isCreatingStudent()"
+            autocomplete="name"
+            [attr.aria-label]="'Nombre del estudiante'"
+            [attr.aria-invalid]="!!quickStudentErrors()['name']" />
+          @if (quickStudentErrors()['name']) {
+            <p class="form-error">{{ quickStudentErrors()['name'] }}</p>
+          }
+        </div>
+
+        <div class="form-row">
+          <label for="quickStudentBirthDate" class="form-label">Cumpleaños</label>
+          <input
+            id="quickStudentBirthDate"
+            type="date"
+            class="form-control"
+            [value]="quickStudentForm().birthDate"
+            (change)="updateQuickStudentField('birthDate', $any($event.target).value)"
+            [class.error]="!!quickStudentErrors()['birthDate']"
+            [disabled]="isCreatingStudent()"
+            [attr.aria-label]="'Fecha de cumpleaños del estudiante'"
+            [attr.aria-invalid]="!!quickStudentErrors()['birthDate']" />
+          @if (quickStudentErrors()['birthDate']) {
+            <p class="form-error">{{ quickStudentErrors()['birthDate'] }}</p>
+          }
+        </div>
+
+        <div class="form-row">
+          <label for="quickStudentPhone" class="form-label">Teléfono del estudiante</label>
+          <input
+            id="quickStudentPhone"
+            type="tel"
+            class="form-control"
+            [value]="quickStudentForm().phone"
+            (input)="updateQuickStudentField('phone', $any($event.target).value)"
+            [class.error]="!!quickStudentErrors()['phone']"
+            [disabled]="isCreatingStudent()"
+            autocomplete="tel"
+            [attr.aria-label]="'Teléfono del estudiante'"
+            [attr.aria-invalid]="!!quickStudentErrors()['phone']" />
+          @if (quickStudentErrors()['phone']) {
+            <p class="form-error">{{ quickStudentErrors()['phone'] }}</p>
+          }
+        </div>
+      </div>
+
+      <footer class="quick-student-modal-actions">
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="closeQuickStudentModal()"
+          (keydown.enter)="closeQuickStudentModal()"
+          [disabled]="isCreatingStudent()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="saveQuickStudent()"
+          (keydown.enter)="saveQuickStudent()"
+          [disabled]="isCreatingStudent()">
+          @if (isCreatingStudent()) {
+            Guardando...
+          } @else {
+            Guardar estudiante
+          }
+        </button>
+      </footer>
+    </section>
+  </div>
+}
 

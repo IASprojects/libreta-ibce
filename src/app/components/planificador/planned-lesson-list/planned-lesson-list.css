@@ -323,6 +323,22 @@
   border-color: #3730a3;
 }
 
+.action-deactivate {
+  background: #dc2626;
+  color: white;
+}
+
+.action-deactivate:hover:not(:disabled) {
+  background: #b91c1c;
+  border-color: #991b1b;
+}
+
+.action-deactivate:disabled,
+.action-edit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 /* Estados de carga y error */
 .loading-container,
 .error-container,
