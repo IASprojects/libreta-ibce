@@ -14,7 +14,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--app-color-border);
 }
 
 .user-details {
@@ -25,17 +25,17 @@
 
 .user-name {
   font-weight: 600;
-  color: #333;
+  color: var(--app-ink-strong);
   font-size: 0.9rem;
 }
 
 .user-email {
   font-size: 0.75rem;
-  color: #666;
+  color: var(--app-ink-medium);
 }
 
 .logout-btn {
-  background: #dc3545;
+  background: var(--app-color-danger);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -49,7 +49,7 @@
 }
 
 .logout-btn:hover {
-  background: #c82333;
+  background: color-mix(in srgb, var(--app-color-danger) 82%, #5d1f18 18%);
   transform: translateY(-1px);
 }
 

@@ -1,20 +1,15 @@
-/* Contenedor principal del menú */
 .dashboard-menu {
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 280px;
-  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(180deg, var(--app-sidebar-bg) 0%, var(--app-sidebar-bg-alt) 100%);
+  color: var(--app-sidebar-ink);
+  box-shadow: 4px 0 20px rgba(28, 25, 23, 0.24);
   display: flex;
   flex-direction: column;
-  z-index: 1000;
-  transition: transform 0.3s ease;
+  transition: width 0.25s ease;
+  overflow: hidden;
 }
 
-/* Header del menú */
 .menu-header {
   padding: 2rem 1.5rem 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -24,12 +19,11 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: white;
+  color: var(--app-sidebar-ink);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* Lista de elementos del menú */
 .menu-list {
   list-style: none;
   padding: 1rem 0;
@@ -47,7 +41,7 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  color: rgba(255, 255, 255, 0.85);
+  color: color-mix(in srgb, var(--app-sidebar-ink) 85%, #cfc5bb 15%);
   text-decoration: none;
   transition: all 0.2s ease;
   border-left: 4px solid transparent;
@@ -55,33 +49,43 @@
 }
 
 .menu-link:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border-left-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fffaf4;
+  border-left-color: color-mix(in srgb, var(--app-color-primary) 55%, white 45%);
 }
 
 .menu-link.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border-left-color: white;
+  background: color-mix(in srgb, var(--app-color-primary) 24%, transparent);
+  color: #fffaf4;
+  border-left-color: var(--app-color-primary);
   font-weight: 600;
 }
 
 .menu-icon {
-  font-size: 1.5rem;
   width: 2rem;
   height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.menu-icon svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .menu-label {
   font-size: 1rem;
   flex: 1;
+  white-space: nowrap;
 }
 
-/* Footer del menú */
 .menu-footer {
   padding: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -91,101 +95,81 @@
 .menu-footer-text {
   margin: 0;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: color-mix(in srgb, var(--app-sidebar-ink) 72%, #b2a59a 28%);
   text-align: center;
+  white-space: nowrap;
 }
 
-/* Botón hamburguesa (oculto en desktop) */
-.menu-toggle {
-  display: none;
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1100;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  width: 48px;
-  height: 48px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s ease;
+.dashboard-menu.collapsed .menu-header,
+.dashboard-menu.collapsed .menu-footer {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
-.menu-toggle:hover {
-  background: #764ba2;
-  transform: scale(1.05);
+.dashboard-menu.collapsed .menu-title,
+.dashboard-menu.collapsed .menu-label,
+.dashboard-menu.collapsed .menu-footer-text {
+  opacity: 0;
+  visibility: hidden;
+  width: 0;
+  overflow: hidden;
 }
 
-.menu-toggle:active {
-  transform: scale(0.95);
-}
-
-.hamburger-icon {
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
+.dashboard-menu.collapsed .menu-link {
   justify-content: center;
+  padding: 0.95rem 0.75rem;
 }
 
-/* Overlay para cerrar menú en móviles */
-.menu-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
+.dashboard-menu.collapsed .menu-icon {
+  margin: 0;
 }
 
-/* Responsive Design - Tablets y móviles */
 @media (max-width: 768px) {
-  /* Mostrar botón hamburguesa */
-  .menu-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .dashboard-menu,
+  .dashboard-menu.collapsed {
+    width: 100%;
   }
 
-  /* Menú fuera de pantalla por defecto */
-  .dashboard-menu {
-    transform: translateX(-100%);
+  .dashboard-menu .menu-title,
+  .dashboard-menu .menu-label,
+  .dashboard-menu .menu-footer-text,
+  .dashboard-menu.collapsed .menu-title,
+  .dashboard-menu.collapsed .menu-label,
+  .dashboard-menu.collapsed .menu-footer-text {
+    opacity: 1;
+    visibility: visible;
+    width: auto;
+    overflow: visible;
   }
 
-  /* Menú abierto */
-  .dashboard-menu.menu-open {
-    transform: translateX(0);
+  .dashboard-menu .menu-link,
+  .dashboard-menu.collapsed .menu-link {
+    justify-content: flex-start;
+    padding: 1rem 1.25rem;
   }
 
-  /* Mostrar overlay cuando el menú está abierto */
-  .menu-overlay {
-    display: block;
-  }
-
-  /* Reducir ancho del menú en móviles */
-  .dashboard-menu {
-    width: 260px;
+  .dashboard-menu .menu-header,
+  .dashboard-menu .menu-footer,
+  .dashboard-menu.collapsed .menu-header,
+  .dashboard-menu.collapsed .menu-footer {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
 
-/* Móviles pequeños */
 @media (max-width: 480px) {
-  .dashboard-menu {
-    width: 80%;
-    max-width: 280px;
-  }
-
   .menu-link {
-    padding: 0.875rem 1.25rem;
+    padding: 0.85rem 1.1rem;
   }
 
   .menu-icon {
-    font-size: 1.25rem;
     width: 1.75rem;
     height: 1.75rem;
+  }
+
+  .menu-icon svg {
+    width: 1.2rem;
+    height: 1.2rem;
   }
 
   .menu-label {
@@ -193,7 +177,6 @@
   }
 }
 
-/* Scrollbar personalizado para el menú */
 .menu-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -209,9 +192,4 @@
 
 .menu-list::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
-}
-
-/* Animación suave para todos los estados */
-* {
-  -webkit-tap-highlight-color: transparent;
 }

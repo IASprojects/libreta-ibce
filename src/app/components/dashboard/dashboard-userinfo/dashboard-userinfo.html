@@ -1,11 +1,7 @@
 @if (user(); as currentUser) {
   <div class="user-section">
     <div class="user-info">
-      <img [src]="currentUser.photoURL" [alt]="currentUser.displayName" class="user-avatar" />
-      <div class="user-details">
-        <span class="user-name">{{ currentUser.displayName }}</span>
-        <span class="user-email">{{ currentUser.email }}</span>
-      </div>
+      <img [src]="currentUser.photoURL" [alt]="currentUser.displayName" class="user-avatar" [title]="currentUser.displayName"/>     
     </div>
     <button class="logout-btn" (click)="onLogout()" title="Cerrar sesión">
       <svg
@@ -20,7 +16,7 @@
         <polyline points="16 17 21 12 16 7" />
         <line x1="21" y1="12" x2="9" y2="12" />
       </svg>
-      Salir
+      
     </button>
   </div>
 }

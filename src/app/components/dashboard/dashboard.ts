@@ -5,11 +5,11 @@ import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { DateService } from '../../services/date.service';
 import { DashboardMetrics } from './dashboard-metrics/dashboard-metrics';
-import { DashboardUserinfo } from './dashboard-userinfo/dashboard-userinfo';
+import { ModuleHeader } from '../ui/module-header/module-header';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, DashboardMetrics, DashboardUserinfo],
+  imports: [CommonModule, DashboardMetrics, ModuleHeader],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -22,10 +22,5 @@ export class Dashboard {
   user = this.userService.user;
   currentMonth = this.dateService.currentMonth;
   
-  /**
-   * Cerrar sesión
-   */
-  async signOut(): Promise<void> {
-    await this.authService.signOut();
-  }
+ 
 }

@@ -1,19 +1,19 @@
 .section-card {
-  background: white;
+  background: var(--app-color-surface);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  box-shadow: var(--app-shadow-sm);
   transition: all 0.3s ease;
 }
 
 .section-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  box-shadow: var(--app-shadow-md);
 }
 
 .section-title {
   margin: 0 0 1.5rem 0;
-  color: #333;
+  color: var(--app-ink-strong);
   font-size: 1.25rem;
   font-weight: 700;
   display: flex;
@@ -33,20 +33,20 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: #f8f9fa;
+  background: var(--app-color-surface-muted);
   border-radius: 12px;
   transition: all 0.3s ease;
 }
 
 .birthday-item:hover {
-  background: #e9ecef;
+  background: var(--app-color-border);
   transform: translateX(4px);
 }
 
 .birthday-avatar {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--app-gradient-accent);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -64,12 +64,12 @@
 
 .birthday-name {
   font-weight: 600;
-  color: #333;
+  color: var(--app-ink-strong);
   font-size: 1rem;
 }
 
 .birthday-date {
-  color: #666;
+  color: var(--app-ink-medium);
   font-size: 0.85rem;
 }
 
@@ -79,7 +79,7 @@
 
 .no-birthdays {
   text-align: center;
-  color: #666;
+  color: var(--app-ink-soft);
   font-style: italic;
   padding: 2rem;
 }

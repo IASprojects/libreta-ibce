@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { StudentService } from '../../../services/student.service';
 import { DateService } from '../../../services/date.service';
 import { Student } from '../../../core/models/student.model';
 import { StudentCard, StudentCardData } from '../student-card/student-card';
+import { ModuleHeader } from '../../ui/module-header/module-header';
 
 /**
  * Estudiante con datos calculados para la vista
@@ -18,9 +19,10 @@ interface StudentDisplay extends StudentCardData {
 
 @Component({
   selector: 'app-student-list',
-  imports: [CommonModule, FormsModule, StudentCard],
+  imports: [CommonModule, FormsModule, StudentCard, ModuleHeader],
   templateUrl: './student-list.html',
   styleUrl: './student-list.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StudentList {
   private studentService = inject(StudentService);
@@ -67,6 +69,10 @@ export class StudentList {
   upcomingBirthdays = computed(() => 
     this.filteredStudents().filter(s => s.hasUpcomingBirthday).length
   );
+  studentSubtitle = computed(() => {
+    const total = this.totalStudents();
+    return `${total} estudiante${total !== 1 ? 's' : ''} activo${total !== 1 ? 's' : ''}`;
+  });
 
   // UI States
   showNoResults = computed(() => 

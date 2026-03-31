@@ -1,0 +1,99 @@
+:host {
+  display: block;
+}
+
+.shell-topbar {
+  min-height: 74px;
+  background: var(--app-color-surface);
+  border-bottom: 1px solid var(--app-color-border);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 15;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.topbar-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid color-mix(in srgb, var(--app-color-primary) 22%, var(--app-color-border-strong));
+  border-radius: var(--app-radius-sm);
+  background: color-mix(in srgb, var(--app-color-primary) 10%, var(--app-color-surface-muted));
+  color: var(--app-color-primary-strong);
+  cursor: pointer;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.topbar-btn:hover {
+  background: color-mix(in srgb, var(--app-color-primary) 18%, var(--app-color-surface-muted));
+}
+
+.topbar-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--app-color-primary) 65%, white 35%);
+  outline-offset: 2px;
+}
+
+.topbar-title-wrap {
+  min-width: 0;
+}
+
+.topbar-eyebrow {
+  margin: 0;
+  color: var(--app-ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.1;
+}
+
+.topbar-title {
+  margin: 0.1rem 0 0;
+  color: var(--app-ink-strong);
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .shell-topbar {
+    padding: 0.65rem 0.9rem;
+  }
+
+  .topbar-title {
+    font-size: 1.05rem;
+  }
+}

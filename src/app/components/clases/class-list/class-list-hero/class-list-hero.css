@@ -1,0 +1,112 @@
+:host {
+  display: block;
+}
+
+.hero-section {
+  background: var(--app-gradient-accent);
+  color: white;
+  padding: 1rem 1rem 0.9rem;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.11);
+}
+
+.hero-section.with-editor {
+  display: none;
+}
+
+.hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-section h1 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  margin: 0 0 0.8rem 0;
+  font-size: 0.92rem;
+  opacity: 0.95;
+}
+
+.quick-actions {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  margin-top: 0.6rem;
+}
+
+.action-card {
+  padding: 0.75rem 0.85rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--app-radius-md);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.action-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.action-card .icon {
+  font-size: 1.15rem;
+}
+
+.action-card .label {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.action-card .description {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 2rem 1rem;
+  }
+
+  .hero-section h1 {
+    font-size: 1.75rem;
+  }
+
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+}

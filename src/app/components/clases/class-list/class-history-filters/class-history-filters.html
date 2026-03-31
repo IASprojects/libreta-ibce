@@ -1,0 +1,61 @@
+<div class="filters-section">
+  <div class="filter-group">
+    <label for="teacherFilter" class="filter-label">Maestro:</label>
+    <select
+      id="teacherFilter"
+      class="filter-select"
+      [value]="filterTeacher()"
+      (change)="onTeacherChange($any($event.target).value)"
+    >
+      <option value="all">Todos</option>
+      @for (teacher of uniqueTeachers(); track teacher) {
+        <option [value]="teacher">{{ teacher }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label for="periodFilter" class="filter-label">Periodo:</label>
+    <select
+      id="periodFilter"
+      class="filter-select"
+      [value]="filterPeriod()"
+      (change)="onPeriodChange($any($event.target).value)"
+    >
+      <option value="all">Todos</option>
+      <option value="today">Hoy</option>
+      <option value="week">Esta Semana</option>
+      <option value="month">Este Mes</option>
+      <option value="year">Este Año</option>
+    </select>
+  </div>
+
+  <div class="filter-group search-group">
+    <div class="search-input-wrap">
+      <input
+        type="text"
+        class="filter-search"
+        placeholder="Buscar clase..."
+        [value]="searchTerm()"
+        (input)="onSearchChange($any($event.target).value)"
+        [attr.aria-label]="'Buscar clase'"
+      />
+      @if (searchTerm()) {
+        <button
+          type="button"
+          class="clear-search-btn"
+          (click)="onClearSearch()"
+          aria-label="Limpiar busqueda"
+        >
+          ✕
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (showClearFilters()) {
+    <button type="button" class="btn-secondary" (click)="onClearFilters()" aria-label="Limpiar filtros">
+      Limpiar Filtros
+    </button>
+  }
+</div>

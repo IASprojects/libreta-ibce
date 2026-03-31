@@ -1,13 +1,11 @@
 <div class="dashboard-container">
-  <!-- Header con usuario -->
-  <header class="dashboard-header">
-    <div class="app-title">
-      <h1>📔 Libreta IBCE ({{ currentMonth() }})</h1>
-    </div>   
-    <app-dashboard-userinfo (logoutClick)="signOut()"></app-dashboard-userinfo>
-  </header>
-
-
+  <div class="module-header-wrap">
+    <app-module-header
+      title="Panel General"
+      [subtitle]="'Estado de ' + currentMonth()"
+      eyebrow="Resumen"
+    ></app-module-header>
+  </div>
   <!-- Componente de métricas con toda la información detallada -->
   <app-dashboard-metrics></app-dashboard-metrics>
 </div>

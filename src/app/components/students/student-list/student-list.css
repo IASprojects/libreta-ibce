@@ -1,47 +1,27 @@
 /* Contenedor principal */
 .student-list-container {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: var(--app-color-bg);
   padding-bottom: 5rem; /* Espacio para el FAB */
 }
 
-/* Header */
-.list-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 2rem 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+/* Búsqueda */
+.module-header-wrap {
+  padding: 0.85rem 0.85rem 0;
 }
 
-.header-content {
-  margin-bottom: 1.5rem;
-}
-
-.page-title {
-  margin: 0 0 0.5rem 0;
-  font-size: 2rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.title-icon {
-  font-size: 2rem;
-}
-
-.page-subtitle {
-  margin: 0;
-  font-size: 1rem;
-  opacity: 0.95;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+.search-section {
+  padding: 0.5rem 0.85rem 0.6rem;
+  background: var(--app-color-surface);
+  border: 1px solid var(--app-color-border);
+  border-radius: var(--app-radius-md);
+  margin: 0 0.85rem;
+  box-shadow: var(--app-shadow-sm);
 }
 
 .birthday-badge {
-  background: rgba(255, 255, 255, 0.25);
+  background: color-mix(in srgb, var(--app-color-warning) 18%, transparent);
+  color: var(--app-ink-strong);
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.875rem;
@@ -50,7 +30,7 @@
 
 /* Búsqueda */
 .search-container {
-  max-width: 600px;
+  max-width: 720px;
 }
 
 .search-input-wrapper {
@@ -68,19 +48,19 @@
 
 .search-input {
   width: 100%;
-  padding: 0.875rem 3rem 0.875rem 3rem;
+  padding: 0.7rem 2.75rem 0.7rem 2.7rem;
   border: 2px solid transparent;
-  border-radius: 12px;
-  font-size: 1rem;
-  background: white;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: var(--app-color-surface);
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+  border-color: var(--app-color-primary);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--app-color-primary) 30%, transparent);
 }
 
 .clear-search-btn {
@@ -96,34 +76,34 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #666;
+  color: var(--app-ink-soft);
   font-size: 1.25rem;
   font-weight: 600;
 }
 
 .clear-search-btn:hover {
   background: rgba(0, 0, 0, 0.15);
-  color: #333;
+  color: var(--app-ink-strong);
 }
 
 .clear-search-btn:focus {
-  outline: 2px solid #667eea;
+  outline: 2px solid var(--app-color-primary);
   outline-offset: 2px;
 }
 
 .search-results-text {
-  margin: 0.5rem 0 0 0;
-  font-size: 0.875rem;
-  opacity: 0.9;
+  margin: 0.4rem 0 0 0;
+  font-size: 0.82rem;
+  color: var(--app-ink-medium);
 }
 
 /* Lista de estudiantes */
 .student-list {
   list-style: none;
-  padding: 1rem;
+  padding: 0.85rem;
   margin: 0;
   display: grid;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
 /* Estados de carga y error */
@@ -138,8 +118,8 @@
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(102, 126, 234, 0.2);
-  border-top-color: #667eea;
+  border: 4px solid color-mix(in srgb, var(--app-color-primary) 25%, transparent);
+  border-top-color: var(--app-color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 1rem;
@@ -150,14 +130,14 @@
 }
 
 .loading-text {
-  color: #666;
+  color: var(--app-ink-soft);
   font-size: 1rem;
   margin: 0;
 }
 
 .error-container {
-  background: #f8d7da;
-  border-radius: 12px;
+  background: color-mix(in srgb, var(--app-color-danger) 16%, white);
+  border-radius: var(--app-radius-md);
   margin: 1rem;
 }
 
@@ -168,17 +148,17 @@
 }
 
 .error-text {
-  color: #721c24;
+  color: #7f1d1d;
   margin: 0 0 1rem 0;
   font-size: 1rem;
 }
 
 .retry-btn {
-  background: #dc3545;
+  background: var(--app-color-danger);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: var(--app-radius-sm);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -186,7 +166,7 @@
 }
 
 .retry-btn:hover {
-  background: #c82333;
+  background: #991b1b;
   transform: translateY(-1px);
 }
 
@@ -205,24 +185,24 @@
 
 .no-results-title,
 .empty-title {
-  color: #333;
+  color: var(--app-ink-strong);
   font-size: 1.5rem;
   margin: 0 0 0.5rem 0;
 }
 
 .no-results-text,
 .empty-text {
-  color: #666;
+  color: var(--app-ink-medium);
   font-size: 1rem;
   margin: 0 0 1rem 0;
 }
 
 .clear-search-btn-alt {
-  background: #667eea;
+  background: var(--app-color-primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: var(--app-radius-sm);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -230,12 +210,12 @@
 }
 
 .clear-search-btn-alt:hover {
-  background: #5568d3;
+  background: var(--app-color-primary-strong);
   transform: translateY(-1px);
 }
 
 .clear-search-btn-alt:focus {
-  outline: 3px solid #667eea;
+  outline: 3px solid var(--app-color-primary);
   outline-offset: 2px;
 }
 
@@ -247,10 +227,10 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--app-gradient-accent);
   color: white;
   border: none;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--app-shadow-md);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -261,7 +241,7 @@
 
 .fab:hover {
   transform: scale(1.1);
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 12px 32px rgba(71, 85, 183, 0.36);
 }
 
 .fab:active {
@@ -295,30 +275,18 @@
 /* Responsive - Tablets */
 @media (min-width: 768px) {
   .student-list {
-    padding: 1.5rem;
+    padding: 1.1rem;
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .list-header {
-    padding: 2.5rem 2rem;
   }
 }
 
 /* Responsive - Desktop */
 @media (min-width: 1024px) {
   .student-list {
-    padding: 2rem;
+    padding: 1.2rem;
     grid-template-columns: repeat(3, 1fr);
     max-width: 1400px;
     margin: 0 auto;
-  }
-
-  .list-header {
-    padding: 3rem 2rem;
-  }
-
-  .page-title {
-    font-size: 2.5rem;
   }
 }
 
@@ -349,15 +317,3 @@
   }
 }
 
-/* Tema oscuro (preparado para futuro) */
-@media (prefers-color-scheme: dark) {
-  .student-list-container {
-    background: #1a1a1a;
-  }
-
-  .search-input {
-    background: #2a2a2a;
-    color: #e0e0e0;
-    border-color: #444;
-  }
-}

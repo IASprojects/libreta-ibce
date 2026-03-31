@@ -1,0 +1,32 @@
+<header class="shell-topbar">
+  <div class="topbar-left">
+    <button
+      type="button"
+      class="topbar-btn mobile-only"
+      (click)="onMobileMenuToggle()"
+      [attr.aria-label]="mobileMenuOpen() ? 'Cerrar menu' : 'Abrir menu'"
+      [attr.aria-expanded]="mobileMenuOpen()"
+    >
+      {{ mobileMenuOpen() ? '✕' : '☰' }}
+    </button>
+
+    <button
+      type="button"
+      class="topbar-btn desktop-only"
+      (click)="onSidebarToggle()"
+      [attr.aria-label]="sidebarCollapsed() ? 'Expandir menu' : 'Colapsar menu'"
+      [attr.aria-expanded]="!sidebarCollapsed()"
+    >
+      {{ sidebarCollapsed() ? '▸' : '◂' }}
+    </button>
+
+    <div class="topbar-title-wrap">
+      <p class="topbar-eyebrow">{{ eyebrow() }}</p>
+      <h1 class="topbar-title">{{ title() }}</h1>
+    </div>
+  </div>
+
+  <div class="topbar-actions">
+    <ng-content></ng-content>
+  </div>
+</header>

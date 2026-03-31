@@ -1,0 +1,97 @@
+:host {
+  display: block;
+}
+
+.filters-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.search-group {
+  min-width: 210px;
+}
+
+.filter-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--app-ink-strong);
+}
+
+.filter-select,
+.filter-search {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--app-color-border);
+  border-radius: var(--app-radius-md);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  background: var(--app-color-surface);
+  color: var(--app-ink-strong);
+}
+
+.filter-select:focus,
+.filter-search:focus {
+  outline: none;
+  border-color: var(--app-color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-color-primary) 16%, transparent);
+}
+
+.search-input-wrap {
+  position: relative;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 0.45rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--app-color-border) 70%, white 30%);
+  color: var(--app-ink-medium);
+  cursor: pointer;
+}
+
+.clear-search-btn:hover {
+  background: var(--app-color-border-strong);
+}
+
+.btn-secondary {
+  height: 48px;
+  border-radius: var(--app-radius-md);
+  border: 2px solid var(--app-color-border);
+  background: var(--app-color-surface);
+  padding: 0 1rem;
+  color: var(--app-ink-strong);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  border-color: var(--app-color-primary);
+}
+
+@media (max-width: 768px) {
+  .filters-section {
+    flex-direction: column;
+  }
+
+  .filter-group,
+  .btn-secondary {
+    width: 100%;
+  }
+}

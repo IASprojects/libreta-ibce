@@ -1,0 +1,28 @@
+<div class="filter-bar-host">
+  <button
+    type="button"
+    class="mobile-filter-toggle"
+    (click)="onToggleMobile()"
+    [attr.aria-expanded]="mobileOpen()"
+    [attr.aria-label]="mobileOpen() ? 'Cerrar filtros' : 'Abrir filtros'"
+  >
+    {{ mobileOpen() ? 'Cerrar filtros' : mobileTitle() }}
+  </button>
+
+  @if (mobileOpen()) {
+    <button
+      type="button"
+      class="mobile-filters-backdrop"
+      (click)="onCloseMobile()"
+      aria-label="Cerrar panel de filtros"
+    ></button>
+  }
+
+  <div class="filters-container" [class.mobile-open]="mobileOpen()" aria-label="Panel de filtros">
+    <ng-content></ng-content>
+
+    <button type="button" class="mobile-apply-filters" (click)="onApplyMobile()">
+      Aplicar filtros
+    </button>
+  </div>
+</div>

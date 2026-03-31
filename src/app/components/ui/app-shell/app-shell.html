@@ -1,0 +1,25 @@
+<div
+  class="app-shell"
+  [class.sidebar-collapsed]="sidebarCollapsed()"
+  [class.mobile-menu-open]="mobileMenuOpen()"
+>
+  <aside class="shell-sidebar" aria-label="Navegacion principal">
+    <ng-content select="[shellSidebar]"></ng-content>
+  </aside>
+
+  @if (mobileMenuOpen()) {
+    <button
+      type="button"
+      class="shell-overlay"
+      (click)="onOverlayClick()"
+      aria-label="Cerrar menu lateral"
+    ></button>
+  }
+
+  <div class="shell-main">
+    <ng-content select="[shellTopbar]"></ng-content>
+    <main class="shell-content">
+      <ng-content></ng-content>
+    </main>
+  </div>
+</div>

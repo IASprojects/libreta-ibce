@@ -1,24 +1,20 @@
 <div class="student-list-container">
-  <!-- Header con búsqueda y estadísticas -->
-  <header class="list-header">
-    <div class="header-content">
-      <h1 class="page-title">
-        <span class="title-icon" aria-hidden="true">👥</span>
-        Estudiantes
-      </h1>
-      <p class="page-subtitle">
-        {{ totalStudents() }} estudiante{{ totalStudents() !== 1 ? 's' : '' }} activo{{
-          totalStudents() !== 1 ? 's' : ''
-        }}
-        @if (upcomingBirthdays() > 0) {
-          <span class="birthday-badge" aria-label="Cumpleaños próximos">
-            🎂 {{ upcomingBirthdays() }}
-          </span>
-        }
-      </p>
-    </div>
+  <!-- Header compacto -->
+  <div class="module-header-wrap">
+    <app-module-header
+      title="Total Estudiantes:"
+      [subtitle]="studentSubtitle()"
+    >
+      @if (upcomingBirthdays() > 0) {
+        <span class="birthday-badge" aria-label="Cumpleaños próximos">
+          🎂 {{ upcomingBirthdays() }}
+        </span>
+      }
+    </app-module-header>
+  </div>
 
-    <!-- Barra de búsqueda -->
+  <!-- Barra de búsqueda -->
+  <div class="search-section">
     <div class="search-container">
       <label for="student-search" class="visually-hidden">Buscar estudiante</label>
       <div class="search-input-wrapper">
@@ -52,7 +48,7 @@
         </p>
       }
     </div>
-  </header>
+  </div>
 
   <!-- Estado de carga -->
   @if (isLoading()) {

@@ -3,15 +3,16 @@
 }
 
 .student-card {
-    background: white;
+  background: var(--app-color-surface);
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--app-shadow-sm);
   transition: all 0.2s ease;
   overflow: hidden;
+  border: 1px solid var(--app-color-border);
 }
 
 .student-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--app-shadow-md);
   transform: translateY(-2px);
 }
 
@@ -30,11 +31,11 @@
 }
 
 .student-card-button:hover {
-  background: rgba(102, 126, 234, 0.02);
+  background: color-mix(in srgb, var(--app-color-primary) 8%, transparent);
 }
 
 .student-card-button:focus {
-  outline: 3px solid #667eea;
+  outline: 3px solid var(--app-color-primary-strong);
   outline-offset: -3px;
 }
 .student-avatar {
@@ -42,7 +43,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--app-gradient-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,7 +79,7 @@
   margin: 0 0 0.5rem 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #333;
+  color: var(--app-ink-strong);
 }
 
 .student-phone {
@@ -86,7 +87,7 @@
   display: flex;
   align-items: center;
   gap: 0.375rem;
-  color: #4b5563;
+  color: var(--app-ink-medium);
   font-size: 0.92rem;
   font-weight: 500;
 }
@@ -102,7 +103,7 @@
   display: flex;
   align-items: center;
   gap: 0.375rem;
-  color: #666;
+  color: var(--app-ink-soft);
   font-size: 0.875rem;
 }
 
@@ -118,7 +119,7 @@
   display: flex;
   align-items: center;
   gap: 0.375rem;
-  color: #666;
+  color: var(--app-ink-soft);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }
@@ -142,8 +143,8 @@
 }
 
 .stat-badge {
-  background: #e9ecef;
-  color: #495057;
+  background: var(--app-color-surface-muted);
+  color: var(--app-ink-medium);
   padding: 0.25rem 0.625rem;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -154,17 +155,17 @@
 }
 
 .stat-badge.streak {
-  background: #fff3cd;
-  color: #856404;
+  background: color-mix(in srgb, var(--app-color-warning) 18%, transparent);
+  color: color-mix(in srgb, var(--app-color-warning) 85%, #4d2f12);
 }
 
 .stat-badge.percentage {
-  background: #d1ecf1;
-  color: #0c5460;
+  background: color-mix(in srgb, var(--app-color-success) 18%, transparent);
+  color: color-mix(in srgb, var(--app-color-success) 80%, #23311a);
 }
 
 .chevron-icon {
-  color: #adb5bd;
+  color: var(--app-ink-soft);
   font-size: 2rem;
   line-height: 1;
   align-self: center;
@@ -173,23 +174,6 @@
 /* Mejoras de contraste para accesibilidad */
 @media (prefers-contrast: high) {
   .student-card {
-    border: 2px solid #333;
-  }
-}
-
-/* Tema oscuro */
-@media (prefers-color-scheme: dark) {
-  .student-card {
-    background: #2a2a2a;
-    color: #e0e0e0;
-  }
-
-  .student-name {
-    color: #f0f0f0;
-  }
-
-  .detail-item,
-  .student-contact {
-    color: #b0b0b0;
+    border: 2px solid var(--app-ink-strong);
   }
 }

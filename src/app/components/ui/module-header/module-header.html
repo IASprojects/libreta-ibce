@@ -1,0 +1,15 @@
+<header class="module-header" role="banner">
+  <div class="module-header-main">
+    @if (eyebrow()) {
+      <p class="module-eyebrow">{{ eyebrow() }}</p>
+    }
+    <h2 class="module-title">{{ title() }}</h2>
+    @if (subtitle()) {
+      <p class="module-subtitle">{{ subtitle() }}</p>
+    }
+  </div>
+
+  <div class="module-header-side">
+    <ng-content></ng-content>
+  </div>
+</header>

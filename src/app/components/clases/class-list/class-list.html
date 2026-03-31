@@ -1,43 +1,10 @@
-<!-- Hero/Welcome Section -->
-<section class="hero-section" [class.with-editor]="showEditor()">
-  <div class="hero-content">
-    <h1>Registrar Asistencia</h1>
-    <p class="hero-subtitle">Cree una clase o edite la asistencia del día.</p>
-
-    <!-- Quick Action Cards -->
-    @if (!showEditor() && !isInitialLoading()) {
-      <div class="quick-actions"> 
-        <!-- Manual Creation -->
-        <button
-          type="button"
-          class="action-card secondary"
-          (click)="openNewClassFromPlanned()"
-          (keydown.enter)="openNewClassFromPlanned()"
-          aria-label="Crear nueva clase">
-          <span class="icon">➕</span>
-          <span class="label">Clase</span>
-          <span class="description">Crear clase</span>
-        </button>      
-      </div>
-    }
-  </div>
-
-  <!-- Stats Bar -->
-  @if (!showEditor() && totalClasses() > 0) {
-    <div class="stats-bar">
-      <div class="stat">
-        <span class="stat-value">{{ totalClasses() }}</span>
-        <span class="stat-label">Clase{{ totalClasses() !== 1 ? 's' : '' }} registrada{{ totalClasses() !== 1 ? 's' : '' }}</span>
-      </div>
-      @if (recentCount() > 0) {
-        <div class="stat">
-          <span class="stat-value">{{ recentCount() }}</span>
-          <span class="stat-label">Semana actual</span>
-        </div>
-      }
-    </div>
-  }
-</section>
+<app-class-list-hero
+  [showEditor]="showEditor()"
+  [isInitialLoading]="isInitialLoading()"
+  [totalClasses]="totalClasses()"
+  [recentCount]="recentCount()"
+  (createClass)="openNewClassFromPlanned()"
+></app-class-list-hero>
 
 <!-- Error Alert -->
 @if (saveError()) {
@@ -409,72 +376,18 @@
     <section class="history-section" role="region" aria-label="Historial de clases">
       <h2 class="section-title">Historial de Clases</h2>
 
-      <!-- Filters -->
-      <div class="filters-section">
-        <!-- Teacher Filter -->
-        <div class="filter-group">
-          <label for="teacherFilter" class="filter-label">Maestro:</label>
-          <select
-            id="teacherFilter"
-            class="filter-select"
-            [value]="filterTeacher()"
-            (change)="onFilterTeacherChange($any($event.target).value)">
-            <option value="all">Todos</option>
-            @for (teacher of uniqueTeachers(); track teacher) {
-              <option [value]="teacher">{{ teacher }}</option>
-            }
-          </select>
-        </div>
-
-        <!-- Period Filter -->
-        <div class="filter-group">
-          <label for="periodFilter" class="filter-label">Período:</label>
-          <select
-            id="periodFilter"
-            class="filter-select"
-            [value]="filterPeriod()"
-            (change)="onFilterPeriodChange($any($event.target).value)">
-            <option value="all">Todos</option>
-            <option value="today">Hoy</option>
-            <option value="week">Esta Semana</option>
-            <option value="month">Este Mes</option>
-            <option value="year">Este Año</option>
-          </select>
-        </div>
-
-        <!-- Search -->
-        <div class="filter-group">
-          <input
-            type="text"
-            class="filter-search"
-            placeholder="Buscar clase..."
-            [value]="searchTerm()"
-            (input)="onSearchChange($any($event.target).value)"
-            [attr.aria-label]="'Buscar clase'" />
-          @if (searchTerm()) {
-            <button
-              type="button"
-              class="clear-search-btn"
-              (click)="clearSearch()"
-              (keydown.enter)="clearSearch()"
-              aria-label="Limpiar búsqueda">
-              ✕
-            </button>
-          }
-        </div>
-
-        <!-- Clear Filters -->
-        @if (filterTeacher() !== 'all' || filterPeriod() !== 'all' || searchTerm()) {
-          <button
-            type="button"
-            class="btn-secondary"
-            (click)="clearFilters()"
-            (keydown.enter)="clearFilters()"
-            aria-label="Limpiar todos los filtros">
-            Limpiar Filtros
-          </button>
-        }
-      </div>
+      <app-class-history-filters
+        [filterTeacher]="filterTeacher()"
+        [filterPeriod]="filterPeriod()"
+        [searchTerm]="searchTerm()"
+        [uniqueTeachers]="uniqueTeachers()"
+        [showClearFilters]="filterTeacher() !== 'all' || filterPeriod() !== 'all' || !!searchTerm()"
+        (filterTeacherChange)="onFilterTeacherChange($event)"
+        (filterPeriodChange)="onFilterPeriodChange($event)"
+        (searchTermChange)="onSearchChange($event)"
+        (searchClear)="clearSearch()"
+        (filtersClear)="clearFilters()"
+      ></app-class-history-filters>
 
       <!-- Loading State -->
       @if (isInitialLoading()) {

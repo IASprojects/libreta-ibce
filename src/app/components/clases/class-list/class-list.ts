@@ -16,6 +16,8 @@ import { LessonClass } from '../../../core/models/lesson-class.model';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
 import { Student } from '../../../core/models/student.model';
 import { TeacherNames } from '../../../core/models/enums';
+import { ClassListHero } from './class-list-hero/class-list-hero';
+import { ClassHistoryFilters } from './class-history-filters/class-history-filters';
 
 type ClassEditorMode = 'create' | 'edit';
 type ClassEditorSource = 'planned' | 'custom';
@@ -58,7 +60,7 @@ interface QuickStudentFormData {
 
 @Component({
   selector: 'app-class-list',
-  imports: [CommonModule],
+  imports: [CommonModule, ClassListHero, ClassHistoryFilters],
   templateUrl: './class-list.html',
   styleUrl: './class-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

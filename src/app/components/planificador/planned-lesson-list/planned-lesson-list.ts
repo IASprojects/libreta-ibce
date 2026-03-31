@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
@@ -6,6 +6,8 @@ import { PlannedLessonService } from '../../../services/planned-lesson.service';
 import { DateService } from '../../../services/date.service';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
 import { PlannedLessonForm } from '../planned-lesson-form/planned-lesson-form';
+import { ModuleHeader } from '../../ui/module-header/module-header';
+import { FilterBar } from '../../ui/filter-bar/filter-bar';
 
 /**
  * Lección planificada con datos calculados para la vista
@@ -22,9 +24,10 @@ interface PlannedLessonDisplay extends PlannedLesson {
 
 @Component({
   selector: 'app-planned-lesson-list',
-  imports: [CommonModule, FormsModule, PlannedLessonForm],
+  imports: [CommonModule, FormsModule, PlannedLessonForm, ModuleHeader, FilterBar],
   templateUrl: './planned-lesson-list.html',
   styleUrl: './planned-lesson-list.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlannedLessonList {
   private plannedLessonService = inject(PlannedLessonService);
@@ -42,6 +45,7 @@ export class PlannedLessonList {
   filterTeacher = signal<string>('all');
   filterDate = signal<string>('upcoming'); // 'all', 'upcoming', 'past', 'today'
   searchTerm = signal('');
+  showMobileFilters = signal(false);
 
   // Estados del formulario
   showForm = signal(false);
@@ -95,6 +99,10 @@ export class PlannedLessonList {
   todayCount = computed(() => 
     this.lessonsDisplay().filter(l => l.isToday).length
   );
+  lessonSubtitle = computed(() => {
+    const total = this.totalLessons();
+    return `${total} lección${total !== 1 ? 'es' : ''} planificada${total !== 1 ? 's' : ''}`;
+  });
 
   // UI States
   showNoResults = computed(() => 
@@ -208,12 +216,22 @@ export class PlannedLessonList {
 
   onFilterDateChange(value: string): void {
     this.filterDate.set(value);
+    this.closeMobileFilters();
   }
 
   clearFilters(): void {
     this.filterTeacher.set('all');
     this.filterDate.set('all');
     this.searchTerm.set('');
+    this.closeMobileFilters();
+  }
+
+  toggleMobileFilters(): void {
+    this.showMobileFilters.update(value => !value);
+  }
+
+  closeMobileFilters(): void {
+    this.showMobileFilters.set(false);
   }
 
   refresh(): void {

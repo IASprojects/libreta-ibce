@@ -1,6 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { DashboardUserinfo } from '../dashboard-userinfo/dashboard-userinfo';
+import { AuthService } from '../../../services/auth.service';
+
+type MenuIcon = 'dashboard' | 'students' | 'planner' | 'classes' | 'settings';
 
 /**
  * Elemento del menú de navegación
@@ -8,65 +12,64 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 interface MenuItem {
   label: string;
   route: string;
-  icon: string;
+  icon: MenuIcon;
   description: string;
 }
 
 @Component({
   selector: 'app-dashboard-menu',
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, DashboardUserinfo],
   templateUrl: './dashboard-menu.html',
   styleUrl: './dashboard-menu.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardMenu {
-  // Control de menú móvil
-  isMenuOpen = signal(false);
-
+  private authService = inject(AuthService);
+  collapsed = input(false);
+  mobileOpen = input(false);
+  navigated = output<void>();
+ /**
+   * Cerrar sesión
+   */
+  async signOut(): Promise<void> {
+    await this.authService.signOut();
+  }
   // Elementos del menú
   menuItems: MenuItem[] = [
     {
       label: 'Dashboard',
       route: '/dashboard',
-      icon: '📊',
+      icon: 'dashboard',
       description: 'Vista general y resumen'
     },
     {
       label: 'Estudiantes',
       route: '/dashboard/estudiantes',
-      icon: '👥',
+      icon: 'students',
       description: 'Gestión de estudiantes'
     },
     {
       label: 'Planificador',
       route: '/dashboard/planificador',
-      icon: '📅',
+      icon: 'planner',
       description: 'Planificación de clases'
     },
     {
       label: 'Clases',
       route: '/dashboard/clases',
-      icon: '📚',
+      icon: 'classes',
       description: 'Registro de clases'
     },
     {
       label: 'Configuración',
       route: '/dashboard/configuracion',
-      icon: '⚙️',
+      icon: 'settings',
       description: 'Ajustes del sistema'
     }
   ];
 
-  /**
-   * Toggle del menú en móviles
-   */
-  toggleMenu(): void {
-    this.isMenuOpen.update(value => !value);
+  onNavigate(): void {
+    this.navigated.emit();
   }
-
-  /**
-   * Cerrar menú (útil en móviles después de selección)
-   */
-  closeMenu(): void {
-    this.isMenuOpen.set(false);
-  }
+  
 }

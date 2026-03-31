@@ -1,19 +1,19 @@
 .section-card {
-  background: white;
+  background: var(--app-color-surface);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  box-shadow: var(--app-shadow-sm);
   transition: all 0.3s ease;
 }
 
 .section-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  box-shadow: var(--app-shadow-md);
 }
 
 .section-title {
   margin: 0 0 1.5rem 0;
-  color: #333;
+  color: var(--app-ink-strong);
   font-size: 1.25rem;
   font-weight: 700;
   display: flex;
@@ -33,20 +33,20 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: #f8f9fa;
+  background: var(--app-color-surface-muted);
   border-radius: 12px;
   transition: all 0.3s ease;
 }
 
 .student-item:hover {
-  background: #e9ecef;
+  background: var(--app-color-border);
   transform: translateX(4px);
 }
 
 .student-avatar {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #28a745, #20c997);
+  background: linear-gradient(135deg, var(--app-color-success), color-mix(in srgb, var(--app-color-success) 65%, #6d8e50));
   color: white;
   border-radius: 50%;
   display: flex;
@@ -64,17 +64,17 @@
 
 .student-name {
   font-weight: 600;
-  color: #333;
+  color: var(--app-ink-strong);
   font-size: 1rem;
 }
 
 .student-joined {
-  color: #666;
+  color: var(--app-ink-medium);
   font-size: 0.85rem;
 }
 
 .new-badge {
-  background: #28a745;
+  background: var(--app-color-success);
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 6px;
@@ -84,7 +84,7 @@
 
 .no-new-students {
   text-align: center;
-  color: #666;
+  color: var(--app-ink-soft);
   font-style: italic;
   padding: 2rem;
 }
