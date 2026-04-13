@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { FilterBar } from '../../../ui/filter-bar/filter-bar';
 
 @Component({
   selector: 'app-class-history-filters',
+  imports: [FilterBar],
   templateUrl: './class-history-filters.html',
   styleUrl: './class-history-filters.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,12 +21,15 @@ export class ClassHistoryFilters {
   searchClear = output<void>();
   filtersClear = output<void>();
 
+  showMobileFilters = signal(false);
+
   onTeacherChange(value: string): void {
     this.filterTeacherChange.emit(value);
   }
 
   onPeriodChange(value: string): void {
     this.filterPeriodChange.emit(value);
+    this.closeMobileFilters();
   }
 
   onSearchChange(value: string): void {
@@ -37,5 +42,14 @@ export class ClassHistoryFilters {
 
   onClearFilters(): void {
     this.filtersClear.emit();
+    this.closeMobileFilters();
+  }
+
+  toggleMobileFilters(): void {
+    this.showMobileFilters.update(current => !current);
+  }
+
+  closeMobileFilters(): void {
+    this.showMobileFilters.set(false);
   }
 }

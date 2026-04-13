@@ -1,6 +1,7 @@
 # Firebase Hosting - Despliegue de Produccion
 
 Esta guia usa la configuracion ya incluida en:
+
 - `firebase.json`
 - `.firebaserc`
 - `.firebaseignore`
@@ -49,6 +50,7 @@ npm run firebase:deploy
 ```
 
 Notas:
+
 - Solo despliega Hosting (`--only hosting`).
 - `firebase.json` ejecuta `predeploy` para compilar automaticamente antes de publicar.
 

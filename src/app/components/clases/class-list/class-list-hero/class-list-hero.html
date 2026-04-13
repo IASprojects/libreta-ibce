@@ -1,19 +1,15 @@
 <section class="hero-section" [class.with-editor]="showEditor()">
   <div class="hero-content">
-    <h1>Registrar Asistencia</h1>
-    <p class="hero-subtitle">Cree una clase o edite la asistencia del dia.</p>
-
+    <h1>Registrar Asistencia</h1>  
     @if (!showEditor() && !isInitialLoading()) {
       <div class="quick-actions">
         <button
           type="button"
           class="action-card secondary"
           (click)="onCreateClass()"
-          aria-label="Crear nueva clase"
+          aria-label="Tomar asistencia"
         >
-          <span class="icon">➕</span>
-          <span class="label">Clase</span>
-          <span class="description">Crear clase</span>
+          <span class="icon">➕ Tomar asistencia</span> 
         </button>
       </div>
     }

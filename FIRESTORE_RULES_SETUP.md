@@ -67,17 +67,22 @@ service cloud.firestore {
     }
     
     // Colección de asistencias
-    match /attendances/{attendanceId} {
+    match /attendance/{attendanceId} {
       allow read, write: if request.auth != null;
     }
     
     // Colección de lecciones planificadas
-    match /planned-lessons/{lessonId} {
+    match /planned_lessons/{lessonId} {
       allow read, write: if request.auth != null;
     }
     
     // Colección de clases
-    match /lesson-classes/{classId} {
+    match /lesson_classes/{classId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Configuración global
+    match /config/{configId} {
       allow read, write: if request.auth != null;
     }
   }
@@ -168,6 +173,17 @@ Puedes verificar si las reglas están bloqueando en Firebase Console:
 - Firebase Console → Firestore → **Reglas** → Pestaña **Logs**
 - Busca entradas con `PERMISSION_DENIED`
 
+### Verifica nombres exactos de colecciones (importante)
+
+En esta app los nombres reales son:
+- `students`
+- `attendance`
+- `planned_lessons`
+- `lesson_classes`
+- `config`
+
+Si publicas reglas con nombres distintos (por ejemplo `lesson-classes` o `planned-lessons`), Firestore rechazará lecturas/escrituras con `Missing or insufficient permissions`.
+
 ---
 
 ## ⏱️ Tiempos Esperados
@@ -180,5 +196,5 @@ Puedes verificar si las reglas están bloqueando en Firebase Console:
 
 ---
 
-**Última actualización**: Marzo 2026  
-**Versión**: 1.0.0
+**Última actualización**: Abril 2026  
+**Versión**: 1.1.0
