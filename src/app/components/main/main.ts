@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { DashboardMenu } from '../dashboard/dashboard-menu/dashboard-menu';
+import { DashboardMenu } from '../ui/menu/menu';
 import { AppShell } from '../ui/app-shell/app-shell';
 import { Topbar } from '../ui/topbar/topbar';
 

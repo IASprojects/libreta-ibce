@@ -1,0 +1,86 @@
+.class-card {
+  background: var(--app-color-surface);
+  border: 1px solid var(--app-color-border);
+  border-radius: 14px;
+}
+
+.class-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.8rem;
+  border-bottom: 1px solid var(--app-color-border);
+  background: var(--app-color-surface-muted);
+}
+
+.class-date-info {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.class-date {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--app-ink-strong);
+}
+
+.badge {
+  display: inline-flex;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge.today {
+  background: color-mix(in srgb, var(--app-color-warning) 20%, transparent);
+  color: #92400e;
+}
+
+.badge.recent {
+  background: color-mix(in srgb, var(--app-color-primary) 16%, transparent);
+  color: var(--app-color-primary-strong);
+}
+
+.btn-edit {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid var(--app-color-border);
+  background: var(--app-color-surface);
+  cursor: pointer;
+}
+
+.class-card-body {
+  padding: 0.8rem;
+}
+
+.class-title {
+  margin: 0 0 0.42rem;
+  color: var(--app-ink-strong);
+  font-size: 0.95rem;
+}
+
+.class-meta {
+  margin: 0;
+  color: var(--app-ink-medium);
+  font-size: 0.84rem;
+}
+
+.meta-item {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.class-notes {
+  margin-top: 0.55rem;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background: var(--app-color-surface-muted);
+  color: var(--app-ink-medium);
+  font-size: 0.84rem;
+}

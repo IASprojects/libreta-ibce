@@ -10,28 +10,36 @@
   --app-radius-md: 12px;
   --app-radius-lg: 16px;
 
-  --app-color-bg: #f4efe8;
-  --app-color-surface: #ffffff;
-  --app-color-surface-muted: #f7f2ec;
-  --app-color-border: #decfc0;
-  --app-color-border-strong: #c8b5a4;
-  --app-ink-strong: #2f241d;
-  --app-ink-medium: #5c473a;
-  --app-ink-soft: #7a6354;
+  /* Nueva Paleta: Fondo y Superficies */
+  --app-color-bg: #1A1A1A;           /* Fondo principal */
+  --app-color-surface: #242424;      /* Superficie (antes blanco) */
+  --app-color-surface-muted: #2d2d2d; /* Superficie secundaria */
+  
+  /* Bordes (Ajustados para fondo oscuro) */
+  --app-color-border: #404040;
+  --app-color-border-strong: #666666;
 
-  --app-color-primary: #d66a2f;
-  --app-color-primary-strong: #b65222;
-  --app-color-success: #556b3f;
-  --app-color-warning: #9a5f20;
-  --app-color-danger: #a13b2e;
+  /* Texto (Escala de grises basada en blanco) */
+  --app-ink-strong: #ffffff;
+  --app-ink-medium: #e0e0e0;
+  --app-ink-soft: #b0b0b0;
 
-  --app-sidebar-bg: #2f261f;
-  --app-sidebar-bg-alt: #241d18;
-  --app-sidebar-ink: #f1e7dd;
+  /* Colores Primarios y Semánticos */
+  --app-color-primary: #134154;        /* Dark Steel */
+  --app-color-primary-strong: #0f3342; /* Hover de Dark Steel */
+  --app-color-success: #4CAF50;
+  --app-color-warning: #FF9800;
+  --app-color-danger: #F44336;
 
-  --app-gradient-accent: linear-gradient(135deg, #d66a2f 0%, #ee9635 100%);
-  --app-shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.08);
-  --app-shadow-md: 0 6px 20px rgba(15, 23, 42, 0.12);
+  /* Sidebar (Se mantiene oscuro pero más técnico) */
+  --app-sidebar-bg: #0d0d0d;
+  --app-sidebar-bg-alt: #000000;
+  --app-sidebar-ink: #00BCD4;          /* Cian para destacar elementos */
+
+  /* Gradientes y Sombras */
+  --app-gradient-accent: linear-gradient(135deg, #134154 0%, #00BCD4 100%);
+  --app-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --app-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -43,7 +51,7 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Trebuchet MS', 'Segoe UI', Tahoma, sans-serif;
+  font-family: 'Segoe UI', Tahoma, sans-serif; /* Eliminé Trebuchet por ser muy antigua */
   background: var(--app-color-bg);
   color: var(--app-ink-strong);
 }
@@ -56,6 +64,6 @@ textarea {
 }
 
 :focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--app-color-primary) 60%, white 40%);
+  outline: 3px solid color-mix(in srgb, var(--app-color-primary) 70%, white 30%);
   outline-offset: 2px;
 }

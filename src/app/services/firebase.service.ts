@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { getFirestore, type Firestore } from 'firebase/firestore';
+import { initializeFirestore, type Firestore } from 'firebase/firestore';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
 import { environment } from '../../environments/environment';
@@ -27,7 +27,10 @@ export class FirebaseService {
       });
       
       this.app = initializeApp(environment.firebase);
-      this.db = getFirestore(this.app);
+      // Auto-detecta redes/navegadores donde WebChannel falla con 400 y cambia a long-polling.
+      this.db = initializeFirestore(this.app, {
+        experimentalAutoDetectLongPolling: true,
+      });
       this.auth = getAuth(this.app);
       this.storage = getStorage(this.app);
       

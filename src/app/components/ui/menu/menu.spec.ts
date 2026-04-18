@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { RouterTestingModule } from '@angular/router/testing';
-import { DashboardMenu } from './dashboard-menu';
+import { DashboardMenu } from './menu';
 
 describe('DashboardMenu', () => {
   let component: DashboardMenu;

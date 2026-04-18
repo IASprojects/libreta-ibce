@@ -8,39 +8,21 @@
 
 <!-- Error Alert -->
 @if (saveError()) {
-  <div class="alert alert-error" role="alert">
-    <span class="alert-icon">⚠️</span>
-    <div class="alert-content">
-      <p class="alert-title">No se pudo guardar</p>
-      <p class="alert-message">{{ saveError() }}</p>
-    </div>
-    <button
-      type="button"
-      class="alert-close"
-      (click)="saveError.set(null)"
-      (keydown.enter)="saveError.set(null)"
-      aria-label="Cerrar alerta">
-      ×
-    </button>
-  </div>
+  <app-alert-banner
+    variant="error"
+    title="No se pudo guardar"
+    [message]="saveError()!"
+    (dismissed)="saveError.set(null)"
+  ></app-alert-banner>
 }
 
 <!-- Success Alert -->
 @if (saveSuccess()) {
-  <div class="alert alert-success" role="alert">
-    <span class="alert-icon">✅</span>
-    <div class="alert-content">
-      <p class="alert-message">{{ saveSuccess() }}</p>
-    </div>
-    <button
-      type="button"
-      class="alert-close"
-      (click)="saveSuccess.set(null)"
-      (keydown.enter)="saveSuccess.set(null)"
-      aria-label="Cerrar alerta">
-      ×
-    </button>
-  </div>
+  <app-alert-banner
+    variant="success"
+    [message]="saveSuccess()!"
+    (dismissed)="saveSuccess.set(null)"
+  ></app-alert-banner>
 }
 
 <!-- Main Content Area -->
@@ -48,21 +30,12 @@
   <!-- Editor Modal/Panel -->
   @if (showEditor()) {
     <section class="editor-panel" role="region" aria-label="Editor de clase y asistencia">
-      <!-- Editor Header -->
-      <div class="editor-header">
-        <div class="editor-title-block">
-          <h2 class="editor-title">{{ editorTitle() }}</h2>
-          <p class="editor-subtitle">{{ editorSubtitle() }}</p>
-        </div>
-        <button
-          type="button"
-          class="close-btn"
-          (click)="closeEditor()"
-          (keydown.enter)="closeEditor()"
-          aria-label="Cerrar editor">
-          ✕
-        </button>
-      </div>
+      <app-editor-panel-header
+        [title]="editorTitle()"
+        [subtitle]="editorSubtitle()"
+        [closeDisabled]="isSaving() || isDeactivatingClass()"
+        (closeClick)="closeEditor()"
+      ></app-editor-panel-header>
 
       <!-- Form Section -->
       <div class="editor-form-section">
@@ -438,36 +411,11 @@
 
         <div class="classes-grid">
           @for (lessonClass of filteredClasses(); track trackByClassId($index, lessonClass)) {
-            <div class="class-card">
-              <div class="class-card-header">
-                <div class="class-date-info">
-                  <div class="class-date">{{ lessonClass.formattedShortDate }}</div>
-                  @if (lessonClass.isToday) {
-                    <span class="badge today">Hoy</span>
-                  } @else if (lessonClass.isRecent) {
-                    <span class="badge recent">{{ getRelativeTime(lessonClass.daysSinceClass) }}</span>
-                  }
-                </div>
-                <button
-                  type="button"
-                  class="btn-edit"
-                  (click)="openEditClass(lessonClass)"
-                  (keydown.enter)="openEditClass(lessonClass)"
-                  [attr.aria-label]="'Editar clase del ' + lessonClass.formattedDate">
-                  ✏️
-                </button>
-              </div>
-
-              <div class="class-card-body">
-                <div class="class-title">Unidad {{ lessonClass.unitNumber }} - Lección {{ lessonClass.lessonNumber }}</div>
-                <div class="class-meta">
-                  <span class="meta-item">👨‍🏫 {{ lessonClass.teacherId }}</span>
-                </div>
-                @if (lessonClass.notes) {
-                  <div class="class-notes">{{ lessonClass.notes }}</div>
-                }
-              </div>
-            </div>
+            <app-class-history-card
+              [lesson]="lessonClass"
+              [relativeTimeLabel]="getRelativeTime(lessonClass.daysSinceClass)"
+              (editClick)="openEditClass(lessonClass)"
+            ></app-class-history-card>
           }
         </div>
       }

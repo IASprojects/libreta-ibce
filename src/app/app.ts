@@ -7,12 +7,17 @@ import { AuthService } from './services/auth.service';
   selector: 'app-root',
   imports: [RouterOutlet, CommonModule],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
+  host: {
+    '(window:scroll)': 'onWindowScroll()'
+  }
 })
 export class App implements OnInit {
   private authService = inject(AuthService);
+  private readonly scrollThreshold = 280;
   
   protected readonly title = signal('libreta-ibce');
+  showScrollTopButton = signal(false);
   
   // Estado de inicialización de la app
   isAppInitialized = this.authService.isInitialized;
@@ -22,6 +27,7 @@ export class App implements OnInit {
 
   ngOnInit(): void {
     console.log('🚀 App initialized');
+    this.onWindowScroll();
     
     // Timeout de respaldo si Firebase tarda mucho en inicializar
     setTimeout(() => {
@@ -30,5 +36,16 @@ export class App implements OnInit {
         this.authService.isInitialized.set(true);
       }
     }, 10000); // 10 segundos de timeout
+  }
+
+  onWindowScroll(): void {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+    const isVisible = scrollTop > this.scrollThreshold;
+    this.showScrollTopButton.set(isVisible);
+    document.body.classList.toggle('scroll-top-visible', isVisible);
+  }
+
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

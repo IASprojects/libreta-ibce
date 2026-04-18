@@ -28,7 +28,7 @@
   border: 1px solid color-mix(in srgb, var(--app-color-primary) 22%, var(--app-color-border-strong));
   border-radius: var(--app-radius-sm);
   background: color-mix(in srgb, var(--app-color-primary) 10%, var(--app-color-surface-muted));
-  color: var(--app-color-primary-strong);
+  color: var(--app-ink-strong);
   cursor: pointer;
   font-size: 1.125rem;
   font-weight: 700;

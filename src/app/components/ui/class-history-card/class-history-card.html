@@ -1,0 +1,31 @@
+<article class="class-card">
+  <div class="class-card-header">
+    <div class="class-date-info">
+      <div class="class-date">{{ lesson().formattedShortDate }}</div>
+      @if (lesson().isToday) {
+        <span class="badge today">Hoy</span>
+      } @else if (lesson().isRecent) {
+        <span class="badge recent">{{ relativeTimeLabel() }}</span>
+      }
+    </div>
+    <button
+      type="button"
+      class="btn-edit"
+      (click)="onEdit()"
+      (keydown.enter)="onEdit()"
+      [attr.aria-label]="'Editar clase del ' + lesson().formattedDate"
+    >
+      ✏️
+    </button>
+  </div>
+
+  <div class="class-card-body">
+    <div class="class-title">Unidad {{ lesson().unitNumber }} - Lección {{ lesson().lessonNumber }}</div>
+    <div class="class-meta">
+      <span class="meta-item">👨‍🏫 {{ lesson().teacherId }}</span>
+    </div>
+    @if (lesson().notes) {
+      <div class="class-notes">{{ lesson().notes }}</div>
+    }
+  </div>
+</article>

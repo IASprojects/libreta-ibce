@@ -18,6 +18,9 @@ import { Student } from '../../../core/models/student.model';
 import { TeacherNames } from '../../../core/models/enums';
 import { ClassListHero } from './class-list-hero/class-list-hero';
 import { ClassHistoryFilters } from './class-history-filters/class-history-filters';
+import { AlertBanner } from '../../ui/alert-banner/alert-banner';
+import { EditorPanelHeader } from '../../ui/editor-panel-header/editor-panel-header';
+import { ClassHistoryCard } from '../../ui/class-history-card/class-history-card';
 
 type ClassEditorMode = 'create' | 'edit';
 type ClassEditorSource = 'planned' | 'custom';
@@ -60,7 +63,14 @@ interface QuickStudentFormData {
 
 @Component({
   selector: 'app-class-list',
-  imports: [CommonModule, ClassListHero, ClassHistoryFilters],
+  imports: [
+    CommonModule,
+    ClassListHero,
+    ClassHistoryFilters,
+    AlertBanner,
+    EditorPanelHeader,
+    ClassHistoryCard,
+  ],
   templateUrl: './class-list.html',
   styleUrl: './class-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

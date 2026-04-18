@@ -13,6 +13,14 @@
 .menu-header {
   padding: 2rem 1.5rem 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-3);
+  color: color-mix(in srgb, var(--app-sidebar-ink) 88%, white 12%);
+}
+
+.menu-logo {
+  flex-shrink: 0;
 }
 
 .menu-title {
@@ -130,16 +138,20 @@
     width: 100%;
   }
 
-  .dashboard-menu .menu-title,
   .dashboard-menu .menu-label,
   .dashboard-menu .menu-footer-text,
-  .dashboard-menu.collapsed .menu-title,
   .dashboard-menu.collapsed .menu-label,
   .dashboard-menu.collapsed .menu-footer-text {
     opacity: 1;
     visibility: visible;
     width: auto;
     overflow: visible;
+    letter-spacing: 0.4px;
+  }
+
+  .dashboard-menu .menu-title,
+  .dashboard-menu.collapsed .menu-title {
+    display: none;
   }
 
   .dashboard-menu .menu-link,
@@ -154,6 +166,19 @@
   .dashboard-menu.collapsed .menu-footer {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+  }
+
+  .dashboard-menu .menu-header,
+  .dashboard-menu.collapsed .menu-header {
+    justify-content: center;
+    padding-top: 1.25rem;
+    padding-bottom: 1rem;
+  }
+
+  .dashboard-menu .menu-logo,
+  .dashboard-menu.collapsed .menu-logo {
+    width: 28px;
+    height: 28px;
   }
 }
 

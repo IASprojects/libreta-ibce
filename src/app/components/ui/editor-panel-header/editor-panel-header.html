@@ -1,0 +1,18 @@
+<div class="editor-header">
+  <div class="editor-title-block">
+    <h2 class="editor-title">{{ title() }}</h2>
+    @if (subtitle()) {
+      <p class="editor-subtitle">{{ subtitle() }}</p>
+    }
+  </div>
+  <button
+    type="button"
+    class="close-btn"
+    (click)="onClose()"
+    (keydown.enter)="onClose()"
+    [disabled]="closeDisabled()"
+    [attr.aria-label]="closeLabel()"
+  >
+    ✕
+  </button>
+</div>

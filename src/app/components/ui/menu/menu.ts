@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { DashboardUserinfo } from '../dashboard-userinfo/dashboard-userinfo';
+import { DashboardUserinfo } from '../userinfo/userinfo';
 import { AuthService } from '../../../services/auth.service';
 
 type MenuIcon = 'dashboard' | 'students' | 'planner' | 'classes' | 'settings';
 
 /**
- * Elemento del menú de navegación
+ * Elemento del menu de navegacion
  */
 interface MenuItem {
   label: string;
@@ -19,8 +19,8 @@ interface MenuItem {
 @Component({
   selector: 'app-dashboard-menu',
   imports: [CommonModule, RouterLink, RouterLinkActive, DashboardUserinfo],
-  templateUrl: './dashboard-menu.html',
-  styleUrl: './dashboard-menu.css',
+  templateUrl: './menu.html',
+  styleUrl: './menu.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardMenu {
@@ -28,48 +28,49 @@ export class DashboardMenu {
   collapsed = input(false);
   mobileOpen = input(false);
   navigated = output<void>();
- /**
-   * Cerrar sesión
+
+  /**
+   * Cerrar sesion
    */
   async signOut(): Promise<void> {
     await this.authService.signOut();
   }
-  // Elementos del menú
+
+  // Elementos del menu
   menuItems: MenuItem[] = [
     {
       label: 'Dashboard',
       route: '/dashboard',
       icon: 'dashboard',
-      description: 'Vista general y resumen'
+      description: 'Vista general y resumen',
     },
     {
       label: 'Estudiantes',
       route: '/dashboard/estudiantes',
       icon: 'students',
-      description: 'Gestión de estudiantes'
+      description: 'Gestion de estudiantes',
     },
     {
       label: 'Planificador',
       route: '/dashboard/planificador',
       icon: 'planner',
-      description: 'Planificación de clases'
+      description: 'Planificacion de clases',
     },
     {
       label: 'Clases',
       route: '/dashboard/clases',
       icon: 'classes',
-      description: 'Registro de clases'
+      description: 'Registro de clases',
     },
     {
-      label: 'Configuración',
+      label: 'Configuracion',
       route: '/dashboard/configuracion',
       icon: 'settings',
-      description: 'Ajustes del sistema'
-    }
+      description: 'Ajustes del sistema',
+    },
   ];
 
   onNavigate(): void {
     this.navigated.emit();
   }
-  
 }

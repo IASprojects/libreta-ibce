@@ -1,9 +1,9 @@
 @if (user(); as currentUser) {
   <div class="user-section">
     <div class="user-info">
-      <img [src]="currentUser.photoURL" [alt]="currentUser.displayName" class="user-avatar" [title]="currentUser.displayName"/>     
+      <img [src]="currentUser.photoURL" [alt]="currentUser.displayName" class="user-avatar" [title]="currentUser.displayName"/>
     </div>
-    <button class="logout-btn" (click)="onLogout()" title="Cerrar sesión">
+    <button class="logout-btn" (click)="onLogout()" title="Cerrar sesion">
       <svg
         width="20"
         height="20"
@@ -16,7 +16,6 @@
         <polyline points="16 17 21 12 16 7" />
         <line x1="21" y1="12" x2="9" y2="12" />
       </svg>
-      
     </button>
   </div>
 }

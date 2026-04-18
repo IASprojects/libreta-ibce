@@ -11,4 +11,20 @@
 } @else {
   <!-- App principal una vez inicializada -->
   <router-outlet />
+
+  @if (showScrollTopButton()) {
+    <button
+      type="button"
+      class="scroll-top-button"
+      (click)="scrollToTop()"
+      aria-label="Volver al inicio"
+      title="Volver al inicio"
+    >
+      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+        <path d="M12 5 6 11"></path>
+        <path d="M12 5 18 11"></path>
+        <path d="M12 5V19"></path>
+      </svg>
+    </button>
+  }
 }
