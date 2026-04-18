@@ -1,0 +1,80 @@
+<div class="filters-section">
+  <app-filter-bar
+    [mobileOpen]="showMobileFilters()"
+    mobileTitle="Filtros de clase"
+    (toggleMobile)="onToggleMobileFilters()"
+    (closeMobile)="onCloseMobileFilters()"
+    (applyMobile)="onCloseMobileFilters()"
+  >
+    <div class="filter-group">
+      <label for="teacher-filter" class="filter-label">Maestro</label>
+      <select
+        id="teacher-filter"
+        class="filter-select"
+        [value]="filterTeacher()"
+        (change)="onFilterTeacherChange($any($event.target).value)"
+      >
+        <option value="all">Todos los maestros</option>
+        @for (teacher of uniqueTeachers(); track teacher) {
+          <option [value]="teacher">{{ teacher }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="date-filter" class="filter-label">Fecha</label>
+      <select
+        id="date-filter"
+        class="filter-select"
+        [value]="filterDate()"
+        (change)="onFilterDateChange($any($event.target).value)"
+      >
+        <option value="all">Todas las fechas</option>
+        <option value="today">Hoy</option>
+        <option value="upcoming">Próximas</option>
+        <option value="past">Pasadas</option>
+      </select>
+    </div>
+
+    <div class="search-group">
+      <label for="lesson-search" class="visually-hidden">Buscar lección</label>
+      <div class="search-input-wrapper">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input
+          id="lesson-search"
+          type="search"
+          class="search-input"
+          placeholder="Buscar por unidad, lección o maestro..."
+          [value]="searchTerm()"
+          (input)="onSearchChange($any($event.target).value)"
+          autocomplete="off"
+          aria-label="Buscar lección por unidad, lección o maestro"
+        />
+        @if (searchTerm()) {
+          <button
+            type="button"
+            class="clear-search-btn"
+            (click)="onClearSearch()"
+            aria-label="Limpiar búsqueda"
+          >
+            ✕
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (showClearFilters()) {
+      <button type="button" class="clear-filters-btn" (click)="onClearFilters()">
+        Limpiar filtros
+      </button>
+    }
+  </app-filter-bar>
+
+  @if (showResultsText()) {
+    <p class="search-results-text" role="status" aria-live="polite">
+      {{ totalFiltered() }} resultado{{ totalFiltered() !== 1 ? 's' : '' }} encontrado{{
+        totalFiltered() !== 1 ? 's' : ''
+      }}
+    </p>
+  }
+</div>

@@ -1,0 +1,57 @@
+<article
+  class="lesson-card"
+  [class.lesson-today]="lesson().isToday"
+  [class.lesson-upcoming]="lesson().isUpcoming && !lesson().isToday"
+  [class.lesson-past]="lesson().isPast"
+>
+  <div class="lesson-date">
+    <div class="date-badge" [class.date-today]="lesson().isToday">
+      <span class="date-day">{{ lesson().formattedShortDate }}</span>
+      @if (lesson().isToday) {
+        <span class="date-label">Hoy</span>
+      }
+      @if (lesson().isUpcoming && !lesson().isToday) {
+        <span class="date-label">Próxima</span>
+      }
+      @if (lesson().isPast) {
+        <span class="date-label">Pasada</span>
+      }
+    </div>
+  </div>
+
+  <div class="lesson-info">
+    <h3 class="lesson-title">{{ lesson().displayTitle }}</h3>
+    <p class="lesson-date-full">{{ lesson().formattedDate }}</p>
+    <div class="lesson-teacher">
+      <span class="teacher-icon" aria-hidden="true">👤</span>
+      <span class="teacher-name">{{ lesson().plannedTeacherId }}</span>
+    </div>
+  </div>
+
+  <div class="lesson-actions">
+    <button
+      type="button"
+      class="action-btn action-edit"
+      (click)="onEdit()"
+      [disabled]="isDeactivating()"
+      aria-label="Editar lección"
+      title="Editar"
+    >
+      ✏️ Editar
+    </button>
+    <button
+      type="button"
+      class="action-btn action-deactivate"
+      (click)="onDeactivate()"
+      [disabled]="isDeactivating()"
+      [attr.aria-label]="'Inactivar lección ' + lesson().displayTitle"
+      title="Inactivar"
+    >
+      @if (isDeactivating()) {
+        Inactivando...
+      } @else {
+        🛑 Inactivar
+      }
+    </button>
+  </div>
+</article>

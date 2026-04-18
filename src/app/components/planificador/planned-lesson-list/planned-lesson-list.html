@@ -16,91 +16,23 @@
     </app-module-header>
   </div>
 
-  <!-- Filtros -->
-  <div class="filters-section">
-    <app-filter-bar
-      [mobileOpen]="showMobileFilters()"
-      mobileTitle="Filtros de clase"
-      (toggleMobile)="toggleMobileFilters()"
-      (closeMobile)="closeMobileFilters()"
-      (applyMobile)="closeMobileFilters()"
-    >
-      <!-- Filtro por maestro -->
-      <div class="filter-group">
-        <label for="teacher-filter" class="filter-label">Maestro</label>
-        <select
-          id="teacher-filter"
-          class="filter-select"
-          [value]="filterTeacher()"
-          (change)="onFilterTeacherChange($any($event.target).value)"
-        >
-          <option value="all">Todos los maestros</option>
-          @for (teacher of uniqueTeachers(); track teacher) {
-            <option [value]="teacher">{{ teacher }}</option>
-          }
-        </select>
-      </div>
-
-      <!-- Filtro por fecha -->
-      <div class="filter-group">
-        <label for="date-filter" class="filter-label">Fecha</label>
-        <select
-          id="date-filter"
-          class="filter-select"
-          [value]="filterDate()"
-          (change)="onFilterDateChange($any($event.target).value)"
-        >
-          <option value="all">Todas las fechas</option>
-          <option value="today">Hoy</option>
-          <option value="upcoming">Próximas</option>
-          <option value="past">Pasadas</option>
-        </select>
-      </div>
-
-      <!-- Barra de búsqueda -->
-      <div class="search-group">
-        <label for="lesson-search" class="visually-hidden">Buscar lección</label>
-        <div class="search-input-wrapper">
-          <span class="search-icon" aria-hidden="true">🔍</span>
-          <input
-            id="lesson-search"
-            type="search"
-            class="search-input"
-            placeholder="Buscar por unidad, lección o maestro..."
-            [value]="searchTerm()"
-            (input)="onSearchChange($any($event.target).value)"
-            autocomplete="off"
-            aria-label="Buscar lección por unidad, lección o maestro"
-          />
-          @if (searchTerm()) {
-            <button
-              type="button"
-              class="clear-search-btn"
-              (click)="clearSearch()"
-              aria-label="Limpiar búsqueda"
-            >
-              ✕
-            </button>
-          }
-        </div>
-      </div>
-
-      <!-- Botón limpiar filtros -->
-      @if (searchTerm() || filterTeacher() !== 'all' || filterDate() !== 'all') {
-        <button type="button" class="clear-filters-btn" (click)="clearFilters()">
-          Limpiar filtros
-        </button>
-      }
-    </app-filter-bar>
-
-    @if (searchTerm() || filterTeacher() !== 'all' || filterDate() !== 'all') {
-      <p class="search-results-text" role="status" aria-live="polite">
-        {{ totalFiltered() }} resultado{{ totalFiltered() !== 1 ? 's' : '' }} encontrado{{
-          totalFiltered() !== 1 ? 's' : ''
-        }}
-      </p>
-    }
-  </div>
+  <app-planned-lesson-filters
+    [showMobileFilters]="showMobileFilters()"
+    [filterTeacher]="filterTeacher()"
+    [filterDate]="filterDate()"
+    [searchTerm]="searchTerm()"
+    [uniqueTeachers]="uniqueTeachers()"
+    [showClearFilters]="hasActiveFilters()"
+    [showResultsText]="hasActiveFilters()"
+    [totalFiltered]="totalFiltered()"
+    (searchChange)="onSearchChange($event)"
+    (clearSearchClick)="clearSearch()"
+    (filterTeacherChange)="onFilterTeacherChange($event)"
+    (filterDateChange)="onFilterDateChange($event)"
+    (clearFiltersClick)="clearFilters()"
+    (toggleMobileFiltersClick)="toggleMobileFilters()"
+    (closeMobileFiltersClick)="closeMobileFilters()"
+  ></app-planned-lesson-filters>
 
   <!-- Estado de carga -->
   @if (isLoading()) {
@@ -137,70 +69,12 @@
   @if (!isLoading() && !error() && filteredLessons().length > 0) {
     <div class="lessons-grid">
       @for (lesson of filteredLessons(); track trackByLessonId($index, lesson)) {
-        <article 
-          class="lesson-card"
-          [class.lesson-today]="lesson.isToday"
-          [class.lesson-upcoming]="lesson.isUpcoming && !lesson.isToday"
-          [class.lesson-past]="lesson.isPast"
-        >
-          <!-- Fecha -->
-          <div class="lesson-date">
-            <div class="date-badge" [class.date-today]="lesson.isToday">
-              <span class="date-day">{{ lesson.formattedShortDate }}</span>
-              @if (lesson.isToday) {
-                <span class="date-label">Hoy</span>
-              }
-              @if (lesson.isUpcoming && !lesson.isToday) {
-                <span class="date-label">Próxima</span>
-              }
-              @if (lesson.isPast) {
-                <span class="date-label">Pasada</span>
-              }
-            </div>
-          </div>
-
-          <!-- Información de la lección -->
-          <div class="lesson-info">
-            <h3 class="lesson-title">
-              {{ lesson.displayTitle }}
-            </h3>
-            <p class="lesson-date-full">
-              {{ lesson.formattedDate }}
-            </p>
-            <div class="lesson-teacher">
-              <span class="teacher-icon" aria-hidden="true">👤</span>
-              <span class="teacher-name">{{ lesson.plannedTeacherId }}</span>
-            </div>
-          </div>
-
-          <!-- Acciones -->
-          <div class="lesson-actions">
-            <button
-              type="button"
-              class="action-btn action-edit"
-              (click)="openEditLessonForm(lesson)"
-              [disabled]="isDeactivatingLesson(lesson.id)"
-              aria-label="Editar lección"
-              title="Editar"
-            >
-              ✏️ Editar
-            </button>
-            <button
-              type="button"
-              class="action-btn action-deactivate"
-              (click)="deactivateLesson(lesson)"
-              [disabled]="isDeactivatingLesson(lesson.id)"
-              [attr.aria-label]="'Inactivar lección ' + lesson.displayTitle"
-              title="Inactivar"
-            >
-              @if (isDeactivatingLesson(lesson.id)) {
-                Inactivando...
-              } @else {
-                🛑 Inactivar
-              }
-            </button>
-          </div>
-        </article>
+        <app-planned-lesson-card
+          [lesson]="lesson"
+          [isDeactivating]="isDeactivatingLesson(lesson.id)"
+          (editClick)="openEditLessonForm(lesson)"
+          (deactivateClick)="deactivateLesson(lesson)"
+        ></app-planned-lesson-card>
       }
     </div>
   }
@@ -218,32 +92,7 @@
 
   <!-- Estadísticas del planificador -->
   @if (!isLoading() && totalLessons() > 0) {
-    <aside class="stats-section" aria-labelledby="stats-title">
-      <h2 id="stats-title" class="stats-title">Estadísticas</h2>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <span class="stat-icon" aria-hidden="true">📊</span>
-          <div class="stat-content">
-            <p class="stat-value">{{ planningStats().totalPlanned }}</p>
-            <p class="stat-label">Total planificadas</p>
-          </div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-icon" aria-hidden="true">📌</span>
-          <div class="stat-content">
-            <p class="stat-value">{{ planningStats().upcomingLessons }}</p>
-            <p class="stat-label">Próximas lecciones</p>
-          </div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-icon" aria-hidden="true">📅</span>
-          <div class="stat-content">
-            <p class="stat-value">{{ planningStats().lessonsThisMonth }}</p>
-            <p class="stat-label">Este mes</p>
-          </div>
-        </div>
-      </div>
-    </aside>
+    <app-planned-lesson-stats [stats]="planningStats()"></app-planned-lesson-stats>
   }
 
   <!-- Botón flotante para crear nueva lección -->

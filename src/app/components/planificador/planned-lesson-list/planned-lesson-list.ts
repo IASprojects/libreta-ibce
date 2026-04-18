@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { PlannedLessonService } from '../../../services/planned-lesson.service';
 import { DateService } from '../../../services/date.service';
+import { AppConfigService } from '../../../services/app-config.service';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
 import { PlannedLessonForm } from '../planned-lesson-form/planned-lesson-form';
 import { ModuleHeader } from '../../ui/module-header/module-header';
-import { FilterBar } from '../../ui/filter-bar/filter-bar';
+import { PlannedLessonFilters } from './planned-lesson-filters/planned-lesson-filters';
+import { PlannedLessonCard } from './planned-lesson-card/planned-lesson-card';
+import { PlannedLessonStats } from './planned-lesson-stats/planned-lesson-stats';
 
 /**
  * Lección planificada con datos calculados para la vista
@@ -24,7 +26,14 @@ interface PlannedLessonDisplay extends PlannedLesson {
 
 @Component({
   selector: 'app-planned-lesson-list',
-  imports: [CommonModule, FormsModule, PlannedLessonForm, ModuleHeader, FilterBar],
+  imports: [
+    CommonModule,
+    PlannedLessonForm,
+    ModuleHeader,
+    PlannedLessonFilters,
+    PlannedLessonCard,
+    PlannedLessonStats,
+  ],
   templateUrl: './planned-lesson-list.html',
   styleUrl: './planned-lesson-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +41,7 @@ interface PlannedLessonDisplay extends PlannedLesson {
 export class PlannedLessonList {
   private plannedLessonService = inject(PlannedLessonService);
   private dateService = inject(DateService);
+  private appConfigService = inject(AppConfigService);
 
   // Estados reactivos del servicio
   isLoading = this.plannedLessonService.isLoading;
@@ -109,6 +119,9 @@ export class PlannedLessonList {
     (this.searchTerm().trim() !== '' || this.filterTeacher() !== 'all' || this.filterDate() !== 'all') 
     && this.filteredLessons().length === 0
   );
+  hasActiveFilters = computed(() =>
+    this.searchTerm().trim() !== '' || this.filterTeacher() !== 'all' || this.filterDate() !== 'all'
+  );
 
   // Lista de maestros únicos
   uniqueTeachers = computed(() => {
@@ -154,6 +167,11 @@ export class PlannedLessonList {
       return lesson.title?.trim() || 'Clase informal';
     }
 
+    const configuredLessonTitle = this.getConfiguredLessonTitle(lesson);
+    if (configuredLessonTitle) {
+      return configuredLessonTitle;
+    }
+
     const unit = lesson.unitNumber?.trim();
     const lessonNumber = lesson.lessonNumber?.trim();
 
@@ -170,6 +188,52 @@ export class PlannedLessonList {
     }
 
     return 'Clase formal sin detalle';
+  }
+
+  private getConfiguredLessonTitle(lesson: PlannedLesson): string | null {
+    const unitNumber = lesson.unitNumber?.trim();
+    const lessonNumber = lesson.lessonNumber?.trim();
+
+    if (!unitNumber || !lessonNumber) {
+      return null;
+    }
+
+    const catalogUnit = this.appConfigService
+      .lessonCatalog()
+      .find(unit => this.matchesCatalogValue(unit.unitNumber, unitNumber));
+
+    if (!catalogUnit) {
+      return null;
+    }
+
+    const catalogLesson = catalogUnit.lessons.find(catalogLesson =>
+      this.matchesCatalogValue(catalogLesson.lessonNumber, lessonNumber)
+    );
+
+    const title = catalogLesson?.lessonTitle?.trim();
+    return title ? title : null;
+  }
+
+  private matchesCatalogValue(catalogValue: string | undefined, lessonValue: string): boolean {
+    const normalizedCatalogValue = this.normalizeCatalogValue(catalogValue);
+    const normalizedLessonValue = this.normalizeCatalogValue(lessonValue);
+
+    return normalizedCatalogValue !== '' && normalizedCatalogValue === normalizedLessonValue;
+  }
+
+  private normalizeCatalogValue(value: string | undefined): string {
+    const trimmed = value?.trim() ?? '';
+    if (!trimmed) {
+      return '';
+    }
+
+    const numericMatch = trimmed.match(/\d+/);
+    if (numericMatch) {
+      const numeric = Number(numericMatch[0]);
+      return Number.isFinite(numeric) ? String(numeric) : trimmed.toLowerCase();
+    }
+
+    return trimmed.toLowerCase();
   }
 
   /**

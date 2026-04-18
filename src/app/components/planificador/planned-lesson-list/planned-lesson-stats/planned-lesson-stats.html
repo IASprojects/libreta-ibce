@@ -1,0 +1,26 @@
+<aside class="stats-section" aria-labelledby="stats-title">
+  <h2 id="stats-title" class="stats-title">Estadísticas</h2>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon" aria-hidden="true">📊</span>
+      <div class="stat-content">
+        <p class="stat-value">{{ stats().totalPlanned }}</p>
+        <p class="stat-label">Total planificadas</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon" aria-hidden="true">📌</span>
+      <div class="stat-content">
+        <p class="stat-value">{{ stats().upcomingLessons }}</p>
+        <p class="stat-label">Próximas lecciones</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon" aria-hidden="true">📅</span>
+      <div class="stat-content">
+        <p class="stat-value">{{ stats().lessonsThisMonth }}</p>
+        <p class="stat-label">Este mes</p>
+      </div>
+    </div>
+  </div>
+</aside>
