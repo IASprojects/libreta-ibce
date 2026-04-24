@@ -1,0 +1,133 @@
+<section class="settings-panel" aria-labelledby="catalog-title">
+  <div class="panel-header">
+    <div>
+      <h2 id="catalog-title">Catálogo de Unidades y Lecciones</h2>
+      <p>Define qué lecciones pertenecen a cada unidad del planificador.</p>
+    </div>
+    <button type="button" class="btn btn-secondary" (click)="onAddUnit()" [disabled]="catalogSaving()">
+      Agregar unidad
+    </button>
+  </div>
+
+  @if (catalogMessage()) {
+    <p class="feedback-inline" [class.error-text]="catalogMessage()?.includes('No ') || catalogMessage()?.includes('debe')">
+      {{ catalogMessage() }}
+    </p>
+  }
+
+  @if (!hasLessonCatalog()) {
+    <p class="empty-copy">No hay unidades configuradas.</p>
+  }
+
+  <div class="stack-list">
+    @for (unit of lessonCatalog(); track trackByUnit($index, unit); let unitIndex = $index) {
+      <article class="editor-card catalog-card">
+        <div class="editor-grid unit-grid">
+          <label class="field-group small-field">
+            <span class="field-label">Unidad</span>
+            <input
+              type="text"
+              class="field-control"
+              [ngModel]="unit.unitNumber"
+              (ngModelChange)="onUpdateUnitField($index, 'unitNumber', $event)"
+              placeholder="1"
+            />
+          </label>
+
+          <label class="field-group">
+            <span class="field-label">Título de unidad</span>
+            <input
+              type="text"
+              class="field-control"
+              [ngModel]="unit.unitTitle"
+              (ngModelChange)="onUpdateUnitField($index, 'unitTitle', $event)"
+              placeholder="Unidad 1"
+            />
+          </label>
+
+          <label class="toggle-field">
+            <input
+              type="checkbox"
+              [ngModel]="unit.isActive"
+              (ngModelChange)="onUpdateUnitField($index, 'isActive', $event)"
+            />
+            <span>Activa</span>
+          </label>
+        </div>
+
+        <div class="lesson-list">
+          <div class="lesson-list-header">
+            <h3>Lecciones</h3>
+            <button type="button" class="btn btn-secondary btn-small" (click)="onAddLesson($index)">
+              Agregar lección
+            </button>
+          </div>
+
+          @if (unit.lessons.length === 0) {
+            <p class="empty-copy">Esta unidad aún no tiene lecciones.</p>
+          }
+
+          @for (lesson of unit.lessons; track trackByLesson($index, lesson); let lessonIndex = $index) {
+            <div class="lesson-row">
+              <label class="field-group small-field">
+                <span class="field-label">Número</span>
+                <input
+                  type="text"
+                  class="field-control"
+                  [ngModel]="lesson.lessonNumber"
+                  (ngModelChange)="onUpdateLessonField(unitIndex, lessonIndex, 'lessonNumber', $event)"
+                  placeholder="3"
+                />
+              </label>
+
+              <label class="field-group">
+                <span class="field-label">Título</span>
+                <input
+                  type="text"
+                  class="field-control"
+                  [ngModel]="lesson.lessonTitle"
+                  (ngModelChange)="onUpdateLessonField(unitIndex, lessonIndex, 'lessonTitle', $event)"
+                  placeholder="Lección 3"
+                />
+              </label>
+
+              <label class="toggle-field compact-toggle">
+                <input
+                  type="checkbox"
+                  [ngModel]="lesson.isActive"
+                  (ngModelChange)="onUpdateLessonField(unitIndex, lessonIndex, 'isActive', $event)"
+                />
+                <span>Activa</span>
+              </label>
+
+              <button
+                type="button"
+                class="btn btn-danger btn-small"
+                (click)="onRemoveLesson(unitIndex, lessonIndex)"
+              >
+                Quitar
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="card-actions">
+          <button type="button" class="btn btn-danger" (click)="onRemoveUnit($index)">
+            Quitar unidad
+          </button>
+        </div>
+      </article>
+    }
+  </div>
+
+  <div class="panel-actions">
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onSaveLessonCatalog()"
+      [disabled]="catalogSaving() || isLoading()"
+    >
+      {{ catalogSaving() ? 'Guardando...' : 'Guardar catálogo' }}
+    </button>
+  </div>
+</section>

@@ -41,9 +41,9 @@ export class DashboardSchedule {
 
     return {
       id: lesson.id,
-      day: isDateValid ? String(lessonDate.getDate()).padStart(2, '0') : '--',
+      day: isDateValid ? String(lessonDate.getUTCDate()).padStart(2, '0') : '--',
       month: isDateValid
-        ? new Intl.DateTimeFormat('es-ES', { month: 'short' }).format(lessonDate).toUpperCase().replace('.', '')
+        ? new Intl.DateTimeFormat('es-ES', { month: 'short', timeZone: 'UTC' }).format(lessonDate).toUpperCase().replace('.', '')
         : '---',
       topic,
       teacher: this.resolveTeacherName(lesson.plannedTeacherId),

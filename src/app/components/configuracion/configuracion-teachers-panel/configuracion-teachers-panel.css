@@ -1,0 +1,154 @@
+.settings-panel {
+  margin-top: var(--app-space-5);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-color-surface);
+  border: 1px solid var(--app-color-border);
+  padding: var(--app-space-5);
+  box-shadow: var(--app-shadow-md);
+}
+
+.panel-header,
+.panel-actions,
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.panel-header {
+  margin-bottom: var(--app-space-4);
+}
+
+.panel-header p {
+  margin: 0.4rem 0 0;
+}
+
+.stack-list {
+  display: grid;
+  gap: var(--app-space-4);
+}
+
+.editor-card {
+  border: 1px solid var(--app-color-border);
+  border-radius: var(--app-radius-md);
+  padding: var(--app-space-4);
+  background: var(--app-color-surface-muted);
+}
+
+.editor-grid {
+  display: grid;
+  gap: var(--app-space-4);
+}
+
+.teacher-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.field-group {
+  display: grid;
+  gap: var(--app-space-1);
+}
+
+.field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--app-ink-medium);
+}
+
+.field-control {
+  width: 100%;
+  border: 1px solid var(--app-color-border-strong);
+  border-radius: var(--app-radius-sm);
+  padding: 0.72rem 0.85rem;
+  color: var(--app-ink-strong);
+  background: color-mix(in srgb, var(--app-color-surface) 78%, black 22%);
+}
+
+.field-control:focus {
+  outline: 2px solid color-mix(in srgb, var(--app-color-primary) 65%, white 35%);
+  outline-offset: 2px;
+  border-color: var(--app-color-primary);
+}
+
+.toggle-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 100%;
+  color: var(--app-ink-medium);
+  font-weight: 600;
+}
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.75rem 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.btn-primary {
+  background: var(--app-color-primary);
+  border-color: color-mix(in srgb, var(--app-color-primary) 70%, white 30%);
+  color: var(--app-ink-strong);
+}
+
+.btn-secondary {
+  background: var(--app-color-surface-muted);
+  border-color: var(--app-color-border-strong);
+  color: var(--app-ink-medium);
+}
+
+.btn-danger {
+  background: var(--app-color-danger);
+  border-color: var(--app-color-danger);
+  color: var(--app-ink-strong);
+}
+
+.feedback-inline,
+.empty-copy {
+  color: var(--app-ink-medium);
+}
+
+.feedback-inline {
+  margin: 0 0 1rem;
+  font-weight: 600;
+}
+
+.error-text {
+  color: color-mix(in srgb, var(--app-color-danger) 25%, white 75%);
+}
+
+.card-actions,
+.panel-actions {
+  margin-top: 1rem;
+}
+
+.settings-panel h2 {
+  margin: 0;
+  color: var(--app-ink-strong);
+}
+
+.settings-panel p {
+  margin-top: 0.75rem;
+  color: var(--app-ink-medium);
+}
+
+@media (max-width: 768px) {
+  .settings-panel {
+    padding: var(--app-space-4);
+  }
+
+  .panel-header,
+  .panel-actions,
+  .card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

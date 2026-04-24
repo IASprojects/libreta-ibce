@@ -1,28 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { TeacherNames } from '../../core/models/enums';
-import { LessonCatalogUnit, Teacher } from '../../core/models/app-config.model';
+import { LessonCatalogUnit } from '../../core/models/app-config.model';
 import { AppConfigService } from '../../services/app-config.service';
-
-interface EditableTeacher extends Teacher {}
-
-interface EditableLesson {
-  lessonNumber: string;
-  lessonTitle: string;
-  isActive: boolean;
-}
-
-interface EditableUnit {
-  unitNumber: string;
-  unitTitle: string;
-  isActive: boolean;
-  lessons: EditableLesson[];
-}
+import {
+  EditableLesson,
+  EditableTeacher,
+  EditableUnit,
+  LessonFieldChange,
+  LessonRemove,
+  TeacherFieldChange,
+  TeacherNameChange,
+  UnitFieldChange,
+} from './configuracion.types';
+import { ConfiguracionTeachersPanel } from './configuracion-teachers-panel/configuracion-teachers-panel';
+import { ConfiguracionCatalogPanel } from './configuracion-catalog-panel/configuracion-catalog-panel';
 
 @Component({
   selector: 'app-configuracion',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ConfiguracionTeachersPanel, ConfiguracionCatalogPanel],
   templateUrl: './configuracion.html',
   styleUrl: './configuracion.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -319,20 +315,24 @@ export class Configuracion {
     }
   }
 
-  trackByTeacher(index: number, teacher: EditableTeacher): string {
-    return `${teacher.name}-${index}`;
+  handleTeacherNameChange(event: TeacherNameChange): void {
+    this.updateTeacherName(event.index, event.name);
   }
 
-  canUseTeacherName(name: TeacherNames, currentName: TeacherNames): boolean {
-    return name === currentName || !this.teachers().some(teacher => teacher.name === name);
+  handleTeacherFieldChange(event: TeacherFieldChange): void {
+    this.updateTeacherField(event.index, event.field, event.value);
   }
 
-  trackByUnit(index: number, unit: EditableUnit): string {
-    return `${unit.unitNumber || 'new'}-${index}`;
+  handleUnitFieldChange(event: UnitFieldChange): void {
+    this.updateUnitField(event.index, event.field, event.value);
   }
 
-  trackByLesson(index: number, lesson: EditableLesson): string {
-    return `${lesson.lessonNumber || 'new'}-${index}`;
+  handleLessonRemove(event: LessonRemove): void {
+    this.removeLesson(event.unitIndex, event.lessonIndex);
+  }
+
+  handleLessonFieldChange(event: LessonFieldChange): void {
+    this.updateLessonField(event.unitIndex, event.lessonIndex, event.field, event.value);
   }
 
   private getTodayString(): string {

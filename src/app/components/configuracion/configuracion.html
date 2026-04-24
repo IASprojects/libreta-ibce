@@ -11,247 +11,34 @@
   }
 
   <div class="settings-grid">
-    <section class="settings-panel" aria-labelledby="teachers-title">
-      <div class="panel-header">
-        <div>
-          <h2 id="teachers-title">Maestros</h2>
-          <p>Mantén nombres habilitados, teléfonos, correos y estado activo.</p>
-        </div>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="addTeacher()"
-          [disabled]="teachersSaving() || availableTeacherOptions().length === 0"
-        >
-          Agregar maestro
-        </button>
-      </div>
+    <app-configuracion-teachers-panel
+      [teachers]="teachers()"
+      [teachersMessage]="teachersMessage()"
+      [hasTeachers]="hasTeachers()"
+      [teachersSaving]="teachersSaving()"
+      [isLoading]="isLoading()"
+      [availableTeacherOptionsCount]="availableTeacherOptions().length"
+      [availableTeacherNames]="availableTeacherNames"
+      (addTeacher)="addTeacher()"
+      (removeTeacher)="removeTeacher($event)"
+      (updateTeacherName)="handleTeacherNameChange($event)"
+      (updateTeacherField)="handleTeacherFieldChange($event)"
+      (saveTeachers)="saveTeachers()"
+    />
 
-      @if (teachersMessage()) {
-        <p class="feedback-inline" [class.error-text]="teachersMessage()?.includes('No ') || teachersMessage()?.includes('duplicados')">
-          {{ teachersMessage() }}
-        </p>
-      }
-
-      @if (!hasTeachers()) {
-        <p class="empty-copy">No hay maestros configurados.</p>
-      }
-
-      <div class="stack-list">
-        @for (teacher of teachers(); track trackByTeacher($index, teacher)) {
-          <article class="editor-card">
-            <div class="editor-grid teacher-grid">
-              <label class="field-group">
-                <span class="field-label">Nombre</span>
-                <select
-                  class="field-control"
-                  [ngModel]="teacher.name"
-                  (ngModelChange)="updateTeacherName($index, $event)"
-                >
-                  <option [ngValue]="teacher.name">{{ teacher.name }}</option>
-                  @for (name of availableTeacherNames; track name) {
-                    @if (canUseTeacherName(name, teacher.name)) {
-                      <option [ngValue]="name">{{ name }}</option>
-                    }
-                  }
-                </select>
-              </label>
-
-              <label class="field-group">
-                <span class="field-label">Teléfono</span>
-                <input
-                  type="tel"
-                  class="field-control"
-                  [ngModel]="teacher.phone"
-                  (ngModelChange)="updateTeacherField($index, 'phone', $event)"
-                  placeholder="8090000000"
-                />
-              </label>
-
-              <label class="field-group">
-                <span class="field-label">Correo</span>
-                <input
-                  type="email"
-                  class="field-control"
-                  [ngModel]="teacher.email"
-                  (ngModelChange)="updateTeacherField($index, 'email', $event)"
-                  placeholder="correo@iglesia.org"
-                />
-              </label>
-
-              <label class="field-group">
-                <span class="field-label">Ingreso</span>
-                <input
-                  type="date"
-                  class="field-control"
-                  [ngModel]="teacher.joinedAt"
-                  (ngModelChange)="updateTeacherField($index, 'joinedAt', $event)"
-                />
-              </label>
-
-              <label class="toggle-field">
-                <input
-                  type="checkbox"
-                  [ngModel]="teacher.isActive"
-                  (ngModelChange)="updateTeacherField($index, 'isActive', $event)"
-                />
-                <span>Activo</span>
-              </label>
-            </div>
-
-            <div class="card-actions">
-              <button type="button" class="btn btn-danger" (click)="removeTeacher($index)">
-                Quitar
-              </button>
-            </div>
-          </article>
-        }
-      </div>
-
-      <div class="panel-actions">
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="saveTeachers()"
-          [disabled]="teachersSaving() || isLoading()"
-        >
-          {{ teachersSaving() ? 'Guardando...' : 'Guardar maestros' }}
-        </button>
-      </div>
-    </section>
-
-    <section class="settings-panel" aria-labelledby="catalog-title">
-      <div class="panel-header">
-        <div>
-          <h2 id="catalog-title">Catálogo de Unidades y Lecciones</h2>
-          <p>Define qué lecciones pertenecen a cada unidad del planificador.</p>
-        </div>
-        <button type="button" class="btn btn-secondary" (click)="addUnit()" [disabled]="catalogSaving()">
-          Agregar unidad
-        </button>
-      </div>
-
-      @if (catalogMessage()) {
-        <p class="feedback-inline" [class.error-text]="catalogMessage()?.includes('No ') || catalogMessage()?.includes('debe')">
-          {{ catalogMessage() }}
-        </p>
-      }
-
-      @if (!hasLessonCatalog()) {
-        <p class="empty-copy">No hay unidades configuradas.</p>
-      }
-
-      <div class="stack-list">
-        @for (unit of lessonCatalog(); track trackByUnit($index, unit); let unitIndex = $index) {
-          <article class="editor-card catalog-card">
-            <div class="editor-grid unit-grid">
-              <label class="field-group small-field">
-                <span class="field-label">Unidad</span>
-                <input
-                  type="text"
-                  class="field-control"
-                  [ngModel]="unit.unitNumber"
-                  (ngModelChange)="updateUnitField($index, 'unitNumber', $event)"
-                  placeholder="1"
-                />
-              </label>
-
-              <label class="field-group">
-                <span class="field-label">Título de unidad</span>
-                <input
-                  type="text"
-                  class="field-control"
-                  [ngModel]="unit.unitTitle"
-                  (ngModelChange)="updateUnitField($index, 'unitTitle', $event)"
-                  placeholder="Unidad 1"
-                />
-              </label>
-
-              <label class="toggle-field">
-                <input
-                  type="checkbox"
-                  [ngModel]="unit.isActive"
-                  (ngModelChange)="updateUnitField($index, 'isActive', $event)"
-                />
-                <span>Activa</span>
-              </label>
-            </div>
-
-            <div class="lesson-list">
-              <div class="lesson-list-header">
-                <h3>Lecciones</h3>
-                <button type="button" class="btn btn-secondary btn-small" (click)="addLesson($index)">
-                  Agregar lección
-                </button>
-              </div>
-
-              @if (unit.lessons.length === 0) {
-                <p class="empty-copy">Esta unidad aún no tiene lecciones.</p>
-              }
-
-              @for (lesson of unit.lessons; track trackByLesson($index, lesson); let lessonIndex = $index) {
-                <div class="lesson-row">
-                  <label class="field-group small-field">
-                    <span class="field-label">Número</span>
-                    <input
-                      type="text"
-                      class="field-control"
-                      [ngModel]="lesson.lessonNumber"
-                      (ngModelChange)="updateLessonField(unitIndex, lessonIndex, 'lessonNumber', $event)"
-                      placeholder="3"
-                    />
-                  </label>
-
-                  <label class="field-group">
-                    <span class="field-label">Título</span>
-                    <input
-                      type="text"
-                      class="field-control"
-                      [ngModel]="lesson.lessonTitle"
-                      (ngModelChange)="updateLessonField(unitIndex, lessonIndex, 'lessonTitle', $event)"
-                      placeholder="Lección 3"
-                    />
-                  </label>
-
-                  <label class="toggle-field compact-toggle">
-                    <input
-                      type="checkbox"
-                      [ngModel]="lesson.isActive"
-                      (ngModelChange)="updateLessonField(unitIndex, lessonIndex, 'isActive', $event)"
-                    />
-                    <span>Activa</span>
-                  </label>
-
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-small"
-                    (click)="removeLesson(unitIndex, lessonIndex)"
-                  >
-                    Quitar
-                  </button>
-                </div>
-              }
-            </div>
-
-            <div class="card-actions">
-              <button type="button" class="btn btn-danger" (click)="removeUnit($index)">
-                Quitar unidad
-              </button>
-            </div>
-          </article>
-        }
-      </div>
-
-      <div class="panel-actions">
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="saveLessonCatalog()"
-          [disabled]="catalogSaving() || isLoading()"
-        >
-          {{ catalogSaving() ? 'Guardando...' : 'Guardar catálogo' }}
-        </button>
-      </div>
-    </section>
+    <app-configuracion-catalog-panel
+      [lessonCatalog]="lessonCatalog()"
+      [catalogMessage]="catalogMessage()"
+      [hasLessonCatalog]="hasLessonCatalog()"
+      [catalogSaving]="catalogSaving()"
+      [isLoading]="isLoading()"
+      (addUnit)="addUnit()"
+      (removeUnit)="removeUnit($event)"
+      (updateUnitField)="handleUnitFieldChange($event)"
+      (addLesson)="addLesson($event)"
+      (removeLesson)="handleLessonRemove($event)"
+      (updateLessonField)="handleLessonFieldChange($event)"
+      (saveLessonCatalog)="saveLessonCatalog()"
+    />
   </div>
 </section>

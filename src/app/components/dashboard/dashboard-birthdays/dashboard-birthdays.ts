@@ -32,9 +32,9 @@ export class DashboardBirthdays {
       .activeStudents()
       .filter(student => {
         const birthDate = new Date(student.birthDate);
-        return !Number.isNaN(birthDate.getTime()) && birthDate.getMonth() === monthIndex;
+        return !Number.isNaN(birthDate.getTime()) && birthDate.getUTCMonth() === monthIndex;
       })
-      .sort((first, second) => new Date(first.birthDate).getDate() - new Date(second.birthDate).getDate())
+      .sort((first, second) => new Date(first.birthDate).getUTCDate() - new Date(second.birthDate).getUTCDate())
       .map(student => this.mapBirthday(student));
   });
 
@@ -46,7 +46,7 @@ export class DashboardBirthdays {
       id: student.id,
       name: student.name,
       initials: this.getInitials(student.name),
-      date: `${birthDate.getDate()} ${this.dateService.currentMonth().toLowerCase()} (${age} años)`
+      date: `${birthDate.getUTCDate()} ${this.dateService.currentMonth().toLowerCase()} (${age} años)`
     };
   }
 

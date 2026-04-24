@@ -94,8 +94,8 @@ export class DateService {
     // Ajustar cumpleaños al año actual
     const thisYearBirthday = new Date(
       today.getFullYear(),
-      birth.getMonth(),
-      birth.getDate()
+      birth.getUTCMonth(),
+      birth.getUTCDate()
     );
     
     // Calcular diferencia en días
