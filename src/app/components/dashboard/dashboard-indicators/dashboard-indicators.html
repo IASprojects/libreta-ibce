@@ -1,13 +1,18 @@
 <!-- Indicadores principales -->
 <div class="indicators-grid">
   <!-- Contador de clases -->
-  <div class="indicator-card primary">
+  <a
+    class="indicator-card primary indicator-card-link"
+    [routerLink]="['/dashboard/clases']"
+    aria-label="Ir a la sección de clases"
+  >
     <div class="indicator-icon">📚</div>
     <div class="indicator-content">
       <h3>{{ totalClasses() }}</h3>
       <p>Clases Registradas</p>
+      <small class="indicator-action-hint" aria-hidden="true">Ir a clases</small>
     </div>
-  </div>
+  </a>
 
   <!-- Promedio de asistencia -->
   <div class="indicator-card success">

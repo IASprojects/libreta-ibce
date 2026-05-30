@@ -19,6 +19,37 @@
   border-left: 4px solid;
 }
 
+.indicator-card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.indicator-card-link:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--app-color-primary) 60%, white);
+  outline-offset: 2px;
+}
+
+.indicator-card-link .indicator-action-hint {
+  min-height: 1.1rem;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  color: var(--app-color-primary);
+}
+
+.indicator-card-link:hover .indicator-action-hint,
+.indicator-card-link:focus-visible .indicator-action-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (hover: none) {
+  .indicator-card-link .indicator-action-hint {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .indicator-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--app-shadow-md);

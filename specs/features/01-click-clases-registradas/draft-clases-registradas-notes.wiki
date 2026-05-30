@@ -1,0 +1,41 @@
+h1. Notas sobre el borrador
+
+h2. Lo que ya está bien encaminado
+
+- La intención funcional está clara: convertir la tarjeta de "Clases Registradas" en un acceso directo hacia la página de clases.
+- También está bien identificado el detalle visual de mostrar el texto "ir a clases" al pasar el mouse.
+
+h2. Sugerencias de mejora
+
+- Conviene indicar explícitamente la ruta de destino. En el código actual existe la ruta `dashboard/clases`, así que el criterio debería decir hacia dónde navega exactamente la tarjeta.
+- El texto dice "rediriga"; lo recomendable es corregirlo a "redirija".
+- El borrador menciona solo el hover. En móvil no hay mouse, así que también debería contemplarse el estado de foco o una variante visible para pantallas táctiles.
+- Si la tarjeta será interactiva completa, conviene definir si se implementará como enlace o como botón con navegación. Eso ayuda a mantener accesibilidad y evitar comportamientos inconsistentes.
+- Falta especificar que el estado visual no debe romper el diseño actual, pero sí debería incluir un indicio claro de interactividad: cursor, transición suave y texto secundario visible al hover/focus.
+- Sería útil aclarar que el evento de clic debe respetar la navegación actual sin disparar acciones duplicadas ni interferir con otros indicadores.
+- También haría falta una pequeña lista de criterios de aceptación para probar el cambio: click, teclado, hover, y navegación correcta.
+
+h2. Riesgos o vacíos del alcance
+
+- No se define si toda la tarjeta es clicable o solo una parte concreta.
+- No se indica qué pasa si el usuario presiona Enter o Space desde teclado.
+- No se aclara si el texto "ir a clases" debe estar oculto por defecto o solo atenuado.
+- No se menciona el comportamiento en dispositivos táctiles, donde el hover no existe.
+
+h2. Versión sugerida del requisito
+
+En el dashboard, la tarjeta de "Clases Registradas" debe funcionar como acceso directo a la página de clases.
+
+Requisitos:
+
+- Al hacer clic en la tarjeta, el sistema debe navegar a la ruta de clases.
+- Al pasar el mouse o enfocar la tarjeta con teclado, debe mostrarse el texto "Ir a clases" debajo del contenido.
+- La interacción no debe afectar la visualización actual del dashboard ni alterar el comportamiento de los otros indicadores.
+- La tarjeta debe mantener una experiencia accesible para teclado y dispositivos táctiles.
+
+Criterios de aceptación:
+
+- La tarjeta abre la página de clases al hacer clic.
+- La tarjeta muestra un estado visual claro al pasar el mouse y al recibir foco.
+- El texto "Ir a clases" aparece sin desordenar el contenido.
+- No se rompen los estilos ni la navegación existente del dashboard.

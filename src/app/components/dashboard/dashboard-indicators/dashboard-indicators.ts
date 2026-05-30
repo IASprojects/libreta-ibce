@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { LessonClassService } from '../../../services/lesson-class.service';
 import { AttendanceService } from '../../../services/attendance.service';
 import { AppConfigService } from '../../../services/app-config.service';
@@ -9,7 +10,7 @@ import { combineLatest, map, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard-indicators',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard-indicators.html',
   styleUrl: './dashboard-indicators.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

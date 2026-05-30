@@ -1,0 +1,14 @@
+
+Requisitos:
+
+- Al hacer clic en la tarjeta, el sistema debe navegar a la ruta de clases.
+- Al pasar el mouse o enfocar la tarjeta con teclado, debe mostrarse el texto "Ir a clases" debajo del contenido.
+- La interacción no debe afectar la visualización actual del dashboard ni alterar el comportamiento de los otros indicadores.
+- La tarjeta debe mantener una experiencia accesible para teclado y dispositivos táctiles.
+
+Criterios de aceptación:
+
+- La tarjeta abre la página de clases al hacer clic.
+- La tarjeta muestra un estado visual claro al pasar el mouse y al recibir foco.
+- El texto "Ir a clases" aparece sin desordenar el contenido.
+- No se rompen los estilos ni la navegación existente del dashboard.
