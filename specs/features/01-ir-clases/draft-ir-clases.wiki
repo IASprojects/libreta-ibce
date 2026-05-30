@@ -1,0 +1,54 @@
+h1. Draft: Acceso rápido a clases desde Dashboard
+
+h2. Contexto
+En el dashboard existen indicadores informativos. Se requiere que las tarjetas Presentes Última Semana y Última Clase también funcionen como accesos directos hacia la vista de clases, con comportamiento contextual según existan o no clases registradas.
+
+h2. Objetivo
+Permitir que ambas tarjetas naveguen a clases y:
+
+Si existe al menos una clase activa, abrir automáticamente la última clase en modo edición.
+Si no existen clases, abrir la vista de clases mostrando el formulario para crear una nueva.
+h2. Requisitos funcionales
+
+Las tarjetas Presentes Última Semana y Última Clase deben ser clicables/interactuables.
+Al hacer clic en cualquiera, la app debe navegar a /dashboard/clases.
+Si hay clases activas, se debe pasar el identificador de la última clase para abrirla en edición.
+Si no hay clases activas, se debe abrir el flujo de creación de clase.
+Mostrar texto contextual en hover/foco:
+Ver clase cuando exista última clase.
+Crear clase cuando no existan clases.
+En móvil, al tocar debe verse feedback visual (overlay/ripple breve) y navegar.
+No debe alterarse la distribución ni el comportamiento de otros indicadores.
+h2. Accesibilidad
+
+Mantener foco visible claro.
+Soportar teclado con Enter y Espacio.
+Usar etiquetas ARIA descriptivas según contexto.
+El texto contextual visual puede ser secundario y no duplicar ruido para lector de pantalla.
+h2. Regla de negocio para “última clase”
+
+Tomar la clase con fecha más reciente entre clases con active == true.
+Si no hay coincidencias, aplicar fallback de creación.
+h2. Implementación técnica sugerida
+
+En dashboard: enlaces con navegación a /dashboard/clases.
+En navegación contextual:
+Con clase disponible: usar query param tipo openClassId=<id>.
+Sin clase: usar indicador tipo createClass=true.
+En la vista de clases:
+Si llega openClassId, buscar clase y ejecutar apertura en modo edición.
+Si llega createClass=true, abrir formulario de creación.
+Limpiar query params después de procesarlos para evitar reaperturas involuntarias.
+h2. Criterios de aceptación (QA)
+
+Click en cualquiera de las dos tarjetas navega a /dashboard/clases.
+Con clases activas: se abre automáticamente la última clase en edición.
+Sin clases activas: se abre automáticamente el formulario de crear clase.
+El hint Ver clase / Crear clase aparece en hover/foco sin romper layout.
+Con teclado (Tab + Enter/Espacio) funciona correctamente.
+En móvil responde al tap con feedback visual y navegación.
+No se rompen estilos ni navegación de otros indicadores.
+h2. Notas
+
+Esta historia no requiere cambios de modelo de datos.
+Validar manualmente escenarios con y sin clases antes de cerrar.

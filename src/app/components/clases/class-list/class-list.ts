@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { concatMap, finalize, map, Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   CreateCustomClassInput,
   CreateFromPlannedInput,
@@ -83,6 +85,8 @@ export class ClassList {
   private dateService = inject(DateService);
   private userService = inject(UserService);
   private appConfigService = inject(AppConfigService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   classStats = this.lessonClassService.classStats;
   todayClass = this.lessonClassService.todayClass;
@@ -91,6 +95,8 @@ export class ClassList {
 
   private activeClasses = this.lessonClassService.activeClasses;
   private activePlannedLessons = this.plannedLessonService.activePlannedLessons;
+  private queryParamMap = toSignal(this.route.queryParamMap, { initialValue: this.route.snapshot.queryParamMap });
+  private contextualNavigationHandled = signal(false);
 
   filterTeacher = signal('all');
   filterPeriod = signal('all');
@@ -317,6 +323,77 @@ export class ClassList {
       if (hasChanges) {
         this.attendanceByStudent.set(nextMap);
       }
+    });
+
+    effect(() => {
+      if (this.contextualNavigationHandled()) {
+        return;
+      }
+
+      const queryMap = this.queryParamMap();
+      const openClassId = queryMap.get('openClassId');
+      const createClass = queryMap.get('createClass') === 'true';
+
+      if (!openClassId && !createClass) {
+        return;
+      }
+
+      const classes = this.activeClasses();
+
+      if (openClassId) {
+        const targetClass = classes.find(lessonClass => lessonClass.id === openClassId);
+        if (targetClass) {
+          this.openEditClass(targetClass);
+          this.contextualNavigationHandled.set(true);
+          this.clearContextualQueryParams();
+          return;
+        }
+
+        if (this.lessonClassService.isLoading()) {
+          return;
+        }
+
+        this.openLatestActiveClassOrCreate(classes);
+        this.contextualNavigationHandled.set(true);
+        this.clearContextualQueryParams();
+        return;
+      }
+
+      this.openCustomClass();
+      this.contextualNavigationHandled.set(true);
+      this.clearContextualQueryParams();
+    });
+  }
+
+  private openLatestActiveClassOrCreate(classes: LessonClass[]): void {
+    if (classes.length === 0) {
+      this.openCustomClass();
+      return;
+    }
+
+    const latestClass = [...classes].sort((left, right) => {
+      const leftDate = new Date(`${left.date}T00:00:00`).getTime();
+      const rightDate = new Date(`${right.date}T00:00:00`).getTime();
+      return rightDate - leftDate;
+    })[0];
+
+    if (latestClass) {
+      this.openEditClass(latestClass);
+      return;
+    }
+
+    this.openCustomClass();
+  }
+
+  private clearContextualQueryParams(): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        openClassId: null,
+        createClass: null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
   }
 

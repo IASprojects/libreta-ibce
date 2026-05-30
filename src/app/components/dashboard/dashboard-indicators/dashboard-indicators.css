@@ -24,6 +24,27 @@
   color: inherit;
 }
 
+.indicator-card-actionable {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.indicator-card-actionable::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--app-color-primary) 20%, transparent);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.indicator-card-actionable:active::after {
+  opacity: 1;
+}
+
 .indicator-card-link:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--app-color-primary) 60%, white);
   outline-offset: 2px;

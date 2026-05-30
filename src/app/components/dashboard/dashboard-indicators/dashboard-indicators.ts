@@ -49,6 +49,41 @@ export class DashboardIndicators {
   averageAttendance = computed(() => this.presentStudentsLastWeek());
 
   private readonly lastClass = computed(() => this.classes()[0] ?? null);
+  private readonly lastActiveClass = computed(() => {
+    const activeClasses = this.classes().filter(lessonClass => lessonClass.active);
+    if (activeClasses.length === 0) {
+      return null;
+    }
+
+    return [...activeClasses].sort((left, right) => {
+      const leftDate = new Date(`${left.date}T00:00:00`).getTime();
+      const rightDate = new Date(`${right.date}T00:00:00`).getTime();
+      return rightDate - leftDate;
+    })[0] ?? null;
+  });
+
+  classNavigationQueryParams = computed(() => {
+    const lessonClass = this.lastActiveClass();
+    if (lessonClass) {
+      return { openClassId: lessonClass.id };
+    }
+
+    return { createClass: true };
+  });
+
+  classActionHint = computed(() => (this.lastActiveClass() ? 'Ver clase' : 'Crear clase'));
+
+  averageAttendanceAriaLabel = computed(() =>
+    this.lastActiveClass()
+      ? 'Ir a clases y abrir la última clase en edición'
+      : 'Ir a clases y crear una nueva clase'
+  );
+
+  lastClassAriaLabel = computed(() =>
+    this.lastActiveClass()
+      ? 'Abrir la última clase en modo edición'
+      : 'Ir a clases para crear una nueva clase'
+  );
 
   lastClassDate = computed(() => {
     const lessonClass = this.lastClass();
@@ -79,6 +114,15 @@ export class DashboardIndicators {
 
     return teacher?.name ?? lessonClass.teacherId;
   });
+
+  onIndicatorSpaceKeydown(event: Event): void {
+    event.preventDefault();
+    const target = event.currentTarget;
+
+    if (target instanceof HTMLElement) {
+      target.click();
+    }
+  }
 
   private filterClassesFromLastWeek(classes: LessonClass[]): LessonClass[] {
     const endDate = new Date();

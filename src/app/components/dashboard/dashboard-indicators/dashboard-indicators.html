@@ -15,21 +15,35 @@
   </a>
 
   <!-- Promedio de asistencia -->
-  <div class="indicator-card success">
+  <a
+    class="indicator-card success indicator-card-link indicator-card-actionable"
+    [routerLink]="['/dashboard/clases']"
+    [queryParams]="classNavigationQueryParams()"
+    [attr.aria-label]="averageAttendanceAriaLabel()"
+    (keydown.space)="onIndicatorSpaceKeydown($event)"
+  >
     <div class="indicator-icon">👥</div>
     <div class="indicator-content">
       <h3>{{ averageAttendance() }}</h3>
       <p>Presentes Última Semana</p>
+      <small class="indicator-action-hint" aria-hidden="true">{{ classActionHint() }}</small>
     </div>
-  </div>
+  </a>
 
   <!-- Última clase -->
-  <div class="indicator-card info">
+  <a
+    class="indicator-card info indicator-card-link indicator-card-actionable"
+    [routerLink]="['/dashboard/clases']"
+    [queryParams]="classNavigationQueryParams()"
+    [attr.aria-label]="lastClassAriaLabel()"
+    (keydown.space)="onIndicatorSpaceKeydown($event)"
+  >
     <div class="indicator-icon">🕒</div>
     <div class="indicator-content">
       <h3>{{ lastClassDate() }}</h3>
       <p>Última Clase</p>
       <small>Por: {{ lastTeacher() }}</small>
+      <small class="indicator-action-hint" aria-hidden="true">{{ classActionHint() }}</small>
     </div>
-  </div>
+  </a>
 </div>
