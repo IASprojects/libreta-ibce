@@ -5,6 +5,9 @@
       title="Total Estudiantes:"
       [subtitle]="studentSubtitle()"
     >
+      <div header-note class="header-note">
+        Indicadores: ✓ Total de asistencias registradas · 🔥 Racha actual de clases consecutivas asistidas · 📊 Porcentaje de asistencia en los últimos 3 meses.
+      </div>
       @if (upcomingBirthdays() > 0) {
         <span class="birthday-badge" aria-label="Cumpleaños próximos">
           🎂 {{ upcomingBirthdays() }}

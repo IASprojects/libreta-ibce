@@ -1,24 +1,33 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { 
-  collection, 
-  doc, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  getDocs, 
-  getDoc, 
-  query, 
-  where, 
-  orderBy, 
+import {
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDocs,
+  getDoc,
+  query,
+  where,
+  orderBy,
   onSnapshot,
   writeBatch,
   Timestamp,
   DocumentSnapshot,
   QuerySnapshot,
-  DocumentReference
+  DocumentReference,
 } from 'firebase/firestore';
-import { Observable, from, map, catchError, of, BehaviorSubject, throwError, switchMap } from 'rxjs';
+import {
+  Observable,
+  from,
+  map,
+  catchError,
+  of,
+  BehaviorSubject,
+  throwError,
+  switchMap,
+} from 'rxjs';
 import { FirebaseService } from './firebase.service';
 import { Student, StudentStats, StudentContact } from '../core/models/student.model';
 import { Attendance } from '../core/models/attendance.model';
@@ -31,7 +40,7 @@ interface StudentAttendanceSummary {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StudentService {
   private firebaseService = inject(FirebaseService);
@@ -45,32 +54,47 @@ export class StudentService {
   private studentsSubject = new BehaviorSubject<Student[]>([]);
   private isLoadingSubject = new BehaviorSubject<boolean>(false);
   private errorSubject = new BehaviorSubject<string | null>(null);
-  
+
   // Signals públicos
-  public readonly isLoading = toSignal(this.isLoadingSubject.asObservable(), { initialValue: false });
+  public readonly isLoading = toSignal(this.isLoadingSubject.asObservable(), {
+    initialValue: false,
+  });
   public readonly error = toSignal(this.errorSubject.asObservable(), { initialValue: null });
   public readonly students = toSignal(this.studentsSubject.asObservable(), { initialValue: [] });
-  
+
   // Estudiantes activos
-  public readonly activeStudents = computed(() => 
-    this.students().filter(student => student.active)
+  public readonly activeStudents = computed(() =>
+    this.students().filter((student) => student.active),
   );
-  
+
   // Estudiantes inactivos
-  public readonly inactiveStudents = computed(() => 
-    this.students().filter(student => !student.active)
+  public readonly inactiveStudents = computed(() =>
+    this.students().filter((student) => !student.active),
   );
 
   // Estadísticas generales
   public readonly studentsCount = computed(() => this.activeStudents().length);
   public readonly birthdaysThisMonth = computed(() => {
     const currentMonth = new Date().getMonth();
-    return this.activeStudents().filter(student => {
+    return this.activeStudents().filter((student) => {
       const birthDate = new Date(student.birthDate);
       return birthDate.getMonth() === currentMonth;
     });
   });
-
+  public readonly upcomingBirthdays = computed(() => {
+    const today = new Date();
+    const nextWeek = new Date();
+    nextWeek.setDate(today.getDate() + 7);
+    return this.activeStudents().filter((student) => {
+      const birthDate = new Date(student.birthDate);
+      const thisYearBirthday = new Date(
+        today.getFullYear(),
+        birthDate.getMonth(),
+        birthDate.getDate(),
+      );
+      return thisYearBirthday >= today && thisYearBirthday <= nextWeek;
+    });
+  });
   constructor() {
     this.initializeRealTimeListener();
   }
@@ -83,12 +107,13 @@ export class StudentService {
       const studentsRef = collection(this.firebaseService.db, this.STUDENTS_COLLECTION);
       const q = query(studentsRef, orderBy('name'));
 
-      onSnapshot(q, 
+      onSnapshot(
+        q,
         (snapshot: QuerySnapshot) => {
-          const students = snapshot.docs.map(docSnap => 
-            this.mapStudentData(docSnap.id, docSnap.data() as Record<string, unknown>)
+          const students = snapshot.docs.map((docSnap) =>
+            this.mapStudentData(docSnap.id, docSnap.data() as Record<string, unknown>),
           );
-          
+
           this.studentsSubject.next(students);
           this.setError(null);
         },
@@ -97,7 +122,7 @@ export class StudentService {
           this.setError('Error al sincronizar estudiantes');
           // En caso de error, intentar cargar desde cache/offline
           this.loadStudentsFromCache();
-        }
+        },
       );
     } catch (error) {
       console.error('Error al inicializar listener:', error);
@@ -121,7 +146,9 @@ export class StudentService {
   /**
    * Crear nuevo estudiante
    */
-  createStudent(studentData: Omit<Student, 'id' | 'registeredAt' | 'updatedAt' | 'active' | 'stats'>): Observable<string> {
+  createStudent(
+    studentData: Omit<Student, 'id' | 'registeredAt' | 'updatedAt' | 'active' | 'stats'>,
+  ): Observable<string> {
     this.setLoading(true);
     this.setError(null);
 
@@ -133,19 +160,19 @@ export class StudentService {
       stats: {
         totalAttendances: 0,
         currentStreak: 0,
-        last3MonthsPercentage: 0
-      }
+        last3MonthsPercentage: 0,
+      },
     };
 
     const studentsRef = collection(this.firebaseService.db, this.STUDENTS_COLLECTION);
-    
+
     return from(addDoc(studentsRef, newStudent)).pipe(
       map((docRef: DocumentReference) => {
         console.log('✅ Estudiante creado con ID:', docRef.id);
         this.setLoading(false);
         return docRef.id;
       }),
-      catchError(error => this.handleError('Error al crear estudiante', error))
+      catchError((error) => this.handleError('Error al crear estudiante', error)),
     );
   }
 
@@ -154,9 +181,9 @@ export class StudentService {
    */
   getStudentById(studentId: string): Observable<Student | null> {
     this.setError(null);
-    
+
     const studentRef = doc(this.firebaseService.db, this.STUDENTS_COLLECTION, studentId);
-    
+
     return from(getDoc(studentRef)).pipe(
       map((docSnap: DocumentSnapshot) => {
         if (docSnap.exists()) {
@@ -164,7 +191,7 @@ export class StudentService {
         }
         return null;
       }),
-      catchError(error => this.handleError('Error al obtener estudiante', error))
+      catchError((error) => this.handleError('Error al obtener estudiante', error)),
     );
   }
 
@@ -178,7 +205,7 @@ export class StudentService {
     const studentRef = doc(this.firebaseService.db, this.STUDENTS_COLLECTION, studentId);
     const updateData: Record<string, unknown> = {
       ...updates,
-      updatedAt: Timestamp.now()
+      updatedAt: Timestamp.now(),
     };
 
     // Remover campos que no se deben actualizar directamente
@@ -186,7 +213,7 @@ export class StudentService {
     delete updateData['registeredAt'];
 
     // Firestore no acepta undefined: limpiamos cualquier campo opcional no definido.
-    Object.keys(updateData).forEach(key => {
+    Object.keys(updateData).forEach((key) => {
       if (updateData[key] === undefined) {
         delete updateData[key];
       }
@@ -197,7 +224,7 @@ export class StudentService {
         console.log('✅ Estudiante actualizado:', studentId);
         this.setLoading(false);
       }),
-      catchError(error => this.handleError('Error al actualizar estudiante', error))
+      catchError((error) => this.handleError('Error al actualizar estudiante', error)),
     );
   }
 
@@ -207,7 +234,7 @@ export class StudentService {
   deactivateStudent(studentId: string, notes?: string): Observable<void> {
     const updates: Partial<Student> = {
       active: false,
-      notes: notes ? `[INACTIVO] ${notes}` : '[INACTIVO] Estudiante marcado como inactivo'
+      notes: notes ? `[INACTIVO] ${notes}` : '[INACTIVO] Estudiante marcado como inactivo',
     };
 
     return this.updateStudent(studentId, updates);
@@ -218,7 +245,7 @@ export class StudentService {
    */
   reactivateStudent(studentId: string): Observable<void> {
     const updates: Partial<Student> = {
-      active: true
+      active: true,
     };
 
     return this.updateStudent(studentId, updates);
@@ -232,13 +259,13 @@ export class StudentService {
     this.setError(null);
 
     const studentRef = doc(this.firebaseService.db, this.STUDENTS_COLLECTION, studentId);
-    
+
     return from(deleteDoc(studentRef)).pipe(
       map(() => {
         console.log('🗑️ Estudiante eliminado permanentemente:', studentId);
         this.setLoading(false);
       }),
-      catchError(error => this.handleError('Error al eliminar estudiante', error))
+      catchError((error) => this.handleError('Error al eliminar estudiante', error)),
     );
   }
 
@@ -247,31 +274,25 @@ export class StudentService {
    */
   searchStudentsByName(searchTerm: string): Observable<Student[]> {
     this.setError(null);
-    
+
     if (!searchTerm.trim()) {
       return of([]);
     }
 
     const studentsRef = collection(this.firebaseService.db, this.STUDENTS_COLLECTION);
-    const q = query(
-      studentsRef,
-      where('active', '==', true),
-      orderBy('name')
-    );
+    const q = query(studentsRef, where('active', '==', true), orderBy('name'));
 
     return from(getDocs(q)).pipe(
       map((querySnapshot: QuerySnapshot) => {
-        const allStudents = querySnapshot.docs.map(docSnap => 
-          this.mapStudentData(docSnap.id, docSnap.data() as Record<string, unknown>)
+        const allStudents = querySnapshot.docs.map((docSnap) =>
+          this.mapStudentData(docSnap.id, docSnap.data() as Record<string, unknown>),
         );
 
         // Filtro case insensitive en el frontend
         const searchLower = searchTerm.toLowerCase();
-        return allStudents.filter(student => 
-          student.name.toLowerCase().includes(searchLower)
-        );
+        return allStudents.filter((student) => student.name.toLowerCase().includes(searchLower));
       }),
-      catchError(error => this.handleError('Error al buscar estudiantes', error))
+      catchError((error) => this.handleError('Error al buscar estudiantes', error)),
     );
   }
 
@@ -282,38 +303,40 @@ export class StudentService {
     this.setError(null);
 
     return from(this.calculateStudentAttendanceSummary(studentId)).pipe(
-      switchMap(summary =>
+      switchMap((summary) =>
         this.updateStudent(studentId, {
           stats: summary.stats,
-          lastAttendance: summary.lastAttendance
-        })
+          lastAttendance: summary.lastAttendance,
+        }),
       ),
-      catchError(error => this.handleError('Error al actualizar estadísticas', error))
+      catchError((error) => this.handleError('Error al actualizar estadísticas', error)),
     );
   }
 
   /**
    * Calcular estadísticas de asistencia para un estudiante
    */
-  private async calculateStudentAttendanceSummary(studentId: string): Promise<StudentAttendanceSummary> {
+  private async calculateStudentAttendanceSummary(
+    studentId: string,
+  ): Promise<StudentAttendanceSummary> {
     try {
       const attendanceRef = collection(this.firebaseService.db, this.ATTENDANCE_COLLECTION);
       const q = query(
         attendanceRef,
         where('studentId', '==', studentId),
-        where('present', '==', true)
+        where('present', '==', true),
       );
 
       const querySnapshot = await getDocs(q);
-      const attendances = querySnapshot.docs.map(doc => ({
+      const attendances = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-        registeredAt: doc.data()['registeredAt']?.toDate() || new Date()
+        registeredAt: doc.data()['registeredAt']?.toDate() || new Date(),
       })) as Attendance[];
 
-      const activeAttendances = attendances.filter(attendance => attendance.inactive !== true);
+      const activeAttendances = attendances.filter((attendance) => attendance.inactive !== true);
       const sortedActiveAttendances = [...activeAttendances].sort(
-        (a, b) => b.registeredAt.getTime() - a.registeredAt.getTime()
+        (a, b) => b.registeredAt.getTime() - a.registeredAt.getTime(),
       );
 
       // Total de asistencias
@@ -325,38 +348,39 @@ export class StudentService {
       // Porcentaje de los últimos 3 meses
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-      const recentAttendances = sortedActiveAttendances.filter(att => 
-        att.registeredAt >= threeMonthsAgo
+      const recentAttendances = sortedActiveAttendances.filter(
+        (att) => att.registeredAt >= threeMonthsAgo,
       );
 
-      const lastAttendance = sortedActiveAttendances.length > 0
-        ? this.dateService.getDateString(sortedActiveAttendances[0].registeredAt)
-        : '';
+      const lastAttendance =
+        sortedActiveAttendances.length > 0
+          ? this.dateService.getDateString(sortedActiveAttendances[0].registeredAt)
+          : '';
 
       // Para calcular el porcentaje necesitamos el total de clases en los últimos 3 meses
       // Esto requiere consultar todas las clases, por simplicidad usaremos una aproximación
-      const last3MonthsPercentage = recentAttendances.length > 0 
-        ? Math.min(100, Math.round((recentAttendances.length / 12) * 100)) // Aproximado: 1 clase por semana
-        : 0;
+      const last3MonthsPercentage =
+        recentAttendances.length > 0
+          ? Math.min(100, Math.round((recentAttendances.length / 12) * 100)) // Aproximado: 1 clase por semana
+          : 0;
 
       return {
         stats: {
           totalAttendances,
           currentStreak,
-          last3MonthsPercentage
+          last3MonthsPercentage,
         },
-        lastAttendance
+        lastAttendance,
       };
-
     } catch (error) {
       console.error('Error calculando estadísticas:', error);
       return {
         stats: {
           totalAttendances: 0,
           currentStreak: 0,
-          last3MonthsPercentage: 0
+          last3MonthsPercentage: 0,
         },
-        lastAttendance: ''
+        lastAttendance: '',
       };
     }
   }
@@ -368,8 +392,8 @@ export class StudentService {
     if (attendances.length === 0) return 0;
 
     // Ordenar por fecha descendente
-    const sortedAttendances = attendances.sort((a, b) => 
-      b.registeredAt.getTime() - a.registeredAt.getTime()
+    const sortedAttendances = attendances.sort(
+      (a, b) => b.registeredAt.getTime() - a.registeredAt.getTime(),
     );
 
     let streak = 0;
@@ -403,8 +427,8 @@ export class StudentService {
     this.setLoading(true);
     this.setError(null);
 
-    const activeStudentIds = this.activeStudents().map(student => student.id);
-    
+    const activeStudentIds = this.activeStudents().map((student) => student.id);
+
     if (activeStudentIds.length === 0) {
       this.setLoading(false);
       return of();
@@ -417,27 +441,28 @@ export class StudentService {
       batches.push(activeStudentIds.slice(i, i + batchSize));
     }
 
-    return from(Promise.all(
-      batches.map(batch => 
-        Promise.all(batch.map(studentId => 
-          this.calculateStudentAttendanceSummary(studentId).then(summary =>
-            updateDoc(
-              doc(this.firebaseService.db, this.STUDENTS_COLLECTION, studentId),
-              {
-                stats: summary.stats,
-                lastAttendance: summary.lastAttendance,
-                updatedAt: Timestamp.now()
-              }
-            )
-          )
-        ))
-      )
-    )).pipe(
+    return from(
+      Promise.all(
+        batches.map((batch) =>
+          Promise.all(
+            batch.map((studentId) =>
+              this.calculateStudentAttendanceSummary(studentId).then((summary) =>
+                updateDoc(doc(this.firebaseService.db, this.STUDENTS_COLLECTION, studentId), {
+                  stats: summary.stats,
+                  lastAttendance: summary.lastAttendance,
+                  updatedAt: Timestamp.now(),
+                }),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ).pipe(
       map(() => {
         console.log('✅ Estadísticas actualizadas para todos los estudiantes');
         this.setLoading(false);
       }),
-      catchError(error => this.handleError('Error al actualizar estadísticas masivas', error))
+      catchError((error) => this.handleError('Error al actualizar estadísticas masivas', error)),
     );
   }
 
@@ -446,11 +471,13 @@ export class StudentService {
    */
   getStudentsBirthdaysByMonth(month: number): Observable<Student[]> {
     return this.studentsSubject.asObservable().pipe(
-      map(students => students.filter(student => {
-        if (!student.active) return false;
-        const birthDate = new Date(student.birthDate);
-        return birthDate.getMonth() === month;
-      }))
+      map((students) =>
+        students.filter((student) => {
+          if (!student.active) return false;
+          const birthDate = new Date(student.birthDate);
+          return birthDate.getMonth() === month;
+        }),
+      ),
     );
   }
 
@@ -463,15 +490,21 @@ export class StudentService {
     nextWeek.setDate(today.getDate() + 7);
 
     return this.studentsSubject.asObservable().pipe(
-      map(students => students.filter(student => {
-        if (!student.active) return false;
-        
-        const birthDate = new Date(student.birthDate);
-        // Ajustar año al actual para comparación
-        const thisYearBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-        
-        return thisYearBirthday >= today && thisYearBirthday <= nextWeek;
-      }))
+      map((students) =>
+        students.filter((student) => {
+          if (!student.active) return false;
+
+          const birthDate = new Date(student.birthDate);
+          // Ajustar año al actual para comparación
+          const thisYearBirthday = new Date(
+            today.getFullYear(),
+            birthDate.getMonth(),
+            birthDate.getDate(),
+          );
+
+          return thisYearBirthday >= today && thisYearBirthday <= nextWeek;
+        }),
+      ),
     );
   }
 
@@ -522,7 +555,7 @@ export class StudentService {
       phone,
       contacts,
       registeredAt: this.toDate(data['registeredAt']),
-      updatedAt: this.toDate(data['updatedAt'])
+      updatedAt: this.toDate(data['updatedAt']),
     } as Student;
   }
 
@@ -535,7 +568,7 @@ export class StudentService {
       return directPhone;
     }
 
-    const mainContact = contacts.find(contact => contact.isMain);
+    const mainContact = contacts.find((contact) => contact.isMain);
     if (mainContact?.phone) {
       return mainContact.phone;
     }
@@ -550,10 +583,10 @@ export class StudentService {
     const rawContacts = this.extractContactsSource(data);
 
     const contacts = rawContacts
-      .map(contact => this.normalizeContact(contact))
+      .map((contact) => this.normalizeContact(contact))
       .filter((contact): contact is StudentContact => !!contact);
 
-    if (contacts.length > 0 && !contacts.some(contact => contact.isMain)) {
+    if (contacts.length > 0 && !contacts.some((contact) => contact.isMain)) {
       contacts[0].isMain = true;
     }
 
@@ -575,7 +608,7 @@ export class StudentService {
       'fullName',
       'contactName',
       'tutorName',
-      'guardianName'
+      'guardianName',
     ]);
 
     const phone = this.readString(raw, [
@@ -584,7 +617,7 @@ export class StudentService {
       'phoneNumber',
       'mobile',
       'cellphone',
-      'numero'
+      'numero',
     ]);
 
     if (!name) {
@@ -595,7 +628,7 @@ export class StudentService {
       name,
       phone: phone || undefined,
       relationship: this.normalizeRelationship(raw['relationship'] ?? raw['parentesco']),
-      isMain: Boolean(raw['isMain'] ?? raw['main'] ?? raw['isPrimary'] ?? raw['principal'])
+      isMain: Boolean(raw['isMain'] ?? raw['main'] ?? raw['isPrimary'] ?? raw['principal']),
     };
   }
 
@@ -608,7 +641,7 @@ export class StudentService {
       data['contactos'],
       data['guardians'],
       data['tutors'],
-      data['responsables']
+      data['responsables'],
     ];
 
     for (const candidate of directCandidates) {
@@ -665,7 +698,12 @@ export class StudentService {
       return value;
     }
 
-    if (value && typeof value === 'object' && 'toDate' in value && typeof (value as { toDate?: unknown }).toDate === 'function') {
+    if (
+      value &&
+      typeof value === 'object' &&
+      'toDate' in value &&
+      typeof (value as { toDate?: unknown }).toDate === 'function'
+    ) {
       return (value as { toDate: () => Date }).toDate();
     }
 
@@ -713,27 +751,29 @@ export class StudentService {
    */
   private isLikelyContactRecord(value: Record<string, unknown>): boolean {
     const keys = Object.keys(value);
-    const hasContactShape = keys.some(key => [
-      'name',
-      'nombre',
-      'fullName',
-      'contactName',
-      'phone',
-      'telefono',
-      'phoneNumber',
-      'relationship',
-      'parentesco'
-    ].includes(key));
+    const hasContactShape = keys.some((key) =>
+      [
+        'name',
+        'nombre',
+        'fullName',
+        'contactName',
+        'phone',
+        'telefono',
+        'phoneNumber',
+        'relationship',
+        'parentesco',
+      ].includes(key),
+    );
 
     if (!hasContactShape) {
       return false;
     }
 
-    const firstLevelObjectValues = Object.values(value).filter(item => this.isObjectRecord(item));
+    const firstLevelObjectValues = Object.values(value).filter((item) => this.isObjectRecord(item));
     if (firstLevelObjectValues.length === 0) {
       return true;
     }
 
-    return firstLevelObjectValues.every(item => !this.isLikelyContactRecord(item));
+    return firstLevelObjectValues.every((item) => !this.isLikelyContactRecord(item));
   }
 }

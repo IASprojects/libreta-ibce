@@ -5,7 +5,10 @@
     }
     <h2 class="module-title">{{ title() }}</h2>
     @if (subtitle()) {
-      <p class="module-subtitle">{{ subtitle() }}</p>
+        <p class="module-subtitle">{{ subtitle() }}</p>
+        <div class="module-note">
+          <ng-content select="[header-note]"></ng-content>
+        </div>
     }
   </div>
 

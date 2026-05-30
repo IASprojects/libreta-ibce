@@ -1,40 +1,55 @@
 import { Injectable, signal, computed } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DateService {
   // Signal que contiene la fecha actual
   private currentDate = signal(new Date());
 
   // Computed signals para diferentes formatos de fecha
-  currentMonth = computed(() => 
-    this.currentDate().toLocaleString('es-ES', { month: 'long' })
-  );
+  currentMonth = computed(() => this.currentDate().toLocaleString('es-ES', { month: 'long' }));
 
   currentMonthCapitalized = computed(() => {
     const month = this.currentMonth();
     return month.charAt(0).toUpperCase() + month.slice(1);
   });
 
-  currentYear = computed(() => 
-    this.currentDate().getFullYear()
-  );
+  currentYear = computed(() => this.currentDate().getFullYear());
 
-  currentMonthNumber = computed(() => 
-    this.currentDate().getMonth()
-  );
+  currentMonthNumber = computed(() => this.currentDate().getMonth());
 
   // Método para actualizar la fecha (útil para testing o cambios manuales)
   updateCurrentDate(date: Date = new Date()) {
     this.currentDate.set(date);
   }
 
+  // Método para agregar días a una fecha
+  addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+  //Metodo para obtener la fecha actual
+  getCurrentDateValue(): Date {
+    return this.currentDate();
+  }
+
   // Método para obtener nombres de meses
   getMonthNames(): string[] {
     return [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
     ];
   }
 
@@ -49,7 +64,7 @@ export class DateService {
     const defaultOptions: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     };
     return date.toLocaleString('es-ES', { ...defaultOptions, ...options });
   }
@@ -58,11 +73,11 @@ export class DateService {
   calculateAge(birthDate: Date, referenceDate: Date = new Date()): number {
     const age = referenceDate.getFullYear() - birthDate.getFullYear();
     const monthDiff = referenceDate.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && referenceDate.getDate() < birthDate.getDate())) {
       return age - 1;
     }
-    
+
     return age;
   }
 
@@ -89,18 +104,24 @@ export class DateService {
   // Método para verificar si el cumpleaños es próximo (próximos 7 días)
   isUpcomingBirthday(birthDate: string | Date, daysAhead: number = 7): boolean {
     const today = new Date();
-    const birth = typeof birthDate === 'string' ? new Date(birthDate) : birthDate;
-    
-    // Ajustar cumpleaños al año actual
-    const thisYearBirthday = new Date(
-      today.getFullYear(),
-      birth.getUTCMonth(),
-      birth.getUTCDate()
-    );
-    
-    // Calcular diferencia en días
-    const diffDays = Math.ceil((thisYearBirthday.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    
+    today.setHours(0, 0, 0, 0);
+
+    const birth =
+      typeof birthDate === 'string' ? new Date(birthDate) : new Date(birthDate.getTime());
+    const month = birth.getMonth();
+    const day = birth.getDate();
+
+    // Birthday this year (normalized)
+    let candidate = new Date(today.getFullYear(), month, day);
+    candidate.setHours(0, 0, 0, 0);
+
+    // If already passed this year, consider next year's birthday (wrap-around)
+    if (candidate < today) {
+      candidate = new Date(today.getFullYear() + 1, month, day);
+      candidate.setHours(0, 0, 0, 0);
+    }
+
+    const diffDays = Math.floor((candidate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
     return diffDays >= 0 && diffDays <= daysAhead;
   }
 
@@ -108,7 +129,7 @@ export class DateService {
   getRelativeDate(date: Date): string {
     const today = new Date();
     const diffDays = this.getDaysDifference(date, today);
-    
+
     if (date > today) {
       if (diffDays === 0) return 'Hoy';
       if (diffDays === 1) return 'Mañana';

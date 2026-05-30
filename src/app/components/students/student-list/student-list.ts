@@ -7,6 +7,7 @@ import { DateService } from '../../../services/date.service';
 import { Student } from '../../../core/models/student.model';
 import { StudentCard, StudentCardData } from '../student-card/student-card';
 import { ModuleHeader } from '../../ui/module-header/module-header';
+import { currentTimestamp } from 'firebase/firestore/pipelines';
 
 /**
  * Estudiante con datos calculados para la vista
@@ -97,7 +98,13 @@ export class StudentList {
     let lastContactFormatted = 'Sin registro';
     if (student.lastAttendance) {
       const lastDate = new Date(student.lastAttendance);
-      lastContactFormatted = this.dateService.getRelativeDate(lastDate);
+      // Solo mostrar fecha relativa si el último contacto fue hace menos de 60 días
+      if(lastDate > this.dateService.addDays(this.dateService.getCurrentDateValue(), -60)) {
+        lastContactFormatted = this.dateService.getRelativeDate(lastDate);
+      }
+      else {
+        lastContactFormatted = this.dateService.formatDate(lastDate, { year: 'numeric', month: 'short' });
+      }
     }
 
     return {

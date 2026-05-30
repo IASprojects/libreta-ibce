@@ -33,6 +33,7 @@ Sistema de gestión gratuito para:
 - No crear campos, colecciones, enums o relaciones fuera de lo definido en `.github/data.persistance.json` sin actualizar explícitamente ese archivo.
 - Si existe conflicto entre código/documentación y el modelo de datos, prevalece `.github/data.persistance.json`.
 - Toda propuesta de cambio de datos debe incluir el impacto en `.github/data.persistance.json` como parte obligatoria de la implementación.
+- Nunca ofrecer hacer commit a los cambios. 
 
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 

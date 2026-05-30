@@ -1,0 +1,4 @@
+h1. Indicadores Tarjetas Estudiantes.
+
+En la sección de la lista de estudiantes (dashboard/estudiantes) cada tarjeta de estudiante tiene unos indices que no tienen una explicación clara.
+Agregar una nota en el encabezado de lo que significa cada indicador debajo de "{X} Estudiantes Activos".
