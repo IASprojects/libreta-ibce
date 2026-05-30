@@ -1,0 +1,5 @@
+h1. Requisitos dar Clic Proxima Clase en el dashboard
+
+- En el dashboard al dar clic en la tarjeta "Próxima Clase" redirije a esa clase en el planificador abriendola en estado de edición.
+- Al mover el mouse o al tener foco la tarjeta se ve una leyenda abajo que dice "Ver".
+- No cambia el comportamiento.

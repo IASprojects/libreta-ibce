@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
 import { PlannedLessonService } from '../../../services/planned-lesson.service';
 import { DateService } from '../../../services/date.service';
@@ -42,6 +43,7 @@ export class PlannedLessonList {
   private plannedLessonService = inject(PlannedLessonService);
   private dateService = inject(DateService);
   private appConfigService = inject(AppConfigService);
+  private activatedRoute = inject(ActivatedRoute);
 
   // Estados reactivos del servicio
   isLoading = this.plannedLessonService.isLoading;
@@ -132,6 +134,23 @@ export class PlannedLessonList {
   constructor() {
     effect(() => {
       console.log('📅 Lecciones filtradas:', this.filteredLessons().length);
+    });
+
+    // Si la URL contiene ?editLessonId=<id>, abrir automáticamente el formulario de edición
+    this.activatedRoute.queryParams.subscribe(params => {
+      const editId = params['editLessonId'];
+      if (editId) {
+        this.plannedLessonService.getById(editId).subscribe({
+          next: (lesson) => {
+            if (lesson) {
+              this.openEditLessonForm(lesson);
+            } else {
+              console.warn('Lección solicitada para edición no encontrada:', editId);
+            }
+          },
+          error: (err) => console.error('Error cargando lección por id desde query param:', err)
+        });
+      }
     });
   }
 

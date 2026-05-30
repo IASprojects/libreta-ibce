@@ -3,7 +3,7 @@
   <h3 class="section-title">📋 Próximas Clases Programadas</h3>
   <div class="upcoming-classes">
     @for (upcomingClass of upcomingClasses(); track upcomingClass.id) {
-      <div class="class-item">
+      <div class="class-item" tabindex="0" role="link" aria-label="Ver próxima clase: {{ upcomingClass.topic }}" (click)="openLesson(upcomingClass.id)" (keydown)="onKeydown($event, upcomingClass.id)">
         <div class="class-date">
           <span class="day">{{ upcomingClass.day }}</span>
           <span class="month">{{ upcomingClass.month }}</span>
@@ -11,6 +11,7 @@
         <div class="class-info">
           <span class="class-topic">{{ upcomingClass.topic }}</span>
           <span class="class-teacher">Maestro: {{ upcomingClass.teacher }}</span>
+          <span class="card-action" aria-hidden="true">Ver</span>
         </div>       
       </div>
     }

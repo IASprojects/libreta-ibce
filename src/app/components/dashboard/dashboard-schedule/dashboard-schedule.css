@@ -36,11 +36,37 @@
   background: var(--app-color-surface-muted);
   border-radius: 12px;
   transition: all 0.3s ease;
+  cursor: default;
 }
 
 .class-item:hover {
   background: var(--app-color-border);
   transform: translateX(4px);
+}
+
+.class-item[role="link"] {
+  cursor: pointer;
+}
+
+.class-item:focus {
+  outline: 3px solid rgba(0,0,0,0.08);
+  outline-offset: 2px;
+}
+
+.card-action {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--app-ink-medium);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.class-item:hover .card-action,
+.class-item:focus .card-action {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .class-date {
