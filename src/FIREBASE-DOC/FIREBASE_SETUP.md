@@ -7,16 +7,18 @@ Este proyecto ya está configurado para deploy en Firebase Hosting.
 ## Pasos para completar la configuración:
 
 ### 1. Configurar tus credenciales Firebase
+
 Edita los archivos de environment con tus valores reales de Firebase:
 
 - `src/environments/environment.ts` (desarrollo)
 - `src/environments/environment.prod.ts` (producción)
 
 Reemplaza los siguientes valores con los de tu proyecto Firebase:
+
 ```typescript
 {
   apiKey: "TU_API_KEY",
-  authDomain: "TU_PROJECT_ID.firebaseapp.com", 
+  authDomain: "TU_PROJECT_ID.firebaseapp.com",
   projectId: "TU_PROJECT_ID",
   storageBucket: "TU_PROJECT_ID.appspot.com",
   messagingSenderId: "TU_MESSAGING_SENDER_ID",
@@ -25,6 +27,7 @@ Reemplaza los siguientes valores con los de tu proyecto Firebase:
 ```
 
 ### 2. Hacer login en Firebase
+
 ```bash
 firebase login
 ```
@@ -32,21 +35,25 @@ firebase login
 ### 3. Comandos disponibles:
 
 #### Construir y deployar a Firebase:
+
 ```bash
 npm run firebase:deploy
 ```
 
 #### Servir localmente desde Firebase:
-```bash  
+
+```bash
 npm run firebase:serve
 ```
 
 #### Solo construir para producción:
+
 ```bash
 npm run build:prod
 ```
 
 #### Deploy manual (después de build):
+
 ```bash
 firebase deploy
 ```
@@ -63,8 +70,9 @@ firebase deploy
 ## Servicios Firebase disponibles:
 
 El `FirebaseService` incluye:
+
 - **Firestore Database** (`this.db`)
-- **Authentication** (`this.auth`) 
+- **Authentication** (`this.auth`)
 - **Storage** (`this.storage`)
 
 ## Notas importantes:

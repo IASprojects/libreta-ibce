@@ -2,14 +2,8 @@
   "hosting": {
     "site": "asistencia-ibce",
     "public": "dist/libreta-ibce/browser",
-    "predeploy": [
-      "npm run build:prod"
-    ],
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "predeploy": ["npm run build:prod"],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "cleanUrls": true,
     "trailingSlash": false,
     "rewrites": [

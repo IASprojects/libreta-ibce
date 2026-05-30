@@ -7,6 +7,7 @@ Si experimentas un **TimeoutError** al intentar guardar estudiantes, el problema
 ### ¿Por qué ocurre esto?
 
 Según la [documentación oficial de Firebase](https://firebase.google.com/docs/firestore/security/get-started):
+
 > "Por defecto, las reglas de Firestore **niegan todo acceso** hasta que las configures explícitamente."
 
 Cuando Firestore bloquea una operación por reglas de seguridad, **no devuelve un error** - simplemente la operación nunca se completa, quedándose en estado pendiente indefinidamente hasta que dispare el timeout.
@@ -16,7 +17,9 @@ Cuando Firestore bloquea una operación por reglas de seguridad, **no devuelve u
 ## 🔍 Diagnóstico Rápido
 
 ### 1. Verifica el estado actual en la consola del navegador
+
 Al intentar guardar un estudiante, deberías ver:
+
 ```
 🔐 Verificando autenticación antes de guardar...
 Usuario actual: { uid: "...", email: "..." }
@@ -31,6 +34,7 @@ Si ves el usuario correcto → **Problema de reglas de Firestore** (ve a soluci�
 ## ✅ Solución A: Configurar Reglas de Firestore
 
 ### Paso 1: Acceder a Firebase Console
+
 1. Ve a [Firebase Console](https://console.firebase.google.com/)
 2. Selecciona tu proyecto
 3. En el menú izquierdo: **Firestore Database**
@@ -39,6 +43,7 @@ Si ves el usuario correcto → **Problema de reglas de Firestore** (ve a soluci�
 ### Paso 2: Configurar las Reglas
 
 #### 🧪 **Para Desarrollo/Pruebas** (temporal):
+
 ```javascript
 rules_version = '2';
 
@@ -51,31 +56,33 @@ service cloud.firestore {
   }
 }
 ```
+
 ⚠️ **ADVERTENCIA**: Estas reglas permiten acceso completo. Solo úsalas para pruebas iniciales.
 
 #### 🔒 **Para Producción** (recomendado):
+
 ```javascript
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Colección de estudiantes
     match /students/{studentId} {
       // Solo usuarios autenticados pueden leer y escribir
       allow read, write: if request.auth != null;
     }
-    
+
     // Colección de asistencias
     match /attendance/{attendanceId} {
       allow read, write: if request.auth != null;
     }
-    
+
     // Colección de lecciones planificadas
     match /planned_lessons/{lessonId} {
       allow read, write: if request.auth != null;
     }
-    
+
     // Colección de clases
     match /lesson_classes/{classId} {
       allow read, write: if request.auth != null;
@@ -90,18 +97,19 @@ service cloud.firestore {
 ```
 
 #### 🛡️ **Para Producción con Email Específico** (más seguro):
+
 ```javascript
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Función helper para verificar email autorizado
     function isAuthorizedUser() {
-      return request.auth != null && 
+      return request.auth != null &&
              request.auth.token.email == 'maestrosibce@gmail.com';
     }
-    
+
     // Todas las colecciones requieren el email específico
     match /{document=**} {
       allow read, write: if isAuthorizedUser();
@@ -111,6 +119,7 @@ service cloud.firestore {
 ```
 
 ### Paso 3: Publicar las Reglas
+
 1. Después de editar, clic en **Publicar** (Publish)
 2. Confirma la publicación
 3. Las reglas se aplican **inmediatamente**
@@ -170,12 +179,14 @@ Después de configurar las reglas, intenta crear un estudiante:
 ### Logs adicionales para debugging:
 
 Puedes verificar si las reglas están bloqueando en Firebase Console:
+
 - Firebase Console → Firestore → **Reglas** → Pestaña **Logs**
 - Busca entradas con `PERMISSION_DENIED`
 
 ### Verifica nombres exactos de colecciones (importante)
 
 En esta app los nombres reales son:
+
 - `students`
 - `attendance`
 - `planned_lessons`
@@ -188,11 +199,11 @@ Si publicas reglas con nombres distintos (por ejemplo `lesson-classes` o `planne
 
 ## ⏱️ Tiempos Esperados
 
-| Acción | Tiempo esperado | Si excede... |
-|--------|----------------|--------------|
-| Guardar estudiante | 1-3 segundos | Problema de reglas o red |
-| Cargar lista | 1-2 segundos | Problema de índices |
-| Login con Google | 2-5 segundos | Problema de Auth |
+| Acción             | Tiempo esperado | Si excede...             |
+| ------------------ | --------------- | ------------------------ |
+| Guardar estudiante | 1-3 segundos    | Problema de reglas o red |
+| Cargar lista       | 1-2 segundos    | Problema de índices      |
+| Login con Google   | 2-5 segundos    | Problema de Auth         |
 
 ---
 
