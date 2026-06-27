@@ -33,6 +33,7 @@ import { Student, StudentStats, StudentContact } from '../core/models/student.mo
 import { Attendance } from '../core/models/attendance.model';
 import { DateService } from './date.service';
 import { ContactRelationship } from '../core/models/enums';
+import { LessonClassService } from './lesson-class.service';
 
 interface StudentAttendanceSummary {
   stats: StudentStats;
@@ -45,6 +46,7 @@ interface StudentAttendanceSummary {
 export class StudentService {
   private firebaseService = inject(FirebaseService);
   private dateService = inject(DateService);
+  private lessonsService = inject(LessonClassService);
 
   // Collections
   private readonly STUDENTS_COLLECTION = 'students';
@@ -229,7 +231,10 @@ export class StudentService {
   }
 
   /**
-   * Soft delete - marcar estudiante como inactivo
+   * Soft delete - marcar estudiante como inactivo.
+   * IMPORTANTE: updateStudent() actualiza updatedAt con Timestamp.now() en cada llamada.
+   * updatedAt actúa como la marca de tiempo de inactivación; no se requiere campo adicional.
+   * No modificar updateStudent() para omitir updatedAt sin revisar este contrato.
    */
   deactivateStudent(studentId: string, notes?: string): Observable<void> {
     const updates: Partial<Student> = {
@@ -356,19 +361,21 @@ export class StudentService {
         sortedActiveAttendances.length > 0
           ? this.dateService.getDateString(sortedActiveAttendances[0].registeredAt)
           : '';
+      // Para calcular el porcentaje de asistencia vamos a obtener las clases que se han impartido en los últimos 12 meses.
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+      const totalClassesLastYear = this.lessonsService.getTotalActiveClassesSince(oneYearAgo);
 
-      // Para calcular el porcentaje necesitamos el total de clases en los últimos 3 meses
-      // Esto requiere consultar todas las clases, por simplicidad usaremos una aproximación
-      const last3MonthsPercentage =
-        recentAttendances.length > 0
-          ? Math.min(100, Math.round((recentAttendances.length / 12) * 100)) // Aproximado: 1 clase por semana
+      const last12MonthsPercentage =
+        recentAttendances.length > 0 && totalClassesLastYear > 0
+          ? Math.min(100, Math.round((recentAttendances.length / totalClassesLastYear) * 100))
           : 0;
 
       return {
         stats: {
           totalAttendances,
           currentStreak,
-          last3MonthsPercentage,
+          lastYearPercentage: last12MonthsPercentage,
         },
         lastAttendance,
       };
@@ -378,7 +385,7 @@ export class StudentService {
         stats: {
           totalAttendances: 0,
           currentStreak: 0,
-          last3MonthsPercentage: 0,
+          lastYearPercentage: 0,
         },
         lastAttendance: '',
       };

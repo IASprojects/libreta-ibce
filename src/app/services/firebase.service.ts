@@ -20,12 +20,7 @@ export class FirebaseService {
 
   private initializeFirebase(): void {
     try {
-      console.log('🔥 Initializing Firebase with config:', {
-        apiKey: environment.firebase.apiKey?.substring(0, 10) + '...',
-        authDomain: environment.firebase.authDomain,
-        projectId: environment.firebase.projectId
-      });
-      
+     
       this.app = initializeApp(environment.firebase);
       // Auto-detecta redes/navegadores donde WebChannel falla con 400 y cambia a long-polling.
       this.db = initializeFirestore(this.app, {

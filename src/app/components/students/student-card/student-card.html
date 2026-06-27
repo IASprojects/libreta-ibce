@@ -1,13 +1,13 @@
-<li class="student-card" >
+<li class="student-card" [class.student-card--inactive]="isInactive()">
   <button
     type="button"
     class="student-card-button"
     (click)="onViewStudent()"
-    [attr.aria-label]="'Ver detalles de ' + student().name"
+    [attr.aria-label]="'Ver detalles de ' + student().name + (isInactive() ? ' (inactivo)' : '')"
   >
     <div class="student-avatar" aria-hidden="true">
       <span class="avatar-initials">{{ getInitials(student().name) }}</span>
-      @if (student().hasUpcomingBirthday) {
+      @if (!isInactive() && student().hasUpcomingBirthday) {
         <span
           class="birthday-indicator"
           role="img"
@@ -17,11 +17,18 @@
           🎂
         </span>
       }
-      
+      @if (isInactive()) {
+        <span class="inactive-indicator" aria-hidden="true" title="Inactivo"></span>
+      }
     </div>
 
     <div class="student-info">
-      <h3 class="student-name">{{ student().name }}</h3>
+      <div class="student-name-row">
+        <h3 class="student-name">{{ student().name }}</h3>
+        @if (isInactive()) {
+          <span class="inactive-badge" aria-label="Estudiante inactivo">Inactivo</span>
+        }
+      </div>
       <p class="student-phone">
         <span class="detail-icon" aria-hidden="true">📱</span>
         <span>{{ student().phone || 'Sin teléfono' }}</span>
@@ -60,14 +67,22 @@
               🔥 {{ student().stats?.currentStreak }}
             </span>
           }
-          @if (student().stats?.last3MonthsPercentage !== undefined) {
+          @if (student().stats?.lastYearPercentage !== undefined) {
             <span
               class="stat-badge percentage"
               [attr.aria-label]="
-                'Porcentaje últimos 3 meses: ' + student().stats?.last3MonthsPercentage + '%'
+                'Porcentaje último año: ' + student().stats?.lastYearPercentage + '%'
               "
             >
-              📊 {{ student().stats?.last3MonthsPercentage }}%
+              📊 {{ student().stats?.lastYearPercentage }}%
+            </span>
+          }
+          @else{
+            <span
+              class="stat-badge percentage"
+              aria-label="Porcentaje de asistencia en el último año no disponible"
+            >
+              📊 N/A
             </span>
           }
         </div>

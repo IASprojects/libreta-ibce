@@ -217,19 +217,7 @@ export class PlannedLessonList {
       return null;
     }
 
-    const catalogUnit = this.appConfigService
-      .lessonCatalog()
-      .find(unit => this.matchesCatalogValue(unit.unitNumber, unitNumber));
-
-    if (!catalogUnit) {
-      return null;
-    }
-
-    const catalogLesson = catalogUnit.lessons.find(catalogLesson =>
-      this.matchesCatalogValue(catalogLesson.lessonNumber, lessonNumber)
-    );
-
-    const title = catalogLesson?.lessonTitle?.trim();
+    const title = this.appConfigService.getLessonTitle(unitNumber, lessonNumber)?.trim();
     return title ? title : null;
   }
 

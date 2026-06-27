@@ -1,0 +1,50 @@
+h1. Ver Estudiantes Inactivos
+
+h2. Descripción
+
+Permitir a los maestros revisar los estudiantes que han sido marcados como inactivos, sin posibilidad de editarlos ni reactivarlos.
+
+h2. Alcance
+
+Solo aplica al módulo de estudiantes. El resto de módulos (asistencia, planificador, clases) no se ven afectados.
+
+h2. Requisitos Funcionales
+
+h3. RF-01 — Toggle en la lista de estudiantes
+
+- En la página principal de estudiantes (`/students`) debe existir un toggle switch con la etiqueta *"Ver Inactivos"*.
+- Por defecto el toggle está desactivado y la lista muestra únicamente estudiantes activos (comportamiento actual).
+- Al activar el toggle, la lista cambia completamente para mostrar solo los estudiantes inactivos.
+- Al desactivar el toggle, la lista vuelve a mostrar solo los estudiantes activos.
+- El toggle es mutuamente excluyente: nunca se muestran activos e inactivos al mismo tiempo en la misma vista.
+
+h3. RF-02 — Apariencia de tarjetas de inactivos
+
+- Las tarjetas de estudiantes inactivos se muestran con apariencia grisada/desaturada para diferenciarlas visualmente de los activos.
+- Cada tarjeta incluye un badge/etiqueta con el texto *"Inactivo"*.
+
+h3. RF-03 — Ficha de estudiante inactivo (solo lectura)
+
+- Al dar clic en una tarjeta de inactivo, se abre su ficha de detalle.
+- La ficha muestra toda la información registrada del estudiante en modo de solo lectura.
+- La ficha muestra la *fecha de inactivación* de forma destacada.
+- No se muestran botones de edición, guardado ni reactivación.
+
+h3. RF-04 — Restricción de edición y reactivación
+
+- Un estudiante inactivo no puede ser reactivado por ningún usuario bajo ninguna circunstancia.
+- Ningún campo de la ficha de un estudiante inactivo puede ser modificado.
+- Esta restricción es absoluta y no tiene excepciones.
+
+h2. Notas Técnicas
+
+- La fecha de inactivación se obtiene del campo `updatedAt` del modelo de estudiante; no se requiere un campo adicional.
+- Al marcar un estudiante como inactivo, el proceso de inactivación *debe* actualizar `updatedAt` con la marca de tiempo exacta del momento en que se realizó la acción. Esto es obligatorio para que la ficha muestre la fecha correcta.
+- El toggle gestiona un estado local en el componente `student-list`; no requiere una ruta separada.
+- La carga de inactivos puede realizarse como consulta separada a Firestore solo cuando el toggle esté activado, para evitar cargas innecesarias.
+
+h2. Fuera de Alcance
+
+- No se implementa un campo de motivo/razón de inactivación.
+- No se implementa historial de quién realizó la inactivación.
+- No existe flujo de reactivación (ni siquiera para roles futuros).

@@ -1,0 +1,10 @@
+h1. Poder revisar los estudiantes marcados como inactivos.
+
+- En la pagina de busqueda pode tener la opción de "Ver Marcado como Inactivos"
+- Al dar clic muestre los estudiantes que fueron inactivados.
+- Poder abrir la ficha y revisar cuando fue inactivado.
+
+h2. Notas
+
+- Solo aplica para estudiantes el resto de modulos no se ven afectados.
+- No se puede volver a activar o editar información del estudiante inactivo.

@@ -22,8 +22,8 @@ export interface StudentStats {
   totalAttendances?: number;
   /** Asistencias consecutivas */
   currentStreak?: number;
-  /** Porcentaje últimos 3 meses (0-100) */
-  last3MonthsPercentage?: number;
+  /** Porcentaje último año (0-100) */
+  lastYearPercentage?: number;
 }
 
 /**

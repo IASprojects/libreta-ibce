@@ -141,7 +141,6 @@
   margin-top: 0.75rem;
   flex-wrap: wrap;
 }
-
 .stat-badge {
   background: var(--app-color-surface-muted);
   color: var(--app-ink-medium);
@@ -163,7 +162,6 @@
   background: color-mix(in srgb, var(--app-color-success) 18%, transparent);
   color: color-mix(in srgb, var(--app-color-success) 80%, #23311a);
 }
-
 .chevron-icon {
   color: var(--app-ink-soft);
   font-size: 2rem;
@@ -176,4 +174,49 @@
   .student-card {
     border: 2px solid var(--app-ink-strong);
   }
+}
+
+/* Variante inactiva */
+.student-card--inactive {
+  filter: grayscale(70%) opacity(0.78);
+}
+
+.student-card--inactive:hover {
+  filter: grayscale(50%) opacity(0.9);
+}
+
+.student-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0 0 0.5rem 0;
+}
+
+.student-name-row .student-name {
+  margin: 0;
+}
+
+.inactive-badge {
+  background: color-mix(in srgb, var(--app-ink-soft) 20%, transparent);
+  color: var(--app-ink-medium);
+  border: 1px solid var(--app-color-border);
+  padding: 0.125rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.inactive-indicator {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 14px;
+  height: 14px;
+  background: var(--app-ink-soft);
+  border-radius: 50%;
+  border: 2px solid var(--app-color-surface);
 }

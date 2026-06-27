@@ -32,6 +32,20 @@
     </div>
   }
 
+  <!-- Banner de estudiante inactivo -->
+  @if (mode() === 'edit' && !studentIsActive()) {
+    <div class="alert alert-inactive" role="status" aria-live="polite">
+      <span class="alert-icon" aria-hidden="true">🚫</span>
+      <div>
+        <strong>Estudiante inactivo</strong>
+        @if (formattedInactivatedAt()) {
+          <p class="alert-text">Inactivado el {{ formattedInactivatedAt() }}</p>
+        }
+        <p class="alert-text">Esta ficha es de solo lectura. No se puede editar ni reactivar.</p>
+      </div>
+    </div>
+  }
+
   <!-- Formulario -->
   <form [formGroup]="studentForm" (ngSubmit)="onSubmit()" class="student-form" novalidate>
     
@@ -276,13 +290,13 @@
 
     <!-- Botones de acción -->
     <div class="form-actions">
-      @if (mode() === 'edit') {
+      @if (mode() === 'edit' && studentIsActive()) {
         <button
           type="button"
           class="btn btn-outline"
           (click)="toggleStudentStatus()"
           [disabled]="isSubmitting()">
-          {{ studentIsActive() ? 'Inactivar Estudiante' : 'Reactivar Estudiante' }}
+          Inactivar Estudiante
         </button>
       }
 
@@ -291,7 +305,7 @@
         class="btn btn-secondary"
         (click)="cancel()"
         [disabled]="isSubmitting()">
-        Cancelar
+        {{ studentIsActive() ? 'Cancelar' : 'Volver' }}
       </button>
 
       @if (mode() === 'create') {
@@ -307,15 +321,17 @@
         </button>
       }
 
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="isSubmitting()">
-        @if (isSubmitting()) {
-          <span class="btn-spinner" aria-hidden="true"></span>
-        }
-        <span>{{ submitButtonText() }}</span>
-      </button>
+      @if (studentIsActive()) {
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="isSubmitting()">
+          @if (isSubmitting()) {
+            <span class="btn-spinner" aria-hidden="true"></span>
+          }
+          <span>{{ submitButtonText() }}</span>
+        </button>
+      }
     </div>
 
     <!-- Indicador de formulario sucio -->

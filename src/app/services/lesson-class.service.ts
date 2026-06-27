@@ -92,10 +92,15 @@ export class LessonClassService {
   public readonly activeClasses = computed(() => 
     this.lessonClasses().filter(lessonClass => lessonClass.active)
   );
-  
+  // Total de clases activas
+  public readonly totalActiveClasses = computed(() => this.activeClasses().length);
   // Verificar si ya existe clase hoy
   public readonly hasTodayClass = computed(() => this.todayClass() !== null);
   
+  // Total de Classes Activas Desde X fecha.
+  public getTotalActiveClassesSince(date: Date): number {
+    return this.activeClasses().filter(lessonClass => new Date(lessonClass.date) >= date).length;
+  }
   // Estadísticas computadas
   public readonly classStats = computed((): ClassStats => {
     const active = this.activeClasses();

@@ -1,12 +1,14 @@
 <div class="student-list-container">
   <!-- Header compacto -->
   <div class="module-header-wrap">
-    <app-module-header
-      title="Total Estudiantes:"
-      [subtitle]="studentSubtitle()"
-    >
+    <app-module-header title="Total Estudiantes:" [subtitle]="studentSubtitle()">
       <div header-note class="header-note">
-        Indicadores: ✓ Total de asistencias registradas · 🔥 Racha actual de clases consecutivas asistidas · 📊 Porcentaje de asistencia en los últimos 3 meses.
+        Indicadores:
+        <span class="stat-badge">✓ Total de asistencias registradas</span> ·
+        <span class="stat-badge streak">🔥 Racha actual de clases asistidas</span> ·
+        <span class="stat-badge percentage"
+          >📊 % asistencia último año</span
+        >
       </div>
       @if (upcomingBirthdays() > 0) {
         <span class="birthday-badge" aria-label="Cumpleaños próximos">
@@ -14,6 +16,24 @@
         </span>
       }
     </app-module-header>
+  </div>
+
+  <!-- Toggle inactivos -->
+  <div class="inactives-toggle-section">
+    <button
+      type="button"
+      role="switch"
+      class="inactives-toggle"
+      [class.inactives-toggle--active]="showInactives()"
+      [attr.aria-checked]="showInactives()"
+      aria-label="Ver estudiantes inactivos"
+      (click)="toggleShowInactives()"
+    >
+      <span class="toggle-track" aria-hidden="true">
+        <span class="toggle-thumb"></span>
+      </span>
+      <span class="toggle-label">Ver Inactivos</span>
+    </button>
   </div>
 
   <!-- Barra de búsqueda -->
@@ -86,7 +106,7 @@
   @if (!isLoading() && !error() && filteredStudents().length > 0) {
     <ul class="student-list" role="list">
       @for (student of filteredStudents(); track trackByStudentId($index, student)) {
-        <app-student-card [student]="student" (view)="viewStudentDetail($event)">
+        <app-student-card [student]="student" [isInactive]="showInactives()" (view)="viewStudentDetail($event)">
         </app-student-card>
       }
     </ul>
@@ -95,20 +115,28 @@
   <!-- Lista vacía (sin estudiantes registrados) -->
   @if (!isLoading() && !error() && !searchTerm() && totalStudents() === 0) {
     <div class="empty-state" role="status">
-      <span class="empty-icon" aria-hidden="true">👥</span>
-      <h2 class="empty-title">No hay estudiantes registrados</h2>
-      <p class="empty-text">Comienza agregando tu primer estudiante usando el botón de abajo</p>
+      @if (showInactives()) {
+        <span class="empty-icon" aria-hidden="true">📋</span>
+        <h2 class="empty-title">Sin estudiantes inactivos</h2>
+        <p class="empty-text">No hay estudiantes marcados como inactivos</p>
+      } @else {
+        <span class="empty-icon" aria-hidden="true">👥</span>
+        <h2 class="empty-title">No hay estudiantes registrados</h2>
+        <p class="empty-text">Comienza agregando tu primer estudiante usando el botón de abajo</p>
+      }
     </div>
   }
 
-  <!-- Botón flotante para agregar nuevo estudiante -->
-  <button
-    type="button"
-    class="fab"
-    (click)="addNewStudent()"
-    aria-label="Agregar nuevo estudiante"
-    title="Agregar nuevo estudiante"
-  >
-    <span class="fab-icon" aria-hidden="true">+</span>
-  </button>
+  <!-- Botón flotante para agregar nuevo estudiante (solo en vista activos) -->
+  @if (!showInactives()) {
+    <button
+      type="button"
+      class="fab"
+      (click)="addNewStudent()"
+      aria-label="Agregar nuevo estudiante"
+      title="Agregar nuevo estudiante"
+    >
+      <span class="fab-icon" aria-hidden="true">+</span>
+    </button>
+  }
 </div>

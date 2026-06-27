@@ -60,9 +60,20 @@ export class StudentForm implements OnInit {
   submitError = signal<string | null>(null);
   submitSuccess = signal(false);
   studentIsActive = signal(true);
+  inactivatedAt = signal<Date | null>(null);
 
   // Título del formulario
-  formTitle = computed(() => (this.mode() === 'create' ? 'Nuevo Estudiante' : 'Editar Estudiante'));
+  formTitle = computed(() => {
+    if (this.mode() === 'create') return 'Nuevo Estudiante';
+    return this.studentIsActive() ? 'Editar Estudiante' : 'Ficha de Estudiante';
+  });
+
+  // Fecha de inactivación formateada en español
+  formattedInactivatedAt = computed(() => {
+    const date = this.inactivatedAt();
+    if (!date) return null;
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  });
 
   // Botón de envío
   submitButtonText = computed(() =>
@@ -165,6 +176,23 @@ export class StudentForm implements OnInit {
   private populateForm(student: Student): void {
     this.studentIsActive.set(student.active);
 
+    // Si el estudiante es inactivo, guardar la fecha de inactivación (updatedAt)
+    // y deshabilitar el formulario para impedir cualquier edición.
+    if (!student.active) {
+      const raw = student.updatedAt as unknown;
+      let inactivatedDate: Date;
+      if (raw instanceof Date) {
+        inactivatedDate = raw;
+      } else if (raw && typeof raw === 'object' && 'seconds' in (raw as object)) {
+        inactivatedDate = new Date((raw as { seconds: number }).seconds * 1000);
+      } else if (typeof raw === 'string' || typeof raw === 'number') {
+        inactivatedDate = new Date(raw);
+      } else {
+        inactivatedDate = new Date();
+      }
+      this.inactivatedAt.set(inactivatedDate);
+    }
+
     this.studentForm.patchValue({
       name: student.name,
       phone: student.phone || '',
@@ -189,14 +217,18 @@ export class StudentForm implements OnInit {
       } else {
         this.contacts.at(0).patchValue(contacts[0]);
       }
-      return;
+    } else {
+      // Múltiples contactos: reemplazar completamente
+      this.contacts.clear();
+      contacts.forEach((contact) => {
+        this.contacts.push(createContactFormGroup(this.fb, contact));
+      });
     }
 
-    // Múltiples contactos: reemplazar completamente
-    this.contacts.clear();
-    contacts.forEach((contact) => {
-      this.contacts.push(createContactFormGroup(this.fb, contact));
-    });
+    // Deshabilitar formulario si el estudiante es inactivo (restricción absoluta)
+    if (!student.active) {
+      this.studentForm.disable();
+    }
   }
 
   /**

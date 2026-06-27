@@ -15,6 +15,7 @@ export interface StudentCardData extends Student {
 })
 export class StudentCard {
   student = input.required<StudentCardData>();
+  isInactive = input(false);
   view = output<string>();
 
   onViewStudent(): void {

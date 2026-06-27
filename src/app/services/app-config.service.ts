@@ -57,7 +57,19 @@ export class AppConfigService {
       this.loadingState.set(false);
     }
   }
-
+  //Metodo para obtener el titulo de la leccion a partir de una Unidad y Leccion.
+  getLessonTitle(unitId: string, lessonId: string): string | null {
+    if (!unitId || !lessonId) {
+      return null;
+    }
+    const unit = this.lessonCatalog().find(u => u.unitNumber === unitId);
+    if (!unit) {
+      return null;
+    }
+    const lesson = unit.lessons.find(l => l.lessonNumber === lessonId);
+    return lesson ? `Unidad ${unitId} - Lección ${lessonId} - ${lesson.lessonTitle ?? ''}` : null;
+  }
+  
   async refresh(): Promise<void> {
     const configRef = doc(this.firebaseService.db, this.CONFIG_COLLECTION, this.GLOBAL_CONFIG_ID);
     this.loadingState.set(true);

@@ -1,0 +1,127 @@
+h1. Plan de Implementación — Ver Estudiantes Inactivos
+
+h2. Estado Previo del Código (Análisis)
+
+Antes de implementar se revisó el código existente. Hallazgos relevantes:
+
+| Elemento | Estado actual | Acción requerida |
+|---|---|---|
+| `Student.active` (model) | ✅ Existe | Ninguna |
+| `Student.updatedAt` (model) | ✅ Existe | Ninguna |
+| `studentService.inactiveStudents` (signal computed) | ✅ Existe | Ninguna |
+| `studentService.deactivateStudent()` | ✅ Establece `updatedAt` automáticamente vía `updateStudent()` | Ninguna |
+| `studentService.reactivateStudent()` | ⚠️ Existe en servicio | No exponer en UI (mantener oculto) |
+| Consulta Firestore al cargar | ❌ Solo carga `active == true` | Agregar consulta separada para inactivos |
+| `student-list` — toggle inactivos | ❌ No existe | Implementar |
+| `student-card` — variante inactiva | ❌ No existe | Implementar |
+| Ficha de estudiante — modo solo lectura | ❌ No existe | Implementar |
+
+h2. Paso 1 — Verificar y proteger `updatedAt` al inactivar
+
+*Archivo:* `src/app/services/student.service.ts`
+*Complejidad:* Baja
+
+Verificación: el método `updateStudent()` ya añade `updatedAt: Timestamp.now()` en cada llamada, lo que incluye las llamadas desde `deactivateStudent()`. El campo ya se actualiza correctamente.
+
+*Acción:* Solo agregar un comentario explícito en `deactivateStudent()` que documente que `updatedAt` actúa como marca de tiempo de inactivación, para que futuros cambios no lo omitan.
+
+h2. Paso 2 — Agregar carga de inactivos bajo demanda en el servicio
+
+*Archivo:* `src/app/services/student.service.ts`
+*Complejidad:* Media
+
+El problema: la consulta inicial de Firestore filtra `where('active', '==', true)`, por lo que `inactiveStudents` siempre está vacío aunque el computed exista.
+
+Implementar un método público `loadInactiveStudents(): Observable<Student[]>` que:
+- Ejecute una consulta Firestore separada: `where('active', '==', false)`, `orderBy('updatedAt', 'desc')`.
+- Devuelva un Observable con los resultados (sin persistirlos en el signal global de `students`).
+- No se llama en el constructor; solo se llama cuando el toggle se activa.
+
+Alternativa más simple: agregar un signal `inactiveStudentsLoaded = signal<Student[]>([])` que se llene solo cuando el toggle esté activo, y se limpia al desactivarlo.
+
+h2. Paso 3 — Toggle en `student-list`
+
+*Archivos:* `src/app/components/students/student-list/student-list.ts` y `student-list.html`
+*Complejidad:* Media
+
+En `student-list.ts`:
+- Agregar signal: `showInactives = signal(false)`.
+- Agregar signal: `inactiveStudentsLoaded = signal<Student[]>([])`.
+- Agregar `effect()` que escuche `showInactives`:
+  - Si se activa (`true`): llamar al método del servicio del Paso 2 y poblar `inactiveStudentsLoaded`.
+  - Si se desactiva (`false`): vaciar `inactiveStudentsLoaded`.
+- El `computed` principal de la lista (`studentsDisplay`) debe leer de `activeStudents` o `inactiveStudentsLoaded` según `showInactives()`.
+- Actualizar `studentSubtitle` para que diga "N estudiantes inactivos" cuando el toggle está activo.
+- Deshabilitar la búsqueda cuando el toggle está activo (o adaptarla para filtrar inactivos también, a criterio).
+
+En `student-list.html`:
+- Agregar el toggle switch debajo de la barra de búsqueda (o junto a ella).
+- Etiquetar con `aria-label` y `role="switch"` para accesibilidad.
+- Cuando el toggle está activo, ocultar los indicadores de cumpleaños (no aplican a inactivos).
+
+h2. Paso 4 — Variante visual inactiva en `student-card`
+
+*Archivos:* `src/app/components/students/student-card/student-card.ts`, `.html`, `.css`
+*Complejidad:* Baja
+
+- Agregar input booleano `isInactive = input(false)` al componente `StudentCard`.
+- En la plantilla: añadir clase CSS condicional `[class.student-card--inactive]="isInactive()"`.
+- Agregar badge/etiqueta con el texto *"Inactivo"* visible cuando `isInactive()` sea `true`.
+- En el CSS: la clase `.student-card--inactive` aplica `filter: grayscale(70%) opacity(0.75)` y el badge usa color neutro/gris.
+- En `student-list.html`: pasar `[isInactive]="showInactives()"` a cada `<app-student-card>`.
+
+h2. Paso 5 — Ficha de estudiante en modo solo lectura
+
+*Archivos:* `src/app/components/students/student-form/student-form.ts` y `.html`
+*Complejidad:* Media-Alta
+
+El formulario actual es de edición. Para inactivos debe ser de solo lectura.
+
+Opciones:
+- a) Agregar input `readOnly = input(false)` al `StudentForm` y deshabilitar todos los controles del formulario cuando sea `true`.
+- b) Crear un componente separado `student-detail` solo para visualización. (Preferida si el formulario de edición es muy complejo.)
+
+Independiente de la opción elegida, la vista de detalle del inactivo debe:
+- Mostrar la fecha de inactivación obtenida de `updatedAt`, formateada en español (ej: "27 de junio de 2026").
+- Presentar este dato de forma destacada, por ejemplo con una sección o badge de color rojo/naranja con "Inactivo desde: [fecha]".
+- No mostrar botones de "Guardar", "Editar" ni "Inactivar".
+- Si existe el botón de "Inactivar" en la ficha actual, ocultarlo completamente cuando el estudiante ya está inactivo.
+
+h2. Paso 6 — Validar accesibilidad
+
+- Toggle: usar `<button role="switch" [attr.aria-checked]="showInactives()">`.
+- Badge "Inactivo": incluir texto visible (no solo color).
+- La sección de solo lectura no debe tener `<input>` enfocables; usar `<p>` o `<span>` con etiquetas descriptivas.
+- Verificar contraste de colores del estado grisado y del badge con AXE.
+
+h2. Paso 7 — Build y validación
+
+Ejecutar `ng build` al finalizar cada paso para verificar que no hay errores de compilación.
+
+h2. Orden de Ejecución Recomendado
+
+# Paso 2 (servicio — consulta Firestore)
+# Paso 3 (toggle en student-list)
+# Paso 4 (variante visual student-card)
+# Paso 5 (ficha solo lectura)
+# Paso 1 (comentario en deactivateStudent — bajo riesgo, al final)
+# Paso 6 (revisión accesibilidad)
+# Paso 7 (ng build final)
+
+h2. Archivos Afectados
+
+- `src/app/services/student.service.ts`
+- `src/app/components/students/student-list/student-list.ts`
+- `src/app/components/students/student-list/student-list.html`
+- `src/app/components/students/student-list/student-list.css`
+- `src/app/components/students/student-card/student-card.ts`
+- `src/app/components/students/student-card/student-card.html`
+- `src/app/components/students/student-card/student-card.css`
+- `src/app/components/students/student-form/student-form.ts` (o nuevo `student-detail`)
+- `src/app/components/students/student-form/student-form.html`
+
+h2. Archivos NO Afectados
+
+- `src/app/core/models/student.model.ts` (modelo ya está completo)
+- `.github/data.persistance.json` (sin campos nuevos)
+- Módulos de clases, planificador, asistencia, configuración

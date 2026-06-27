@@ -7,7 +7,6 @@ import { DateService } from '../../../services/date.service';
 import { Student } from '../../../core/models/student.model';
 import { StudentCard, StudentCardData } from '../student-card/student-card';
 import { ModuleHeader } from '../../ui/module-header/module-header';
-import { currentTimestamp } from 'firebase/firestore/pipelines';
 
 /**
  * Estudiante con datos calculados para la vista
@@ -32,15 +31,17 @@ export class StudentList {
 
   // Estados reactivos
   searchTerm = signal('');
+  showInactives = signal(false);
   isLoading = this.studentService.isLoading;
   error = this.studentService.error;
   
-  // Estudiantes activos del servicio
+  // Fuentes de datos del servicio
   private activeStudents = this.studentService.activeStudents;
+  private inactiveStudents = this.studentService.inactiveStudents;
 
-  // Estudiantes con datos calculados para la vista
+  // Estudiantes con datos calculados para la vista (activos o inactivos según toggle)
   studentsDisplay = computed(() => {
-    const students = this.activeStudents();
+    const students = this.showInactives() ? this.inactiveStudents() : this.activeStudents();
     return students.map(student => this.enrichStudentData(student));
   });
 
@@ -67,11 +68,15 @@ export class StudentList {
   // Estadísticas de la lista
   totalStudents = computed(() => this.studentsDisplay().length);
   totalFiltered = computed(() => this.filteredStudents().length);
-  upcomingBirthdays = computed(() => 
-    this.filteredStudents().filter(s => s.hasUpcomingBirthday).length
-  );
+  upcomingBirthdays = computed(() => {
+    if (this.showInactives()) return 0;
+    return this.filteredStudents().filter(s => s.hasUpcomingBirthday).length;
+  });
   studentSubtitle = computed(() => {
     const total = this.totalStudents();
+    if (this.showInactives()) {
+      return `${total} estudiante${total !== 1 ? 's' : ''} inactivo${total !== 1 ? 's' : ''}`;
+    }
     return `${total} estudiante${total !== 1 ? 's' : ''} activo${total !== 1 ? 's' : ''}`;
   });
 
@@ -113,6 +118,14 @@ export class StudentList {
       hasUpcomingBirthday,
       lastContactFormatted
     };
+  }
+
+  /**
+   * Activar/desactivar vista de inactivos
+   */
+  toggleShowInactives(): void {
+    this.showInactives.update(v => !v);
+    this.searchTerm.set('');
   }
 
   /**

@@ -39,7 +39,7 @@ export class DashboardSchedule {
 
     const topic = lesson.IsFormalClass === false
       ? lesson.title || 'Clase especial'
-      : `Unidad ${lesson.unitNumber || '-'} - Lección ${lesson.lessonNumber || '-'}`;
+      : this.appConfigService.getLessonTitle(lesson.unitNumber ?? '', lesson.lessonNumber ?? '') || 'Tema por definir';
 
     return {
       id: lesson.id,

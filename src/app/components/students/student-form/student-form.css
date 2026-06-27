@@ -88,6 +88,14 @@
   border: 1px solid color-mix(in srgb, var(--app-color-danger) 38%, white);
 }
 
+.alert-inactive {
+  background: color-mix(in srgb, var(--app-ink-soft) 12%, white);
+  color: var(--app-ink-medium);
+  border: 1px solid var(--app-color-border);
+  border-left: 4px solid var(--app-ink-soft);
+  align-items: flex-start;
+}
+
 .alert-icon {
   font-size: 1.5rem;
 }
