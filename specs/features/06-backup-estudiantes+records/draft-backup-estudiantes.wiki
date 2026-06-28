@@ -1,0 +1,13 @@
+h1. Poder tener un backup en excel de la información.
+
+h2. Motivo
+
+- Hace unas semanas venia revisando los datos y habia una estudiante pero no me aparecia despues, incluso no aparece en los inactivos.
+- Por lo tanto quisiera tener una opción para descargar un backup con los estudiantes:
+-- Nombre, Telefono, Encargado principal, Telefono, Estadisticas Actuales.
+- Con esa información podría verificar que no estoy loco y de verdad existia un estudiante y se perdio en firebase de alguna forma.
+
+h2. Tareas
+
+- En la lista de estudiantes tener un boton llamado "descargar"
+- Ese boton genere un listado separado por punto y coma con los estudiantes y sus estadisticas actuales.

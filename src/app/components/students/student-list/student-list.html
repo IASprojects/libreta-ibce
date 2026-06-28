@@ -15,6 +15,16 @@
           🎂 {{ upcomingBirthdays() }}
         </span>
       }
+      @if (!showInactives()) {
+        <button
+          type="button"
+          class="download-btn"
+          aria-label="Descargar lista de estudiantes en CSV"
+          (click)="downloadCsv()"
+        >
+          ⬇ Descargar
+        </button>
+      }
     </app-module-header>
   </div>
 

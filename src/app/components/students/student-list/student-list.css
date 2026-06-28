@@ -48,6 +48,32 @@
   font-weight: 600;
 }
 
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--app-color-border);
+  border-radius: var(--app-radius-md);
+  background: var(--app-color-surface);
+  color: var(--app-ink-medium);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.download-btn:hover {
+  background: var(--app-color-surface-muted);
+  border-color: var(--app-color-primary);
+  color: var(--app-color-primary);
+}
+
+.download-btn:focus-visible {
+  outline: 2px solid var(--app-color-primary);
+  outline-offset: 2px;
+}
+
 /* Toggle de inactivos */
 .inactives-toggle-section {
   padding: 0.5rem 0.85rem;

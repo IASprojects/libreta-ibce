@@ -1,0 +1,56 @@
+h1. Backup de Estudiantes en CSV
+
+h2. Motivo
+
+Una estudiante desapareció del sistema sin quedar registrada en la lista de inactivos, lo que generó duda sobre la integridad de los datos en Firebase. Se necesita una opción de descarga para poder auditar la información externamente.
+
+h2. Funcionalidad
+
+h3. Ubicación del botón
+- En la barra superior (toolbar) de la pantalla de lista de estudiantes.
+- Botón con etiqueta "Descargar" o ícono de descarga.
+
+h3. Estudiantes incluidos
+- Solo estudiantes activos.
+
+h3. Formato del archivo
+- CSV separado por punto y coma (;).
+- Nombre del archivo: estudiantes-backup-YYYY-MM-DD-HH-mm-ss.csv (con la fecha y hora del día de la descarga).
+
+h2. Columnas del CSV
+
+| Columna | Descripción |
+|---|---|
+| Nombre | Nombre completo del estudiante |
+| Teléfono | Teléfono del estudiante (si aplica) |
+| Encargado principal | Nombre del encargado principal |
+| Teléfono encargado | Teléfono del encargado principal |
+| Total clases asistidas | Total histórico de clases a las que asistió |
+| Porcentaje asistencia año actual | % de asistencia en el año en curso |
+| Última clase asistida | Fecha de la última clase registrada con presencia |
+| Racha actual | Número de clases consecutivas asistidas (racha actual) |
+
+h2. Comportamiento esperado
+
+1. El usuario hace clic en "Descargar" en la lista de estudiantes.
+2. El sistema genera en el cliente (sin llamada al servidor) el archivo CSV con todos los estudiantes activos y sus estadísticas.
+3. El navegador descarga automáticamente el archivo con el nombre estudiantes-backup-YYYY-MM-DD-HH-mm-ss.csv.
+4. Se requiere confirmación previa. Modal: 
+{noformat}
+¿Confirma que desea descargar el archivo con los estudiantes? SI/NO
+{noformat}
+
+h2. Restricciones técnicas
+
+- La generación del CSV debe hacerse en el cliente (sin backend).
+- No se requiere librería externa; usar Blob + URL.createObjectURL.
+- Los datos deben calcularse a partir de los records/asistencias ya disponibles en el servicio de estudiantes.
+
+h2. Criterios de aceptación
+
+- [ ] Existe un botón "Descargar" visible en la toolbar de la lista de estudiantes.
+- [ ] El archivo descargado tiene el nombre correcto con la fecha del día.
+- [ ] El CSV incluye una fila de encabezados y una fila por cada estudiante activo.
+- [ ] Los campos del encabezado coinciden con las columnas definidas arriba.
+- [ ] Las estadísticas (total asistencias, porcentaje, última clase, racha) son correctas respecto a lo que muestra la pantalla.
+- [ ] El archivo se abre correctamente en Excel/LibreOffice usando el separador punto y coma.

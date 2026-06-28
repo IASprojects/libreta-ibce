@@ -90,7 +90,7 @@
 
 .alert-inactive {
   background: color-mix(in srgb, var(--app-ink-soft) 12%, white);
-  color: var(--app-ink-medium);
+  color: var(--app-color-danger);
   border: 1px solid var(--app-color-border);
   border-left: 4px solid var(--app-ink-soft);
   align-items: flex-start;

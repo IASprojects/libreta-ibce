@@ -150,6 +150,62 @@ export class StudentList {
   }
 
   /**
+   * Generar y descargar backup CSV de estudiantes activos
+   */
+  downloadCsv(): void {
+    const confirmed = window.confirm('¿Confirma que desea descargar el archivo con los estudiantes?');
+    if (!confirmed) return;
+
+    const students = this.activeStudents();
+
+    const escapeField = (value: string): string => `"${value.replace(/"/g, '""')}"`;
+
+    const header = [
+      'Nombre',
+      'Teléfono',
+      'Encargado principal',
+      'Teléfono encargado',
+      'Total clases asistidas',
+      'Porcentaje asistencia año actual',
+      'Última clase asistida',
+      'Racha actual',
+    ].map(escapeField).join(';');
+
+    const rows = students.map(student => {
+      const mainContact = (student.contacts ?? []).find(c => c.isMain);
+      const pct = student.stats?.lastYearPercentage != null
+        ? `${student.stats.lastYearPercentage.toFixed(1)}%`
+        : 'N/A';
+
+      return [
+        student.name,
+        student.phone ?? '',
+        mainContact?.name ?? '',
+        mainContact?.phone ?? '',
+        String(student.stats?.totalAttendances ?? 0),
+        pct,
+        student.lastAttendance ?? 'N/A',
+        String(student.stats?.currentStreak ?? 0),
+      ].map(escapeField).join(';');
+    });
+
+    const csvContent = '\uFEFF' + [header, ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+    const now = new Date();
+    const pad = (n: number): string => String(n).padStart(2, '0');
+    const timestamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}-${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
+    const fileName = `estudiantes-backup-${timestamp}.csv`;
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /**
    * Navegar a formulario de nuevo estudiante
    */
   addNewStudent(): void {
