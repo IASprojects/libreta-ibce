@@ -2,16 +2,16 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { StudentForm } from './student-form';
+import { StudentFormComponent } from './student-form.component';
 import { StudentService } from '../student.service';
 import { UserService } from '../../../shared/user.service';
 import { of, throwError } from 'rxjs';
 import { signal } from '@angular/core';
 import { ContactRelationship } from '../../../core/models/enums';
 
-describe('StudentForm', () => {
-  let component: StudentForm;
-  let fixture: ComponentFixture<StudentForm>;
+describe('StudentFormComponent', () => {
+  let component: StudentFormComponent;
+  let fixture: ComponentFixture<StudentFormComponent>;
   let mockStudentService: Partial<StudentService>;
   let mockUserService: Partial<UserService>;
 
@@ -27,7 +27,7 @@ describe('StudentForm', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [StudentForm, ReactiveFormsModule, RouterTestingModule],
+      imports: [StudentFormComponent, ReactiveFormsModule, RouterTestingModule],
       providers: [
         { provide: StudentService, useValue: mockStudentService },
         { provide: UserService, useValue: mockUserService }
@@ -35,7 +35,7 @@ describe('StudentForm', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(StudentForm);
+    fixture = TestBed.createComponent(StudentFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

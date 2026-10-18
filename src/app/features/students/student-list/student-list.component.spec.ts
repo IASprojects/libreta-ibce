@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { StudentList } from './student-list';
+import { StudentListComponent } from './student-list.component';
 import { StudentService } from '../student.service';
 import { DateService } from '../../../shared/date.service';
 import { Router } from '@angular/router';
 import { signal } from '@angular/core';
 
-describe('StudentList', () => {
-  let component: StudentList;
-  let fixture: ComponentFixture<StudentList>;
+describe('StudentListComponent', () => {
+  let component: StudentListComponent;
+  let fixture: ComponentFixture<StudentListComponent>;
   let mockStudentService: Partial<StudentService>;
   let mockDateService: Partial<DateService>;
   let mockRouter: Partial<Router>;
@@ -33,7 +33,7 @@ describe('StudentList', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [StudentList],
+      imports: [StudentListComponent],
       providers: [
         { provide: StudentService, useValue: mockStudentService },
         { provide: DateService, useValue: mockDateService },
@@ -42,7 +42,7 @@ describe('StudentList', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(StudentList);
+    fixture = TestBed.createComponent(StudentListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

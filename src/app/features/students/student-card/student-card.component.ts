@@ -10,10 +10,10 @@ export interface StudentCardData extends Student {
 @Component({
   selector: 'app-student-card',
   imports: [],
-  templateUrl: './student-card.html',
-  styleUrl: './student-card.css',
+  templateUrl: './student-card.component.html',
+  styleUrl: './student-card.component.css',
 })
-export class StudentCard {
+export class StudentCardComponent {
   student = input.required<StudentCardData>();
   isInactive = input(false);
   view = output<string>();

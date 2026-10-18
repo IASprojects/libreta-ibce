@@ -2,8 +2,8 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { MainComponent } from './features/dashboard/main/main.component';
-import { StudentList } from './features/students/student-list/student-list';
-import { StudentForm } from './features/students/student-form/student-form';
+import { StudentListComponent } from './features/students/student-list/student-list.component';
+import { StudentFormComponent } from './features/students/student-form/student-form.component';
 import { PlannerComponent } from './features/planned-lessons/planner.component';
 import { ClassesComponent } from './features/lesson-classes/classes.component';
 import { SettingsComponent } from './features/settings/settings.component';
@@ -27,11 +27,11 @@ export const routes: Routes = [
       },
       {
         path: 'estudiantes',
-        component: StudentList
+        component: StudentListComponent
       },
       {
         path: 'estudiantes/:id',
-        component: StudentForm
+        component: StudentFormComponent
       },
       {
         path: 'planificador',

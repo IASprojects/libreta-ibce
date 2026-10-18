@@ -39,10 +39,10 @@ interface StudentFormData {
 @Component({
   selector: 'app-student-form',
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './student-form.html',
-  styleUrl: './student-form.css',
+  templateUrl: './student-form.component.html',
+  styleUrl: './student-form.component.css',
 })
-export class StudentForm implements OnInit {
+export class StudentFormComponent implements OnInit {
   private readonly SAVE_TIMEOUT_MS = 45000;
   private readonly MIN_STUDENT_AGE = 11;
   private readonly MAX_STUDENT_AGE = 20;

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { StudentService } from '../student.service';
 import { DateService } from '../../../shared/date.service';
 import { Student } from '../../../core/models/student.model';
-import { StudentCard, StudentCardData } from '../student-card/student-card';
+import { StudentCardComponent, StudentCardData } from '../student-card/student-card.component';
 import { ModuleHeaderComponent } from '../../../shared/ui/module-header/module-header.component';
 
 /**
@@ -19,12 +19,12 @@ interface StudentDisplay extends StudentCardData {
 
 @Component({
   selector: 'app-student-list',
-  imports: [CommonModule, FormsModule, StudentCard, ModuleHeaderComponent],
-  templateUrl: './student-list.html',
-  styleUrl: './student-list.css',
+  imports: [CommonModule, FormsModule, StudentCardComponent, ModuleHeaderComponent],
+  templateUrl: './student-list.component.html',
+  styleUrl: './student-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StudentList {
+export class StudentListComponent {
   private studentService = inject(StudentService);
   private dateService = inject(DateService);
   private router = inject(Router);
