@@ -18,8 +18,8 @@ import {
   limit as firestoreLimit
 } from 'firebase/firestore';
 import { Observable, from, map, catchError, of, BehaviorSubject, throwError } from 'rxjs';
-import { FirebaseService } from './firebase.service';
-import { DateService } from './date.service';
+import { FirebaseService } from '../core/services/firebase.service';
+import { DateService } from '../shared/date.service';
 import { PlannedLesson } from '../core/models/planned-lesson.model';
 
 /**

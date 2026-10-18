@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { CommonModule } from '@angular/common';
 import { TeacherNames } from '../../core/models/enums';
 import { LessonCatalogUnit } from '../../core/models/app-config.model';
-import { AppConfigService } from '../../services/app-config.service';
+import { AppConfigService } from '../../shared/app-config.service';
+import { AppConfigEditorService } from '../../features/configuracion/app-config-editor.service';
 import {
   EditableLesson,
   EditableTeacher,
@@ -25,11 +26,14 @@ import { ConfiguracionCatalogPanel } from './configuracion-catalog-panel/configu
 })
 export class Configuracion {
   private appConfigService = inject(AppConfigService);
+  private appConfigEditorService = inject(AppConfigEditorService);
 
   readonly availableTeacherNames = Object.values(TeacherNames);
   readonly config = this.appConfigService.config;
   readonly isLoading = this.appConfigService.isLoading;
-  readonly serviceError = this.appConfigService.error;
+  readonly serviceError = computed(
+    () => this.appConfigService.error() ?? this.appConfigEditorService.saveError()
+  );
 
   teachers = signal<EditableTeacher[]>([]);
   lessonCatalog = signal<EditableUnit[]>([]);
@@ -159,7 +163,7 @@ export class Configuracion {
 
     this.teachersSaving.set(true);
     try {
-      await this.appConfigService.saveTeachers(normalizedTeachers);
+      await this.appConfigEditorService.saveTeachers(normalizedTeachers);
       this.teachersDirty.set(false);
       this.teachersMessage.set('Maestros guardados correctamente.');
     } catch {
@@ -305,7 +309,7 @@ export class Configuracion {
 
     this.catalogSaving.set(true);
     try {
-      await this.appConfigService.saveLessonCatalog(normalizedCatalog);
+      await this.appConfigEditorService.saveLessonCatalog(normalizedCatalog);
       this.catalogDirty.set(false);
       this.catalogMessage.set('Catálogo guardado correctamente.');
     } catch {

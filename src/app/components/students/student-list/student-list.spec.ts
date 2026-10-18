@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { StudentList } from './student-list';
 import { StudentService } from '../../../services/student.service';
-import { DateService } from '../../../services/date.service';
+import { DateService } from '../../../shared/date.service';
 import { Router } from '@angular/router';
 import { signal } from '@angular/core';
 

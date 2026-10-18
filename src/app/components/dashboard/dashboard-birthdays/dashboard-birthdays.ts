@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DateService } from '../../../services/date.service';
+import { DateService } from '../../../shared/date.service';
 import { StudentService } from '../../../services/student.service';
 import { Student } from '../../../core/models/student.model';
 

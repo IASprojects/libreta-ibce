@@ -19,9 +19,9 @@ import {
   limit
 } from 'firebase/firestore';
 import { Observable, from, map, catchError, of, BehaviorSubject, throwError, switchMap } from 'rxjs';
-import { FirebaseService } from './firebase.service';
+import { FirebaseService } from '../core/services/firebase.service';
 import { StudentService } from './student.service';
-import { DateService } from './date.service';
+import { DateService } from '../shared/date.service';
 import { Attendance } from '../core/models/attendance.model';
 import { AttendanceType } from '../core/models/enums';
 import { LessonClass } from '../core/models/lesson-class.model';

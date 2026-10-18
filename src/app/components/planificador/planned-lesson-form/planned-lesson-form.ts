@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlannedLessonService, CreatePlannedLessonInput } from '../../../services/planned-lesson.service';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
-import { UserService } from '../../../services/user.service';
-import { DateService } from '../../../services/date.service';
-import { AppConfigService } from '../../../services/app-config.service';
+import { UserService } from '../../../shared/user.service';
+import { DateService } from '../../../shared/date.service';
+import { AppConfigService } from '../../../shared/app-config.service';
 import { TeacherNames } from '../../../core/models/enums';
 
 /**

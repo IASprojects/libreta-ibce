@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray } from '@angular
 import { Router, ActivatedRoute } from '@angular/router';
 import { finalize, timeout } from 'rxjs';
 import { StudentService } from '../../../services/student.service';
-import { UserService } from '../../../services/user.service';
+import { UserService } from '../../../shared/user.service';
 import { Student, StudentContact } from '../../../core/models/student.model';
 import { ContactRelationship } from '../../../core/models/enums';
 import {

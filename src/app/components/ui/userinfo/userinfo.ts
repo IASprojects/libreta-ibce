@@ -1,6 +1,6 @@
 import { Component, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserService } from '../../../services/user.service';
+import { UserService } from '../../../shared/user.service';
 
 @Component({
   selector: 'app-dashboard-userinfo',

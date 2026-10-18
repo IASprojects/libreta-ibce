@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { StudentService } from '../../../services/student.service';
-import { DateService } from '../../../services/date.service';
+import { DateService } from '../../../shared/date.service';
 import { Student } from '../../../core/models/student.model';
 import { StudentCard, StudentCardData } from '../student-card/student-card';
 import { ModuleHeader } from '../../ui/module-header/module-header';

@@ -7,7 +7,7 @@ import { StudentForm } from './components/students/student-form/student-form';
 import { Planificador } from './components/planificador/planificador';
 import { Clases } from './components/clases/clases';
 import { Configuracion } from './components/configuracion/configuracion';
-import { authGuard, loginRedirectGuard } from './guards/auth.guard';
+import { authGuard, loginRedirectGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },

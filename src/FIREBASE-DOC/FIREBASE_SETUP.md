@@ -63,7 +63,7 @@ firebase deploy
 - `firebase.json` - Configuración de Firebase Hosting
 - `.firebaserc` - Proyecto Firebase asociado
 - `src/environments/` - Archivos de configuración de environment
-- `src/app/services/firebase.service.ts` - Servicio base de Firebase
+- `src/app/core/services/firebase.service.ts` - Servicio base de Firebase
 - Scripts en `package.json` para build y deploy
 - Actualizado `.gitignore` para archivos de Firebase
 

@@ -28,10 +28,10 @@ import {
   throwError,
   switchMap,
 } from 'rxjs';
-import { FirebaseService } from './firebase.service';
+import { FirebaseService } from '../core/services/firebase.service';
 import { Student, StudentStats, StudentContact } from '../core/models/student.model';
 import { Attendance } from '../core/models/attendance.model';
-import { DateService } from './date.service';
+import { DateService } from '../shared/date.service';
 import { ContactRelationship } from '../core/models/enums';
 import { LessonClassService } from './lesson-class.service';
 

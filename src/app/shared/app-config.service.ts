@@ -1,8 +1,13 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Timestamp, doc, getDoc, onSnapshot, setDoc, type DocumentSnapshot, type Unsubscribe } from 'firebase/firestore';
-import { FirebaseService } from './firebase.service';
+import { doc, getDoc, onSnapshot, type DocumentSnapshot, type Unsubscribe } from 'firebase/firestore';
+import { FirebaseService } from '../core/services/firebase.service';
 import { AppConfig, LessonCatalogUnit, Teacher } from '../core/models/app-config.model';
 
+/**
+ * Acceso de solo lectura a la configuración global (documento único `config/global`).
+ * Mantiene el listener en tiempo real y las derivaciones compartidas.
+ * La escritura de docentes y catálogo vive en la feature de configuración.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -69,7 +74,20 @@ export class AppConfigService {
     const lesson = unit.lessons.find(l => l.lessonNumber === lessonId);
     return lesson ? `Unidad ${unitId} - Lección ${lessonId} - ${lesson.lessonTitle ?? ''}` : null;
   }
-  
+
+  //Metodo para obtener un maestro activo por su id.
+  getTeacherById(teacherId: string): Teacher | null {
+    if (!teacherId) {
+      return null;
+    }
+    return this.activeTeachers().find(teacher => teacher.id === teacherId) ?? null;
+  }
+
+  //Metodo para obtener el nombre de un maestro activo por su id.
+  getTeacherName(teacherId: string): string | null {
+    return this.getTeacherById(teacherId)?.name ?? null;
+  }
+
   async refresh(): Promise<void> {
     const configRef = doc(this.firebaseService.db, this.CONFIG_COLLECTION, this.GLOBAL_CONFIG_ID);
     this.loadingState.set(true);
@@ -81,42 +99,6 @@ export class AppConfigService {
     } catch (error) {
       console.error('Error al refrescar configuración global:', error);
       this.errorState.set('No se pudo refrescar la configuración global');
-    } finally {
-      this.loadingState.set(false);
-    }
-  }
-
-  async saveTeachers(teachers: Teacher[]): Promise<void> {
-    await this.savePartialConfig({ teachers });
-  }
-
-  async saveLessonCatalog(lessonCatalog: LessonCatalogUnit[]): Promise<void> {
-    await this.savePartialConfig({ lessonCatalog });
-  }
-
-  private async savePartialConfig(partial: Partial<AppConfig>): Promise<void> {
-    const configRef = doc(this.firebaseService.db, this.CONFIG_COLLECTION, this.GLOBAL_CONFIG_ID);
-    const currentConfig = this.configState();
-
-    this.loadingState.set(true);
-
-    try {
-      await setDoc(
-        configRef,
-        {
-          id: this.GLOBAL_CONFIG_ID,
-          churchName: currentConfig?.churchName || 'Libreta IBCE',
-          updatedAt: Timestamp.now(),
-          ...partial
-        },
-        { merge: true }
-      );
-
-      this.errorState.set(null);
-    } catch (error) {
-      console.error('Error al guardar configuración global:', error);
-      this.errorState.set('No se pudo guardar la configuración global');
-      throw error;
     } finally {
       this.loadingState.set(false);
     }

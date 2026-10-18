@@ -11,9 +11,9 @@ import {
 import { PlannedLessonService } from '../../../services/planned-lesson.service';
 import { AttendanceService, BatchAttendanceInput } from '../../../services/attendance.service';
 import { StudentService } from '../../../services/student.service';
-import { DateService } from '../../../services/date.service';
-import { UserService } from '../../../services/user.service';
-import { AppConfigService } from '../../../services/app-config.service';
+import { DateService } from '../../../shared/date.service';
+import { UserService } from '../../../shared/user.service';
+import { AppConfigService } from '../../../shared/app-config.service';
 import { LessonClass } from '../../../core/models/lesson-class.model';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
 import { Student } from '../../../core/models/student.model';

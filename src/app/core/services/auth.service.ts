@@ -8,8 +8,8 @@ import {
   User as FirebaseUser 
 } from 'firebase/auth';
 import { FirebaseService } from './firebase.service';
-import { UserService, User } from './user.service';
-import { environment } from '../../environments/environment';
+import { UserService, User } from '../../shared/user.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

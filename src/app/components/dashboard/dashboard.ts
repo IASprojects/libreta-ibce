@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { UserService } from '../../services/user.service';
-import { AuthService } from '../../services/auth.service';
-import { DateService } from '../../services/date.service';
+import { UserService } from '../../shared/user.service';
+import { AuthService } from '../../core/services/auth.service';
+import { DateService } from '../../shared/date.service';
 import { DashboardMetrics } from './dashboard-metrics/dashboard-metrics';
 import { ModuleHeader } from '../ui/module-header/module-header';
 

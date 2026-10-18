@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, input, output } from '@angu
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { DashboardUserinfo } from '../userinfo/userinfo';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 type MenuIcon = 'dashboard' | 'students' | 'planner' | 'classes' | 'settings';
 

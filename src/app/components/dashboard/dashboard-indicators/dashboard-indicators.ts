@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { LessonClassService } from '../../../services/lesson-class.service';
 import { AttendanceService } from '../../../services/attendance.service';
-import { AppConfigService } from '../../../services/app-config.service';
+import { AppConfigService } from '../../../shared/app-config.service';
 import { LessonClass } from '../../../core/models/lesson-class.model';
 import { combineLatest, map, of, switchMap } from 'rxjs';
 
@@ -108,11 +108,7 @@ export class DashboardIndicators {
       return 'Sin maestro asignado';
     }
 
-    const teacher = this.appConfigService
-      .activeTeachers()
-      .find(currentTeacher => currentTeacher.id === lessonClass.teacherId);
-
-    return teacher?.name ?? lessonClass.teacherId;
+    return this.appConfigService.getTeacherName(lessonClass.teacherId) ?? lessonClass.teacherId;
   });
 
   onIndicatorSpaceKeydown(event: Event): void {
