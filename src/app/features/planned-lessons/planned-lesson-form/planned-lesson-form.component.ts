@@ -28,10 +28,10 @@ type FormMode = 'create' | 'edit';
 @Component({
   selector: 'app-planned-lesson-form',
   imports: [CommonModule, FormsModule],
-  templateUrl: './planned-lesson-form.html',
-  styleUrl: './planned-lesson-form.css',
+  templateUrl: './planned-lesson-form.component.html',
+  styleUrl: './planned-lesson-form.component.css',
 })
-export class PlannedLessonForm {
+export class PlannedLessonFormComponent {
   private plannedLessonService = inject(PlannedLessonService);
   private userService = inject(UserService);
   private dateService = inject(DateService);

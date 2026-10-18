@@ -4,11 +4,11 @@ import { FilterBarComponent } from '../../../../shared/ui/filter-bar/filter-bar.
 @Component({
   selector: 'app-planned-lesson-filters',
   imports: [FilterBarComponent],
-  templateUrl: './planned-lesson-filters.html',
-  styleUrl: './planned-lesson-filters.css',
+  templateUrl: './planned-lesson-filters.component.html',
+  styleUrl: './planned-lesson-filters.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlannedLessonFilters {
+export class PlannedLessonFiltersComponent {
   showMobileFilters = input(false);
   filterTeacher = input('all');
   filterDate = input('all');

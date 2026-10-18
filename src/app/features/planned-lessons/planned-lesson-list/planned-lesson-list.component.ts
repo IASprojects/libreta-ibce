@@ -6,11 +6,11 @@ import { PlannedLessonService } from '../planned-lesson.service';
 import { DateService } from '../../../shared/date.service';
 import { AppConfigService } from '../../../shared/app-config.service';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
-import { PlannedLessonForm } from '../planned-lesson-form/planned-lesson-form';
+import { PlannedLessonFormComponent } from '../planned-lesson-form/planned-lesson-form.component';
 import { ModuleHeaderComponent } from '../../../shared/ui/module-header/module-header.component';
-import { PlannedLessonFilters } from './planned-lesson-filters/planned-lesson-filters';
-import { PlannedLessonCard } from './planned-lesson-card/planned-lesson-card';
-import { PlannedLessonStats } from './planned-lesson-stats/planned-lesson-stats';
+import { PlannedLessonFiltersComponent } from './planned-lesson-filters/planned-lesson-filters.component';
+import { PlannedLessonCardComponent } from './planned-lesson-card/planned-lesson-card.component';
+import { PlannedLessonStatsComponent } from './planned-lesson-stats/planned-lesson-stats.component';
 
 /**
  * Lección planificada con datos calculados para la vista
@@ -29,17 +29,17 @@ interface PlannedLessonDisplay extends PlannedLesson {
   selector: 'app-planned-lesson-list',
   imports: [
     CommonModule,
-    PlannedLessonForm,
+    PlannedLessonFormComponent,
     ModuleHeaderComponent,
-    PlannedLessonFilters,
-    PlannedLessonCard,
-    PlannedLessonStats,
+    PlannedLessonFiltersComponent,
+    PlannedLessonCardComponent,
+    PlannedLessonStatsComponent,
   ],
-  templateUrl: './planned-lesson-list.html',
-  styleUrl: './planned-lesson-list.css',
+  templateUrl: './planned-lesson-list.component.html',
+  styleUrl: './planned-lesson-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlannedLessonList {
+export class PlannedLessonListComponent {
   private plannedLessonService = inject(PlannedLessonService);
   private dateService = inject(DateService);
   private appConfigService = inject(AppConfigService);
