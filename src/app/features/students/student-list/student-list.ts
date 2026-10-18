@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { StudentService } from '../../../services/student.service';
+import { StudentService } from '../student.service';
 import { DateService } from '../../../shared/date.service';
 import { Student } from '../../../core/models/student.model';
 import { StudentCard, StudentCardData } from '../student-card/student-card';
-import { ModuleHeader } from '../../ui/module-header/module-header';
+import { ModuleHeader } from '../../../components/ui/module-header/module-header';
 
 /**
  * Estudiante con datos calculados para la vista

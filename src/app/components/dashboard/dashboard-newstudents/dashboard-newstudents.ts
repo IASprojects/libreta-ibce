@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StudentService } from '../../../services/student.service';
+import { StudentService } from '../../../features/students/student.service';
 import { Student } from '../../../core/models/student.model';
 
 interface StudentPreview {

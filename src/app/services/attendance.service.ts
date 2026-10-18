@@ -20,7 +20,7 @@ import {
 } from 'firebase/firestore';
 import { Observable, from, map, catchError, of, BehaviorSubject, throwError, switchMap } from 'rxjs';
 import { FirebaseService } from '../core/services/firebase.service';
-import { StudentService } from './student.service';
+import { StudentService } from '../features/students/student.service';
 import { DateService } from '../shared/date.service';
 import { Attendance } from '../core/models/attendance.model';
 import { AttendanceType } from '../core/models/enums';

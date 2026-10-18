@@ -10,7 +10,7 @@ import {
 } from '../../../services/lesson-class.service';
 import { PlannedLessonService } from '../../../services/planned-lesson.service';
 import { AttendanceService, BatchAttendanceInput } from '../../../services/attendance.service';
-import { StudentService } from '../../../services/student.service';
+import { StudentService } from '../../../features/students/student.service';
 import { DateService } from '../../../shared/date.service';
 import { UserService } from '../../../shared/user.service';
 import { AppConfigService } from '../../../shared/app-config.service';

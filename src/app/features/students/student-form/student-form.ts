@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { finalize, timeout } from 'rxjs';
-import { StudentService } from '../../../services/student.service';
+import { StudentService } from '../student.service';
 import { UserService } from '../../../shared/user.service';
 import { Student, StudentContact } from '../../../core/models/student.model';
 import { ContactRelationship } from '../../../core/models/enums';

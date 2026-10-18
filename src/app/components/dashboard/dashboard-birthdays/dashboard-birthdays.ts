@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DateService } from '../../../shared/date.service';
-import { StudentService } from '../../../services/student.service';
+import { StudentService } from '../../../features/students/student.service';
 import { Student } from '../../../core/models/student.model';
 
 interface Birthday {

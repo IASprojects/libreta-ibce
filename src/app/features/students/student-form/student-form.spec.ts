@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { StudentForm } from './student-form';
-import { StudentService } from '../../../services/student.service';
+import { StudentService } from '../student.service';
 import { UserService } from '../../../shared/user.service';
 import { of, throwError } from 'rxjs';
 import { signal } from '@angular/core';
