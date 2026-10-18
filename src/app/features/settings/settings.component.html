@@ -11,7 +11,7 @@
   }
 
   <div class="settings-grid">
-    <app-configuracion-teachers-panel
+    <app-settings-teachers-panel
       [teachers]="teachers()"
       [teachersMessage]="teachersMessage()"
       [hasTeachers]="hasTeachers()"
@@ -26,7 +26,7 @@
       (saveTeachers)="saveTeachers()"
     />
 
-    <app-configuracion-catalog-panel
+    <app-settings-catalog-panel
       [lessonCatalog]="lessonCatalog()"
       [catalogMessage]="catalogMessage()"
       [hasLessonCatalog]="hasLessonCatalog()"

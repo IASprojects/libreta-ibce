@@ -13,18 +13,18 @@ import {
   TeacherFieldChange,
   TeacherNameChange,
   UnitFieldChange,
-} from './configuracion.types';
-import { ConfiguracionTeachersPanelComponent } from './configuracion-teachers-panel/configuracion-teachers-panel.component';
-import { ConfiguracionCatalogPanelComponent } from './configuracion-catalog-panel/configuracion-catalog-panel.component';
+} from './settings.types';
+import { SettingsTeachersPanelComponent } from './settings-teachers-panel/settings-teachers-panel.component';
+import { SettingsCatalogPanelComponent } from './settings-catalog-panel/settings-catalog-panel.component';
 
 @Component({
-  selector: 'app-configuracion',
-  imports: [CommonModule, ConfiguracionTeachersPanelComponent, ConfiguracionCatalogPanelComponent],
-  templateUrl: './configuracion.component.html',
-  styleUrl: './configuracion.component.css',
+  selector: 'app-settings',
+  imports: [CommonModule, SettingsTeachersPanelComponent, SettingsCatalogPanelComponent],
+  templateUrl: './settings.component.html',
+  styleUrl: './settings.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConfiguracionComponent {
+export class SettingsComponent {
   private appConfigService = inject(AppConfigService);
   private appConfigEditorService = inject(AppConfigEditorService);
 

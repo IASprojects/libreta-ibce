@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { PlannedLessonList } from './planned-lesson-list/planned-lesson-list';
 
 @Component({
-  selector: 'app-planificador',
+  selector: 'app-planner',
   imports: [PlannedLessonList],
-  templateUrl: './planificador.html',
-  styleUrl: './planificador.css',
+  templateUrl: './planner.component.html',
+  styleUrl: './planner.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Planificador {}
+export class PlannerComponent {}

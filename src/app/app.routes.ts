@@ -4,9 +4,9 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { MainComponent } from './features/dashboard/main/main.component';
 import { StudentList } from './features/students/student-list/student-list';
 import { StudentForm } from './features/students/student-form/student-form';
-import { Planificador } from './features/planned-lessons/planificador';
+import { PlannerComponent } from './features/planned-lessons/planner.component';
 import { Clases } from './features/lesson-classes/clases';
-import { ConfiguracionComponent } from './features/configuracion/configuracion.component';
+import { SettingsComponent } from './features/settings/settings.component';
 import { authGuard, loginRedirectGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -35,7 +35,7 @@ export const routes: Routes = [
       },
       {
         path: 'planificador',
-        component: Planificador
+        component: PlannerComponent
       },
       {
         path: 'clases',
@@ -43,7 +43,7 @@ export const routes: Routes = [
       },
       {
         path: 'configuracion',
-        component: ConfiguracionComponent
+        component: SettingsComponent
       }
     ]
   },

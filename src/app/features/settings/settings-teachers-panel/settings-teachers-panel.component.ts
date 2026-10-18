@@ -2,16 +2,16 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TeacherNames } from '../../../core/models/enums';
-import { EditableTeacher, TeacherFieldChange, TeacherNameChange } from '../configuracion.types';
+import { EditableTeacher, TeacherFieldChange, TeacherNameChange } from '../settings.types';
 
 @Component({
-  selector: 'app-configuracion-teachers-panel',
+  selector: 'app-settings-teachers-panel',
   imports: [CommonModule, FormsModule],
-  templateUrl: './configuracion-teachers-panel.component.html',
-  styleUrl: './configuracion-teachers-panel.component.css',
+  templateUrl: './settings-teachers-panel.component.html',
+  styleUrl: './settings-teachers-panel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConfiguracionTeachersPanelComponent {
+export class SettingsTeachersPanelComponent {
   teachers = input.required<EditableTeacher[]>();
   teachersMessage = input<string | null>(null);
   hasTeachers = input(false);

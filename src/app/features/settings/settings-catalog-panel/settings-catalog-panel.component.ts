@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { EditableLesson, EditableUnit, LessonFieldChange, LessonRemove, UnitFieldChange } from '../configuracion.types';
+import { EditableLesson, EditableUnit, LessonFieldChange, LessonRemove, UnitFieldChange } from '../settings.types';
 
 @Component({
-  selector: 'app-configuracion-catalog-panel',
+  selector: 'app-settings-catalog-panel',
   imports: [CommonModule, FormsModule],
-  templateUrl: './configuracion-catalog-panel.component.html',
-  styleUrl: './configuracion-catalog-panel.component.css',
+  templateUrl: './settings-catalog-panel.component.html',
+  styleUrl: './settings-catalog-panel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConfiguracionCatalogPanelComponent {
+export class SettingsCatalogPanelComponent {
   lessonCatalog = input.required<EditableUnit[]>();
   catalogMessage = input<string | null>(null);
   hasLessonCatalog = input(false);
