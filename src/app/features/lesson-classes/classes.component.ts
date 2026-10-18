@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ClassList } from './class-list/class-list';
 
 @Component({
-  selector: 'app-clases',
+  selector: 'app-classes',
   imports: [ClassList],
-  templateUrl: './clases.html',
-  styleUrl: './clases.css',
+  templateUrl: './classes.component.html',
+  styleUrl: './classes.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Clases {}
+export class ClassesComponent {}

@@ -5,7 +5,7 @@ import { MainComponent } from './features/dashboard/main/main.component';
 import { StudentList } from './features/students/student-list/student-list';
 import { StudentForm } from './features/students/student-form/student-form';
 import { PlannerComponent } from './features/planned-lessons/planner.component';
-import { Clases } from './features/lesson-classes/clases';
+import { ClassesComponent } from './features/lesson-classes/classes.component';
 import { SettingsComponent } from './features/settings/settings.component';
 import { authGuard, loginRedirectGuard } from './core/guards/auth.guard';
 
@@ -39,7 +39,7 @@ export const routes: Routes = [
       },
       {
         path: 'clases',
-        component: Clases
+        component: ClassesComponent
       },
       {
         path: 'configuracion',
