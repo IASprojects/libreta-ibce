@@ -3,7 +3,7 @@
   height: 100vh;
   background: linear-gradient(180deg, var(--app-sidebar-bg) 0%, var(--app-sidebar-bg-alt) 100%);
   color: var(--app-sidebar-ink);
-  box-shadow: 4px 0 20px rgba(28, 25, 23, 0.24);
+  box-shadow: 8px 0 30px rgba(15, 35, 27, 0.16);
   display: flex;
   flex-direction: column;
   transition: width 0.25s ease;
@@ -11,12 +11,12 @@
 }
 
 .menu-header {
-  padding: 2rem 1.5rem 1.5rem;
+  padding: 1.7rem 1.4rem 1.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   gap: var(--app-space-3);
-  color: color-mix(in srgb, var(--app-sidebar-ink) 88%, white 12%);
+  color: var(--app-sidebar-ink);
 }
 
 .menu-logo {
@@ -25,11 +25,11 @@
 
 .menu-title {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: var(--app-sidebar-ink);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.015em;
 }
 
 .menu-list {
@@ -47,31 +47,33 @@
 .menu-link {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  color: color-mix(in srgb, var(--app-sidebar-ink) 85%, #cfc5bb 15%);
+  gap: 0.9rem;
+  margin: 0.2rem 0.75rem;
+  padding: 0.8rem 0.9rem;
+  color: color-mix(in srgb, var(--app-sidebar-ink) 82%, transparent);
   text-decoration: none;
   transition: all 0.2s ease;
-  border-left: 4px solid transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
   font-weight: 500;
 }
 
 .menu-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fffaf4;
-  border-left-color: color-mix(in srgb, var(--app-color-primary) 55%, white 45%);
+  background: rgba(255, 255, 255, 0.075);
+  color: var(--app-sidebar-ink);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .menu-link.active {
-  background: color-mix(in srgb, var(--app-color-primary) 24%, transparent);
-  color: #fffaf4;
-  border-left-color: var(--app-color-primary);
+  background: color-mix(in srgb, var(--app-color-primary) 23%, transparent);
+  color: var(--app-sidebar-ink);
+  border-color: color-mix(in srgb, var(--app-color-primary) 30%, transparent);
   font-weight: 600;
 }
 
 .menu-icon {
-  width: 2rem;
-  height: 2rem;
+  width: 2.25rem;
+  height: 2.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,7 +91,7 @@
 }
 
 .menu-label {
-  font-size: 1rem;
+  font-size: 0.92rem;
   flex: 1;
   white-space: nowrap;
 }

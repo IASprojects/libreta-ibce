@@ -77,19 +77,19 @@
 }
 
 .alert-success {
-  background: color-mix(in srgb, var(--app-color-success) 16%, white);
-  color: color-mix(in srgb, var(--app-color-success) 84%, #1e2b17);
-  border: 1px solid color-mix(in srgb, var(--app-color-success) 38%, white);
+  background: var(--app-color-success-soft);
+  color: var(--app-color-success);
+  border: 1px solid color-mix(in srgb, var(--app-color-success) 38%, var(--app-color-border));
 }
 
 .alert-error {
-  background: color-mix(in srgb, var(--app-color-danger) 14%, white);
-  color: color-mix(in srgb, var(--app-color-danger) 86%, #481a14);
-  border: 1px solid color-mix(in srgb, var(--app-color-danger) 38%, white);
+  background: var(--app-color-danger-soft);
+  color: var(--app-color-danger);
+  border: 1px solid color-mix(in srgb, var(--app-color-danger) 38%, var(--app-color-border));
 }
 
 .alert-inactive {
-  background: color-mix(in srgb, var(--app-ink-soft) 12%, white);
+  background: var(--app-color-surface-muted);
   color: var(--app-color-danger);
   border: 1px solid var(--app-color-border);
   border-left: 4px solid var(--app-ink-soft);

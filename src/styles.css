@@ -1,4 +1,6 @@
-:root {
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
   --app-space-1: 4px;
   --app-space-2: 8px;
   --app-space-3: 12px;
@@ -6,54 +8,99 @@
   --app-space-5: 24px;
   --app-space-6: 32px;
 
-  --app-radius-sm: 8px;
-  --app-radius-md: 12px;
-  --app-radius-lg: 16px;
+  --app-radius-sm: 10px;
+  --app-radius-md: 16px;
+  --app-radius-lg: 22px;
 
-  /* Nueva Paleta: Fondo y Superficies */
-  --app-color-bg: #1A1A1A;           /* Fondo principal */
-  --app-color-surface: #242424;      /* Superficie (antes blanco) */
-  --app-color-surface-muted: #2d2d2d; /* Superficie secundaria */
-  
-  /* Bordes (Ajustados para fondo oscuro) */
-  --app-color-border: #404040;
-  --app-color-border-strong: #666666;
+  --app-color-bg: #f3f5ef;
+  --app-color-surface: #fffefa;
+  --app-color-surface-muted: #e9eee7;
+  --app-color-border: #d8e1d8;
+  --app-color-border-strong: #bdcdbf;
 
-  /* Texto (Escala de grises basada en blanco) */
-  --app-ink-strong: #ffffff;
-  --app-ink-medium: #e0e0e0;
-  --app-ink-soft: #b0b0b0;
+  --app-ink-strong: #18352d;
+  --app-ink-medium: #49645a;
+  --app-ink-soft: #73877e;
 
-  /* Colores Primarios y Semánticos */
-  --app-color-primary: #134154;        /* Dark Steel */
-  --app-color-primary-strong: #0f3342; /* Hover de Dark Steel */
-  --app-color-success: #4CAF50;
-  --app-color-warning: #FF9800;
-  --app-color-danger: #F44336;
+  --app-color-primary: #34745f;
+  --app-color-primary-strong: #255b49;
+  --app-color-accent: #d89550;
+  --app-color-success: #38785d;
+  --app-color-warning: #b77936;
+  --app-color-danger: #b6544f;
+  --app-color-danger-soft: #f8e9e5;
+  --app-color-success-soft: #e7f1e8;
+  --app-color-warning-soft: #f8efdf;
+  --app-color-primary-soft: #e2eee5;
 
-  /* Sidebar (Se mantiene oscuro pero más técnico) */
-  --app-sidebar-bg: #0d0d0d;
-  --app-sidebar-bg-alt: #000000;
-  --app-sidebar-ink: #00BCD4;          /* Cian para destacar elementos */
+  --app-sidebar-bg: #193e34;
+  --app-sidebar-bg-alt: #112f28;
+  --app-sidebar-ink: #e6eee5;
 
-  /* Gradientes y Sombras */
-  --app-gradient-accent: linear-gradient(135deg, #134154 0%, #00BCD4 100%);
-  --app-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --app-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.6);
+  --app-gradient-accent: linear-gradient(125deg, #285e4c 0%, #39765f 58%, #cb8a4a 140%);
+  --app-gradient-page: radial-gradient(ellipse at 85% 0%, rgba(217, 149, 80, 0.11), transparent 38%);
+  --app-shadow-sm: 0 3px 12px rgba(31, 59, 47, 0.06);
+  --app-shadow-md: 0 14px 38px rgba(31, 59, 47, 0.12);
+  --app-shadow-lg: 0 28px 80px rgba(26, 51, 41, 0.18);
+  --app-focus-ring: #ba7838;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --app-color-bg: #111c18;
+  --app-color-surface: #1a2922;
+  --app-color-surface-muted: #22352b;
+  --app-color-border: #34493d;
+  --app-color-border-strong: #50695b;
+
+  --app-ink-strong: #edf3e9;
+  --app-ink-medium: #c3d1c3;
+  --app-ink-soft: #98ad9e;
+
+  --app-color-primary: #477c61;
+  --app-color-primary-strong: #35624a;
+  --app-color-accent: #e2aa68;
+  --app-color-success: #7cbb91;
+  --app-color-warning: #e2b66c;
+  --app-color-danger: #ee9284;
+  --app-color-danger-soft: #402925;
+  --app-color-success-soft: #263b30;
+  --app-color-warning-soft: #403520;
+  --app-color-primary-soft: #283c31;
+
+  --app-sidebar-bg: #0d1713;
+  --app-sidebar-bg-alt: #101e18;
+  --app-sidebar-ink: #dbe8dd;
+
+  --app-gradient-accent: linear-gradient(125deg, #214738 0%, #2d604b 60%, #98683a 145%);
+  --app-gradient-page: radial-gradient(ellipse at 85% 0%, rgba(226, 170, 104, 0.08), transparent 38%);
+  --app-shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.18);
+  --app-shadow-md: 0 14px 38px rgba(0, 0, 0, 0.25);
+  --app-shadow-lg: 0 28px 80px rgba(0, 0, 0, 0.36);
+  --app-focus-ring: #e2aa68;
 }
 
 * {
   box-sizing: border-box;
 }
 
-body,
 html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: 'Segoe UI', Tahoma, sans-serif; /* Eliminé Trebuchet por ser muy antigua */
+  min-height: 100%;
   background: var(--app-color-bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--app-color-bg);
+  background-image: var(--app-gradient-page);
+  background-attachment: fixed;
   color: var(--app-ink-strong);
+  font-family: Inter, 'Segoe UI', Tahoma, sans-serif;
+  line-height: 1.5;
+  transition: background-color 180ms ease, color 180ms ease;
 }
 
 button,
@@ -63,7 +110,27 @@ textarea {
   font: inherit;
 }
 
+button {
+  color: inherit;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--app-color-primary) 32%, transparent);
+  color: var(--app-ink-strong);
+}
+
 :focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--app-color-primary) 70%, white 30%);
-  outline-offset: 2px;
+  outline: 3px solid var(--app-focus-ring);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

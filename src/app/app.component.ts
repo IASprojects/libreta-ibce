@@ -2,6 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './core/services/auth.service';
+import { ThemeService } from './shared/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,10 @@ export class AppComponent implements OnInit {
   
   // Computed para mostrar splash screen mientras inicializa
   showSplashScreen = computed(() => !this.isAppInitialized());
+
+  constructor() {
+    inject(ThemeService);
+  }
 
   ngOnInit(): void {
     console.log('🚀 App initialized');

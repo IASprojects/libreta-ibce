@@ -36,7 +36,7 @@
 }
 
 .date-today {
-  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  background: linear-gradient(135deg, var(--app-color-warning), var(--app-color-accent));
   color: #fff;
 }
 

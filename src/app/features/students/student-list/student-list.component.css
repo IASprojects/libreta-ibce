@@ -252,7 +252,7 @@
 }
 
 .error-container {
-  background: color-mix(in srgb, var(--app-color-danger) 16%, white);
+  background: var(--app-color-danger-soft);
   border-radius: var(--app-radius-md);
   margin: 1rem;
 }
@@ -264,7 +264,7 @@
 }
 
 .error-text {
-  color: #7f1d1d;
+  color: var(--app-color-danger);
   margin: 0 0 1rem 0;
   font-size: 1rem;
 }
@@ -282,12 +282,12 @@
 }
 
 .retry-btn:hover {
-  background: #991b1b;
+  filter: brightness(0.92);
   transform: translateY(-1px);
 }
 
 .retry-btn:focus {
-  outline: 3px solid #dc3545;
+  outline: 3px solid var(--app-color-danger);
   outline-offset: 2px;
 }
 

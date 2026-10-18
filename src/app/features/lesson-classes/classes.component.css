@@ -5,19 +5,19 @@
 
 .action-link {
   border-radius: 10px;
-  border: 1px solid #3e79a3;
+  border: 1px solid color-mix(in srgb, var(--app-color-primary) 45%, var(--app-color-border));
   text-decoration: none;
-  color: #184e78;
+  color: var(--app-color-primary-strong);
   font-weight: 600;
-  background: #eff7ff;
+  background: color-mix(in srgb, var(--app-color-primary) 10%, var(--app-color-surface));
 }
 
 .action-link:hover {
-  background: #e1f0ff;
+  background: color-mix(in srgb, var(--app-color-primary) 17%, var(--app-color-surface));
 }
 
 .action-link:focus-visible {
-  outline: 3px solid #2e78ad;
+  outline: 3px solid var(--app-focus-ring);
   outline-offset: 2px;
 }
 

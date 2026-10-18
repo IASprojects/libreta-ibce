@@ -68,7 +68,7 @@
 .form-error {
   margin: 0.3rem 0 0;
   font-size: 0.82rem;
-  color: #b91c1c;
+  color: var(--app-color-danger);
 }
 
 textarea.form-control {
@@ -124,15 +124,15 @@ textarea.form-control {
 }
 
 .summary-pill.present {
-  background: #dcfce7;
-  border-color: #86efac;
-  color: #166534;
+  background: var(--app-color-success-soft);
+  border-color: color-mix(in srgb, var(--app-color-success) 35%, var(--app-color-border));
+  color: var(--app-color-success);
 }
 
 .summary-pill.absent {
-  background: #fee2e2;
-  border-color: #fca5a5;
-  color: #7f1d1d;
+  background: var(--app-color-danger-soft);
+  border-color: color-mix(in srgb, var(--app-color-danger) 35%, var(--app-color-border));
+  color: var(--app-color-danger);
 }
 
 .pill-value {
@@ -215,15 +215,15 @@ textarea.form-control {
 }
 
 .student-item.present {
-  background: #ecfdf5;
-  border-color: #86efac;
-  color: #166534;
+  background: var(--app-color-success-soft);
+  border-color: color-mix(in srgb, var(--app-color-success) 35%, var(--app-color-border));
+  color: var(--app-color-success);
 }
 
 .student-item.absent {
-  background: #fef2f2;
-  border-color: #fca5a5;
-  color: #991b1b;
+  background: var(--app-color-danger-soft);
+  border-color: color-mix(in srgb, var(--app-color-danger) 35%, var(--app-color-border));
+  color: var(--app-color-danger);
 }
 
 .student-name {
@@ -301,14 +301,14 @@ textarea.form-control {
 }
 
 .btn-danger {
-  background: #dc2626;
-  border-color: #dc2626;
+  background: var(--app-color-danger);
+  border-color: var(--app-color-danger);
   color: #fff;
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #b91c1c;
-  border-color: #b91c1c;
+  filter: brightness(0.92);
+  border-color: var(--app-color-danger);
 }
 
 .btn-primary:disabled,

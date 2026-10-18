@@ -10,15 +10,15 @@
 }
 
 .alert-error {
-  background: #fef2f2;
-  border-color: #fecaca;
-  color: #991b1b;
+  background: var(--app-color-danger-soft);
+  border-color: color-mix(in srgb, var(--app-color-danger) 32%, var(--app-color-border));
+  color: var(--app-color-danger);
 }
 
 .alert-success {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
-  color: #166534;
+  background: var(--app-color-success-soft);
+  border-color: color-mix(in srgb, var(--app-color-success) 32%, var(--app-color-border));
+  color: var(--app-color-success);
 }
 
 .alert-icon {

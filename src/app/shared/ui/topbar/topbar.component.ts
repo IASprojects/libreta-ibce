@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-topbar',
+  imports: [ThemeToggleComponent],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

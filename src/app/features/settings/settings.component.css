@@ -1,13 +1,7 @@
 .page-container {
   min-height: 100vh;
   padding: var(--app-space-6);
-  background:
-    radial-gradient(
-      circle at top left,
-      color-mix(in srgb, var(--app-color-primary) 36%, var(--app-color-bg) 64%) 0%,
-      var(--app-color-bg) 45%,
-      color-mix(in srgb, var(--app-color-bg) 88%, black 12%) 100%
-    );
+  background: var(--app-gradient-page), var(--app-color-bg);
 }
 
 .settings-grid {
@@ -40,7 +34,7 @@
 
 .error,
 .error {
-  color: color-mix(in srgb, var(--app-color-danger) 25%, white 75%);
+  color: var(--app-color-danger);
 }
 
 @media (max-width: 768px) {
