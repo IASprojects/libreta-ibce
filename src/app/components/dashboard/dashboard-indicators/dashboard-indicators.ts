@@ -3,7 +3,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { LessonClassService } from '../../../services/lesson-class.service';
-import { AttendanceService } from '../../../services/attendance.service';
+import { AttendanceService } from '../../../features/attendance/attendance.service';
 import { AppConfigService } from '../../../shared/app-config.service';
 import { LessonClass } from '../../../core/models/lesson-class.model';
 import { combineLatest, map, of, switchMap } from 'rxjs';
