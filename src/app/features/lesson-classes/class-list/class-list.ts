@@ -20,9 +20,9 @@ import { Student } from '../../../core/models/student.model';
 import { TeacherNames } from '../../../core/models/enums';
 import { ClassListHero } from './class-list-hero/class-list-hero';
 import { ClassHistoryFilters } from './class-history-filters/class-history-filters';
-import { AlertBanner } from '../../../components/ui/alert-banner/alert-banner';
-import { EditorPanelHeader } from '../../../components/ui/editor-panel-header/editor-panel-header';
-import { ClassHistoryCard } from '../../../components/ui/class-history-card/class-history-card';
+import { AlertBannerComponent } from '../../../shared/ui/alert-banner/alert-banner.component';
+import { EditorPanelHeaderComponent } from '../../../shared/ui/editor-panel-header/editor-panel-header.component';
+import { ClassHistoryCardComponent } from '../../../shared/ui/class-history-card/class-history-card.component';
 
 type ClassEditorMode = 'create' | 'edit';
 type ClassEditorSource = 'planned' | 'custom';
@@ -69,9 +69,9 @@ interface QuickStudentFormData {
     CommonModule,
     ClassListHero,
     ClassHistoryFilters,
-    AlertBanner,
-    EditorPanelHeader,
-    ClassHistoryCard,
+    AlertBannerComponent,
+    EditorPanelHeaderComponent,
+    ClassHistoryCardComponent,
   ],
   templateUrl: './class-list.html',
   styleUrl: './class-list.css',

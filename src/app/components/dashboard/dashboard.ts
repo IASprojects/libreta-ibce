@@ -5,11 +5,11 @@ import { UserService } from '../../shared/user.service';
 import { AuthService } from '../../core/services/auth.service';
 import { DateService } from '../../shared/date.service';
 import { DashboardMetrics } from './dashboard-metrics/dashboard-metrics';
-import { ModuleHeader } from '../ui/module-header/module-header';
+import { ModuleHeaderComponent } from '../../shared/ui/module-header/module-header.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, DashboardMetrics, ModuleHeader],
+  imports: [CommonModule, DashboardMetrics, ModuleHeaderComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

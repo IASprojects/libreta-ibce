@@ -14,11 +14,11 @@ interface ClassHistoryCardData {
 
 @Component({
   selector: 'app-class-history-card',
-  templateUrl: './class-history-card.html',
-  styleUrl: './class-history-card.css',
+  templateUrl: './class-history-card.component.html',
+  styleUrl: './class-history-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClassHistoryCard {
+export class ClassHistoryCardComponent {
   lesson = input.required<ClassHistoryCardData>();
   relativeTimeLabel = input('');
 

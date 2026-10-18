@@ -7,7 +7,7 @@ import { DateService } from '../../../shared/date.service';
 import { AppConfigService } from '../../../shared/app-config.service';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
 import { PlannedLessonForm } from '../planned-lesson-form/planned-lesson-form';
-import { ModuleHeader } from '../../../components/ui/module-header/module-header';
+import { ModuleHeaderComponent } from '../../../shared/ui/module-header/module-header.component';
 import { PlannedLessonFilters } from './planned-lesson-filters/planned-lesson-filters';
 import { PlannedLessonCard } from './planned-lesson-card/planned-lesson-card';
 import { PlannedLessonStats } from './planned-lesson-stats/planned-lesson-stats';
@@ -30,7 +30,7 @@ interface PlannedLessonDisplay extends PlannedLesson {
   imports: [
     CommonModule,
     PlannedLessonForm,
-    ModuleHeader,
+    ModuleHeaderComponent,
     PlannedLessonFilters,
     PlannedLessonCard,
     PlannedLessonStats,

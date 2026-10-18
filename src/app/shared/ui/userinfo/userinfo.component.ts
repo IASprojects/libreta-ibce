@@ -5,10 +5,10 @@ import { UserService } from '../../../shared/user.service';
 @Component({
   selector: 'app-dashboard-userinfo',
   imports: [CommonModule],
-  templateUrl: './userinfo.html',
-  styleUrl: './userinfo.css',
+  templateUrl: './userinfo.component.html',
+  styleUrl: './userinfo.component.css',
 })
-export class DashboardUserinfo {
+export class UserinfoComponent {
   private userService = inject(UserService);
   // Signal computado que obtiene el usuario del servicio
   user = this.userService.user;

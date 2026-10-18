@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
-import { FilterBar } from '../../../../components/ui/filter-bar/filter-bar';
+import { FilterBarComponent } from '../../../../shared/ui/filter-bar/filter-bar.component';
 
 @Component({
   selector: 'app-class-history-filters',
-  imports: [FilterBar],
+  imports: [FilterBarComponent],
   templateUrl: './class-history-filters.html',
   styleUrl: './class-history-filters.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

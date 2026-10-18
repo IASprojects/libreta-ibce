@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 
 @Component({
   selector: 'app-alert-banner',
-  templateUrl: './alert-banner.html',
-  styleUrl: './alert-banner.css',
+  templateUrl: './alert-banner.component.html',
+  styleUrl: './alert-banner.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AlertBanner {
+export class AlertBannerComponent {
   variant = input<'error' | 'success'>('success');
   title = input('');
   message = input.required<string>();

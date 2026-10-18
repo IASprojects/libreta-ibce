@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 
 @Component({
   selector: 'app-editor-panel-header',
-  templateUrl: './editor-panel-header.html',
-  styleUrl: './editor-panel-header.css',
+  templateUrl: './editor-panel-header.component.html',
+  styleUrl: './editor-panel-header.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditorPanelHeader {
+export class EditorPanelHeaderComponent {
   title = input.required<string>();
   subtitle = input('');
   closeLabel = input('Cerrar editor');

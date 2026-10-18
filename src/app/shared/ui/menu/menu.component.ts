@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { DashboardUserinfo } from '../userinfo/userinfo';
+import { UserinfoComponent } from '../userinfo/userinfo.component';
 import { AuthService } from '../../../core/services/auth.service';
 
 type MenuIcon = 'dashboard' | 'students' | 'planner' | 'classes' | 'settings';
@@ -18,12 +18,12 @@ interface MenuItem {
 
 @Component({
   selector: 'app-dashboard-menu',
-  imports: [CommonModule, RouterLink, RouterLinkActive, DashboardUserinfo],
-  templateUrl: './menu.html',
-  styleUrl: './menu.css',
+  imports: [CommonModule, RouterLink, RouterLinkActive, UserinfoComponent],
+  templateUrl: './menu.component.html',
+  styleUrl: './menu.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardMenu {
+export class MenuComponent {
   private authService = inject(AuthService);
   collapsed = input(false);
   mobileOpen = input(false);

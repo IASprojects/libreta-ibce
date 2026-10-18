@@ -6,7 +6,7 @@ import { StudentService } from '../student.service';
 import { DateService } from '../../../shared/date.service';
 import { Student } from '../../../core/models/student.model';
 import { StudentCard, StudentCardData } from '../student-card/student-card';
-import { ModuleHeader } from '../../../components/ui/module-header/module-header';
+import { ModuleHeaderComponent } from '../../../shared/ui/module-header/module-header.component';
 
 /**
  * Estudiante con datos calculados para la vista
@@ -19,7 +19,7 @@ interface StudentDisplay extends StudentCardData {
 
 @Component({
   selector: 'app-student-list',
-  imports: [CommonModule, FormsModule, StudentCard, ModuleHeader],
+  imports: [CommonModule, FormsModule, StudentCard, ModuleHeaderComponent],
   templateUrl: './student-list.html',
   styleUrl: './student-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

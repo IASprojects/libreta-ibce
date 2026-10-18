@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 
 @Component({
   selector: 'app-topbar',
-  templateUrl: './topbar.html',
-  styleUrl: './topbar.css',
+  templateUrl: './topbar.component.html',
+  styleUrl: './topbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Topbar {
+export class TopbarComponent {
   title = input('Dashboard');
   eyebrow = input('Libreta IBCE');
   mobileMenuOpen = input(false);

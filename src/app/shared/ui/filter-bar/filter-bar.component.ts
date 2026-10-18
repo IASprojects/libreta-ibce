@@ -2,14 +2,14 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 
 @Component({
   selector: 'app-filter-bar',
-  templateUrl: './filter-bar.html',
-  styleUrl: './filter-bar.css',
+  templateUrl: './filter-bar.component.html',
+  styleUrl: './filter-bar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(document:keydown.escape)': 'onEscape()'
   }
 })
-export class FilterBar {
+export class FilterBarComponent {
   mobileOpen = input(false);
   mobileTitle = input('Filtros');
 
