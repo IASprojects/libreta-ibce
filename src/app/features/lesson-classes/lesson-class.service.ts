@@ -19,11 +19,11 @@ import {
   limit as firestoreLimit
 } from 'firebase/firestore';
 import { Observable, from, map, catchError, of, BehaviorSubject, throwError, combineLatest } from 'rxjs';
-import { FirebaseService } from '../core/services/firebase.service';
-import { DateService } from '../shared/date.service';
-import { PlannedLessonService } from './planned-lesson.service';
-import { LessonClass } from '../core/models/lesson-class.model';
-import { PlannedLesson } from '../core/models/planned-lesson.model';
+import { FirebaseService } from '../../core/services/firebase.service';
+import { DateService } from '../../shared/date.service';
+import { PlannedLessonService } from '../../services/planned-lesson.service';
+import { LessonClass } from '../../core/models/lesson-class.model';
+import { PlannedLesson } from '../../core/models/planned-lesson.model';
 
 /**
  * Estructura para crear clase desde planificación

@@ -7,7 +7,7 @@ import {
   CreateCustomClassInput,
   CreateFromPlannedInput,
   LessonClassService,
-} from '../../../services/lesson-class.service';
+} from '../lesson-class.service';
 import { PlannedLessonService } from '../../../services/planned-lesson.service';
 import { AttendanceService, BatchAttendanceInput } from '../../../features/attendance/attendance.service';
 import { StudentService } from '../../../features/students/student.service';
@@ -20,9 +20,9 @@ import { Student } from '../../../core/models/student.model';
 import { TeacherNames } from '../../../core/models/enums';
 import { ClassListHero } from './class-list-hero/class-list-hero';
 import { ClassHistoryFilters } from './class-history-filters/class-history-filters';
-import { AlertBanner } from '../../ui/alert-banner/alert-banner';
-import { EditorPanelHeader } from '../../ui/editor-panel-header/editor-panel-header';
-import { ClassHistoryCard } from '../../ui/class-history-card/class-history-card';
+import { AlertBanner } from '../../../components/ui/alert-banner/alert-banner';
+import { EditorPanelHeader } from '../../../components/ui/editor-panel-header/editor-panel-header';
+import { ClassHistoryCard } from '../../../components/ui/class-history-card/class-history-card';
 
 type ClassEditorMode = 'create' | 'edit';
 type ClassEditorSource = 'planned' | 'custom';

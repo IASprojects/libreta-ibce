@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { LessonClassService } from '../../../services/lesson-class.service';
+import { LessonClassService } from '../../../features/lesson-classes/lesson-class.service';
 import { AttendanceService } from '../../../features/attendance/attendance.service';
 import { AppConfigService } from '../../../shared/app-config.service';
 import { LessonClass } from '../../../core/models/lesson-class.model';

@@ -5,7 +5,7 @@ import { Main } from './components/main/main';
 import { StudentList } from './features/students/student-list/student-list';
 import { StudentForm } from './features/students/student-form/student-form';
 import { Planificador } from './components/planificador/planificador';
-import { Clases } from './components/clases/clases';
+import { Clases } from './features/lesson-classes/clases';
 import { Configuracion } from './components/configuracion/configuracion';
 import { authGuard, loginRedirectGuard } from './core/guards/auth.guard';
 

@@ -33,7 +33,7 @@ import { Student, StudentStats, StudentContact } from '../../core/models/student
 import { Attendance } from '../../core/models/attendance.model';
 import { DateService } from '../../shared/date.service';
 import { ContactRelationship } from '../../core/models/enums';
-import { LessonClassService } from '../../services/lesson-class.service';
+import { LessonClassService } from '../lesson-classes/lesson-class.service';
 
 interface StudentAttendanceSummary {
   stats: StudentStats;
