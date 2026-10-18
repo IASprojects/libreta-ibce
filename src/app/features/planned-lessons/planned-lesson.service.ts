@@ -18,9 +18,9 @@ import {
   limit as firestoreLimit
 } from 'firebase/firestore';
 import { Observable, from, map, catchError, of, BehaviorSubject, throwError } from 'rxjs';
-import { FirebaseService } from '../core/services/firebase.service';
-import { DateService } from '../shared/date.service';
-import { PlannedLesson } from '../core/models/planned-lesson.model';
+import { FirebaseService } from '../../core/services/firebase.service';
+import { DateService } from '../../shared/date.service';
+import { PlannedLesson } from '../../core/models/planned-lesson.model';
 
 /**
  * Estructura para crear nueva lección planificada

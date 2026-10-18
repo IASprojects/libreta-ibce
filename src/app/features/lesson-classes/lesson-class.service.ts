@@ -21,7 +21,7 @@ import {
 import { Observable, from, map, catchError, of, BehaviorSubject, throwError, combineLatest } from 'rxjs';
 import { FirebaseService } from '../../core/services/firebase.service';
 import { DateService } from '../../shared/date.service';
-import { PlannedLessonService } from '../../services/planned-lesson.service';
+import { PlannedLessonService } from '../planned-lessons/planned-lesson.service';
 import { LessonClass } from '../../core/models/lesson-class.model';
 import { PlannedLesson } from '../../core/models/planned-lesson.model';
 

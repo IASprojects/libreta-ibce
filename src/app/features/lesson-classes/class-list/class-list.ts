@@ -8,7 +8,7 @@ import {
   CreateFromPlannedInput,
   LessonClassService,
 } from '../lesson-class.service';
-import { PlannedLessonService } from '../../../services/planned-lesson.service';
+import { PlannedLessonService } from '../../../features/planned-lessons/planned-lesson.service';
 import { AttendanceService, BatchAttendanceInput } from '../../../features/attendance/attendance.service';
 import { StudentService } from '../../../features/students/student.service';
 import { DateService } from '../../../shared/date.service';

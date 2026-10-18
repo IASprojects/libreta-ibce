@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlannedLessonService } from '../../../services/planned-lesson.service';
+import { PlannedLessonService } from '../../../features/planned-lessons/planned-lesson.service';
 import { AppConfigService } from '../../../shared/app-config.service';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
 import { Router } from '@angular/router';

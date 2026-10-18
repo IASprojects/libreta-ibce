@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
-import { PlannedLessonService } from '../../../services/planned-lesson.service';
+import { PlannedLessonService } from '../planned-lesson.service';
 import { DateService } from '../../../shared/date.service';
 import { AppConfigService } from '../../../shared/app-config.service';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
 import { PlannedLessonForm } from '../planned-lesson-form/planned-lesson-form';
-import { ModuleHeader } from '../../ui/module-header/module-header';
+import { ModuleHeader } from '../../../components/ui/module-header/module-header';
 import { PlannedLessonFilters } from './planned-lesson-filters/planned-lesson-filters';
 import { PlannedLessonCard } from './planned-lesson-card/planned-lesson-card';
 import { PlannedLessonStats } from './planned-lesson-stats/planned-lesson-stats';

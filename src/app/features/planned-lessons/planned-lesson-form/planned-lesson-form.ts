@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed, input, output, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlannedLessonService, CreatePlannedLessonInput } from '../../../services/planned-lesson.service';
+import { PlannedLessonService, CreatePlannedLessonInput } from '../planned-lesson.service';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
 import { UserService } from '../../../shared/user.service';
 import { DateService } from '../../../shared/date.service';

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { FilterBar } from '../../../ui/filter-bar/filter-bar';
+import { FilterBar } from '../../../../components/ui/filter-bar/filter-bar';
 
 @Component({
   selector: 'app-planned-lesson-filters',
