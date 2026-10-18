@@ -133,7 +133,9 @@ export class PlannedLessonFormComponent {
   );
 
   // Fecha mínima permitida (hoy)
-  minDate = computed(() => this.dateService.getTodayDateString());
+  minDate = computed(() =>
+    this.mode() === 'create' && !this.lesson() ? this.dateService.getTodayDateString() : null
+  );
 
   constructor() {
     // Reaccionar a cambios de input para asegurar carga correcta en edición.
@@ -270,7 +272,8 @@ export class PlannedLessonFormComponent {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
-      if (plannedDate < today) {
+      const isCreating = this.mode() === 'create' && !this.lesson();
+      if (isCreating && plannedDate < today) {
         errors['plannedDate'] = 'No se puede planificar en el pasado';
       }
     }

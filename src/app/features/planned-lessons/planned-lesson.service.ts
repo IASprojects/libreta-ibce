@@ -299,12 +299,10 @@ export class PlannedLessonService {
     this.setLoading(true);
     this.setError(null);
 
-    // Validar que la fecha no esté en el pasado
-    const plannedDate = new Date(lessonInput.plannedDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    if (plannedDate < today) {
+    // Las fechas del formulario usan YYYY-MM-DD; comparar cadenas evita interpretar
+    // la fecha como UTC y rechazar por error el día actual en zonas horarias negativas.
+    const today = this.dateService.getTodayDateString();
+    if (lessonInput.plannedDate < today) {
       this.setLoading(false);
       return this.handleError('No se puede planificar una lección en el pasado', new Error('Fecha inválida'));
     }
@@ -379,18 +377,6 @@ export class PlannedLessonService {
     delete updateData.id;
     delete updateData.createdAt;
     delete updateData.createdBy;
-
-    // Validar fecha si se está actualizando
-    if (normalizedUpdates.plannedDate) {
-      const plannedDate = new Date(normalizedUpdates.plannedDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      if (plannedDate < today) {
-        this.setLoading(false);
-        return this.handleError('No se puede planificar una lección en el pasado', new Error('Fecha inválida'));
-      }
-    }
 
     return from(updateDoc(lessonRef, updateData)).pipe(
       map(() => {

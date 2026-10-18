@@ -64,7 +64,9 @@
             {{ getFieldError('plannedDate') }}
           </p>
         }
-        <p class="field-hint">La fecha no puede ser en el pasado</p>
+        <p class="field-hint">
+          {{ mode() === 'create' ? 'La fecha no puede ser en el pasado' : 'Puedes conservar o actualizar la fecha de esta lección.' }}
+        </p>
       </div>
 
       @if (formData().IsFormalClass) {
