@@ -1,14 +1,14 @@
 import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
-import { UserService } from '../../shared/user.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { UserService } from '../../../shared/user.service';
 
 @Component({
   selector: 'app-login',
   imports: [CommonModule],
-  templateUrl: './login.html',
-  styleUrl: './login.css'
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css'
 })
 export class LoginComponent {
   private authService = inject(AuthService);

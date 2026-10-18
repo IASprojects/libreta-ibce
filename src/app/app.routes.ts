@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login/login';
+import { LoginComponent } from './features/auth/login/login.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { Main } from './components/main/main';
+import { MainComponent } from './features/dashboard/main/main.component';
 import { StudentList } from './features/students/student-list/student-list';
 import { StudentForm } from './features/students/student-form/student-form';
 import { Planificador } from './features/planned-lessons/planificador';
@@ -18,7 +18,7 @@ export const routes: Routes = [
   },
   { 
     path: 'dashboard',
-    component: Main,
+    component: MainComponent,
     canActivate: [authGuard],
     children: [
       {

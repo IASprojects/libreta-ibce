@@ -1,21 +1,21 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { MenuComponent } from '../../shared/ui/menu/menu.component';
-import { AppShellComponent } from '../../shared/ui/app-shell/app-shell.component';
-import { TopbarComponent } from '../../shared/ui/topbar/topbar.component';
+import { MenuComponent } from '../../../shared/ui/menu/menu.component';
+import { AppShellComponent } from '../../../shared/ui/app-shell/app-shell.component';
+import { TopbarComponent } from '../../../shared/ui/topbar/topbar.component';
 
 @Component({
   selector: 'app-main',
   imports: [RouterOutlet, MenuComponent, AppShellComponent, TopbarComponent],
-  templateUrl: './main.html',
-  styleUrl: './main.css',
+  templateUrl: './main.component.html',
+  styleUrl: './main.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(document:keydown.escape)': 'closeMobileMenu()'
   }
 })
-export class Main {
+export class MainComponent {
   private router = inject(Router);
 
 
