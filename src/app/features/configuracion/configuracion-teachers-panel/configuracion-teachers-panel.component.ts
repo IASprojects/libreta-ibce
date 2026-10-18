@@ -7,11 +7,11 @@ import { EditableTeacher, TeacherFieldChange, TeacherNameChange } from '../confi
 @Component({
   selector: 'app-configuracion-teachers-panel',
   imports: [CommonModule, FormsModule],
-  templateUrl: './configuracion-teachers-panel.html',
-  styleUrl: './configuracion-teachers-panel.css',
+  templateUrl: './configuracion-teachers-panel.component.html',
+  styleUrl: './configuracion-teachers-panel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConfiguracionTeachersPanel {
+export class ConfiguracionTeachersPanelComponent {
   teachers = input.required<EditableTeacher[]>();
   teachersMessage = input<string | null>(null);
   hasTeachers = input(false);

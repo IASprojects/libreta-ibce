@@ -6,11 +6,11 @@ import { EditableLesson, EditableUnit, LessonFieldChange, LessonRemove, UnitFiel
 @Component({
   selector: 'app-configuracion-catalog-panel',
   imports: [CommonModule, FormsModule],
-  templateUrl: './configuracion-catalog-panel.html',
-  styleUrl: './configuracion-catalog-panel.css',
+  templateUrl: './configuracion-catalog-panel.component.html',
+  styleUrl: './configuracion-catalog-panel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConfiguracionCatalogPanel {
+export class ConfiguracionCatalogPanelComponent {
   lessonCatalog = input.required<EditableUnit[]>();
   catalogMessage = input<string | null>(null);
   hasLessonCatalog = input(false);

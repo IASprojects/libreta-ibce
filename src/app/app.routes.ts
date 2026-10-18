@@ -6,7 +6,7 @@ import { StudentList } from './features/students/student-list/student-list';
 import { StudentForm } from './features/students/student-form/student-form';
 import { Planificador } from './features/planned-lessons/planificador';
 import { Clases } from './features/lesson-classes/clases';
-import { Configuracion } from './components/configuracion/configuracion';
+import { ConfiguracionComponent } from './features/configuracion/configuracion.component';
 import { authGuard, loginRedirectGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -43,7 +43,7 @@ export const routes: Routes = [
       },
       {
         path: 'configuracion',
-        component: Configuracion
+        component: ConfiguracionComponent
       }
     ]
   },

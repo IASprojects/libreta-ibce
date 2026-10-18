@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TeacherNames } from '../../core/models/enums';
 import { LessonCatalogUnit } from '../../core/models/app-config.model';
 import { AppConfigService } from '../../shared/app-config.service';
-import { AppConfigEditorService } from '../../features/configuracion/app-config-editor.service';
+import { AppConfigEditorService } from './app-config-editor.service';
 import {
   EditableLesson,
   EditableTeacher,
@@ -14,17 +14,17 @@ import {
   TeacherNameChange,
   UnitFieldChange,
 } from './configuracion.types';
-import { ConfiguracionTeachersPanel } from './configuracion-teachers-panel/configuracion-teachers-panel';
-import { ConfiguracionCatalogPanel } from './configuracion-catalog-panel/configuracion-catalog-panel';
+import { ConfiguracionTeachersPanelComponent } from './configuracion-teachers-panel/configuracion-teachers-panel.component';
+import { ConfiguracionCatalogPanelComponent } from './configuracion-catalog-panel/configuracion-catalog-panel.component';
 
 @Component({
   selector: 'app-configuracion',
-  imports: [CommonModule, ConfiguracionTeachersPanel, ConfiguracionCatalogPanel],
-  templateUrl: './configuracion.html',
-  styleUrl: './configuracion.css',
+  imports: [CommonModule, ConfiguracionTeachersPanelComponent, ConfiguracionCatalogPanelComponent],
+  templateUrl: './configuracion.component.html',
+  styleUrl: './configuracion.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Configuracion {
+export class ConfiguracionComponent {
   private appConfigService = inject(AppConfigService);
   private appConfigEditorService = inject(AppConfigEditorService);
 
