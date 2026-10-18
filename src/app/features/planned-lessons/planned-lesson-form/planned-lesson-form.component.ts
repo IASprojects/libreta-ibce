@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, input, output, effect } from '@angular/core';
+import { Component, inject, signal, computed, input, output, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlannedLessonService, CreatePlannedLessonInput } from '../planned-lesson.service';
@@ -140,36 +140,37 @@ export class PlannedLessonFormComponent {
     effect(() => {
       const currentLesson = this.lesson();
       this.mode();
-      this.appConfigService.lessonCatalog();
-      this.appConfigService.activeTeachers();
 
-      // Si hay lección, siempre hidratar como edición para evitar problemas de orden de inputs.
-      if (currentLesson) {
-        const normalizedDate = this.normalizeDateString(currentLesson.plannedDate);
-        const normalizedUnitNumber = this.normalizeUnitSelectValue(currentLesson.unitNumber);
-        const normalizedLessonNumber = this.normalizeLessonSelectValue(
-          currentLesson.lessonNumber,
-          normalizedUnitNumber
-        );
+      // Reads used to normalize the initial value must not become effect dependencies.
+      // In particular, formData is written below and must not trigger this effect again.
+      untracked(() => {
+        if (currentLesson) {
+          const normalizedDate = this.normalizeDateString(currentLesson.plannedDate);
+          const normalizedUnitNumber = this.normalizeUnitSelectValue(currentLesson.unitNumber);
+          const normalizedLessonNumber = this.normalizeLessonSelectValue(
+            currentLesson.lessonNumber,
+            normalizedUnitNumber
+          );
+
+          this.formData.set({
+            plannedDate: normalizedDate,
+            IsFormalClass: currentLesson.IsFormalClass ?? true,
+            title: currentLesson.title || '',
+            unitNumber: normalizedUnitNumber,
+            lessonNumber: normalizedLessonNumber,
+            plannedTeacherId: currentLesson.plannedTeacherId
+          });
+          return;
+        }
 
         this.formData.set({
-          plannedDate: normalizedDate,
-          IsFormalClass: currentLesson.IsFormalClass ?? true,
-          title: currentLesson.title || '',
-          unitNumber: normalizedUnitNumber,
-          lessonNumber: normalizedLessonNumber,
-          plannedTeacherId: currentLesson.plannedTeacherId
+          plannedDate: this.dateService.getTodayDateString(),
+          IsFormalClass: true,
+          title: '',
+          unitNumber: '',
+          lessonNumber: '',
+          plannedTeacherId: ''
         });
-        return;
-      }
-
-      this.formData.set({
-        plannedDate: this.dateService.getTodayDateString(),
-        IsFormalClass: true,
-        title: '',
-        unitNumber: '',
-        lessonNumber: '',
-        plannedTeacherId: ''
       });
     });
   }
@@ -201,7 +202,9 @@ export class PlannedLessonFormComponent {
   }
 
   private getAllowedLessonNumbers(unitNumber?: string): string[] {
-    const selectedUnit = unitNumber?.trim() || this.formData().unitNumber.trim();
+    const selectedUnit = unitNumber === undefined
+      ? this.formData().unitNumber.trim()
+      : unitNumber.trim();
     if (!selectedUnit) {
       return this.legacyLessonNumbers;
     }
