@@ -18,8 +18,8 @@ import { LessonClass } from '../../../core/models/lesson-class.model';
 import { PlannedLesson } from '../../../core/models/planned-lesson.model';
 import { Student } from '../../../core/models/student.model';
 import { TeacherNames } from '../../../core/models/enums';
-import { ClassListHero } from './class-list-hero/class-list-hero';
-import { ClassHistoryFilters } from './class-history-filters/class-history-filters';
+import { ClassListHeroComponent } from './class-list-hero/class-list-hero.component';
+import { ClassHistoryFiltersComponent } from './class-history-filters/class-history-filters.component';
 import { AlertBannerComponent } from '../../../shared/ui/alert-banner/alert-banner.component';
 import { EditorPanelHeaderComponent } from '../../../shared/ui/editor-panel-header/editor-panel-header.component';
 import { ClassHistoryCardComponent } from '../../../shared/ui/class-history-card/class-history-card.component';
@@ -67,17 +67,17 @@ interface QuickStudentFormData {
   selector: 'app-class-list',
   imports: [
     CommonModule,
-    ClassListHero,
-    ClassHistoryFilters,
+    ClassListHeroComponent,
+    ClassHistoryFiltersComponent,
     AlertBannerComponent,
     EditorPanelHeaderComponent,
     ClassHistoryCardComponent,
   ],
-  templateUrl: './class-list.html',
-  styleUrl: './class-list.css',
+  templateUrl: './class-list.component.html',
+  styleUrl: './class-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClassList {
+export class ClassListComponent {
   private lessonClassService = inject(LessonClassService);
   private plannedLessonService = inject(PlannedLessonService);
   private attendanceService = inject(AttendanceService);

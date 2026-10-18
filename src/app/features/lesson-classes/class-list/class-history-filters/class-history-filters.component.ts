@@ -4,11 +4,11 @@ import { FilterBarComponent } from '../../../../shared/ui/filter-bar/filter-bar.
 @Component({
   selector: 'app-class-history-filters',
   imports: [FilterBarComponent],
-  templateUrl: './class-history-filters.html',
-  styleUrl: './class-history-filters.css',
+  templateUrl: './class-history-filters.component.html',
+  styleUrl: './class-history-filters.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClassHistoryFilters {
+export class ClassHistoryFiltersComponent {
   filterTeacher = input('all');
   filterPeriod = input('all');
   searchTerm = input('');

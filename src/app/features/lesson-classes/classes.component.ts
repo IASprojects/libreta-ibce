@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ClassList } from './class-list/class-list';
+import { ClassListComponent } from './class-list/class-list.component';
 
 @Component({
   selector: 'app-classes',
-  imports: [ClassList],
+  imports: [ClassListComponent],
   templateUrl: './classes.component.html',
   styleUrl: './classes.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

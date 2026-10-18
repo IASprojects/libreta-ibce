@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 
 @Component({
   selector: 'app-class-list-hero',
-  templateUrl: './class-list-hero.html',
-  styleUrl: './class-list-hero.css',
+  templateUrl: './class-list-hero.component.html',
+  styleUrl: './class-list-hero.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClassListHero {
+export class ClassListHeroComponent {
   showEditor = input(false);
   isInitialLoading = input(false);
   totalClasses = input(0);
