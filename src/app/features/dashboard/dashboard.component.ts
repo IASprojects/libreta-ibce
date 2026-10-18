@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
@@ -11,6 +11,7 @@ import { ModuleHeaderComponent } from '../../shared/ui/module-header/module-head
   selector: 'app-dashboard',
   imports: [CommonModule, DashboardMetricsComponent, ModuleHeaderComponent],
   templateUrl: './dashboard.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent {

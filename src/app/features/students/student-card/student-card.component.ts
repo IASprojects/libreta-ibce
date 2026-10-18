@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { Student } from '../../../core/models/student.model';
 
 export interface StudentCardData extends Student {
@@ -11,6 +11,7 @@ export interface StudentCardData extends Student {
   selector: 'app-student-card',
   imports: [],
   templateUrl: './student-card.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './student-card.component.css',
 })
 export class StudentCardComponent {

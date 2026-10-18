@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -9,6 +9,7 @@ import { ThemeToggleComponent } from '../../../shared/ui/theme-toggle/theme-togg
   selector: 'app-login',
   imports: [CommonModule, ThemeToggleComponent],
   templateUrl: './login.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './login.component.css'
 })
 export class LoginComponent {

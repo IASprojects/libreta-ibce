@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, effect } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -40,6 +40,7 @@ interface StudentFormData {
   selector: 'app-student-form',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './student-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './student-form.component.css',
 })
 export class StudentFormComponent implements OnInit {

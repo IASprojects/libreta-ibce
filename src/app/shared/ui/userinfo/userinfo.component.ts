@@ -1,4 +1,4 @@
-import { Component, output, inject } from '@angular/core';
+import { Component, output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../shared/user.service';
 
@@ -6,6 +6,7 @@ import { UserService } from '../../../shared/user.service';
   selector: 'app-dashboard-userinfo',
   imports: [CommonModule],
   templateUrl: './userinfo.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './userinfo.component.css',
 })
 export class UserinfoComponent {

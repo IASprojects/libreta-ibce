@@ -67,7 +67,7 @@
               🔥 {{ student().stats?.currentStreak }}
             </span>
           }
-          @if (student().stats?.lastYearPercentage !== undefined) {
+          @if ($safeNavigationMigration(student().stats?.lastYearPercentage) !== undefined) {
             <span
               class="stat-badge percentage"
               [attr.aria-label]="

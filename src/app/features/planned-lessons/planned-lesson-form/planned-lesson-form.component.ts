@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, input, output, effect, untracked } from '@angular/core';
+import { Component, inject, signal, computed, input, output, effect, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlannedLessonService, CreatePlannedLessonInput } from '../planned-lesson.service';
@@ -29,6 +29,7 @@ type FormMode = 'create' | 'edit';
   selector: 'app-planned-lesson-form',
   imports: [CommonModule, FormsModule],
   templateUrl: './planned-lesson-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './planned-lesson-form.component.css',
 })
 export class PlannedLessonFormComponent {
