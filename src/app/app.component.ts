@@ -6,13 +6,13 @@ import { AuthService } from './core/services/auth.service';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, CommonModule],
-  templateUrl: './app.html',
-  styleUrl: './app.css',
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
   host: {
     '(window:scroll)': 'onWindowScroll()'
   }
 })
-export class App implements OnInit {
+export class AppComponent implements OnInit {
   private authService = inject(AuthService);
   private readonly scrollThreshold = 280;
   
