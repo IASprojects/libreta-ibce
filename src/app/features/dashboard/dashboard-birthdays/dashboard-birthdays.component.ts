@@ -14,11 +14,11 @@ interface Birthday {
 @Component({
   selector: 'app-dashboard-birthdays',
   imports: [CommonModule],
-  templateUrl: './dashboard-birthdays.html',
-  styleUrl: './dashboard-birthdays.css',
+  templateUrl: './dashboard-birthdays.component.html',
+  styleUrl: './dashboard-birthdays.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardBirthdays {
+export class DashboardBirthdaysComponent {
   private readonly dateService = inject(DateService);
   private readonly studentService = inject(StudentService);
   

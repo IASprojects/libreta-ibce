@@ -17,11 +17,11 @@ interface UpcomingClass {
 @Component({
   selector: 'app-dashboard-schedule',
   imports: [CommonModule],
-  templateUrl: './dashboard-schedule.html',
-  styleUrl: './dashboard-schedule.css',
+  templateUrl: './dashboard-schedule.component.html',
+  styleUrl: './dashboard-schedule.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardSchedule {
+export class DashboardScheduleComponent {
   private readonly plannedLessonService = inject(PlannedLessonService);
   private readonly appConfigService = inject(AppConfigService);
   private readonly router = inject(Router);

@@ -13,11 +13,11 @@ interface StudentPreview {
 @Component({
   selector: 'app-dashboard-newstudents',
   imports: [CommonModule],
-  templateUrl: './dashboard-newstudents.html',
-  styleUrl: './dashboard-newstudents.css',
+  templateUrl: './dashboard-newstudents.component.html',
+  styleUrl: './dashboard-newstudents.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardNewstudents {
+export class DashboardNewstudentsComponent {
   private readonly studentService = inject(StudentService);
 
   recentStudents = computed<StudentPreview[]>(() =>

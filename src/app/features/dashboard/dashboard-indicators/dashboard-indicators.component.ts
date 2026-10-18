@@ -11,11 +11,11 @@ import { combineLatest, map, of, switchMap } from 'rxjs';
 @Component({
   selector: 'app-dashboard-indicators',
   imports: [CommonModule, RouterLink],
-  templateUrl: './dashboard-indicators.html',
-  styleUrl: './dashboard-indicators.css',
+  templateUrl: './dashboard-indicators.component.html',
+  styleUrl: './dashboard-indicators.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardIndicators {
+export class DashboardIndicatorsComponent {
   private readonly lessonClassService = inject(LessonClassService);
   private readonly attendanceService = inject(AttendanceService);
   private readonly appConfigService = inject(AppConfigService);
